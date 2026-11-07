@@ -32,7 +32,7 @@ export function nominatimUrl(requete: string): string {
   const u = new URL("https://nominatim.openstreetmap.org/search");
   u.searchParams.set("q", requete);
   u.searchParams.set("format", "json");
-  u.searchParams.set("limit", "1");
+  u.searchParams.set("limit", "5");
   u.searchParams.set("countrycodes", "ci");
   u.searchParams.set("accept-language", "fr");
   return u.toString();
@@ -45,4 +45,21 @@ export function lireNominatim(json: unknown): { lat: number; lon: number; nom: s
   const lon = Number(r.lon);
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
   return { lat, lon, nom: r.display_name ?? "" };
+}
+
+export type Lieu = { lat: number; lon: number; nom: string; cadre?: [[number, number], [number, number]] };
+
+/** Jusqu'à 5 lieux valides d'une réponse Nominatim, avec leur cadre quand il est fourni. */
+export function lireNominatimListe(json: unknown): Lieu[] {
+  if (!Array.isArray(json)) return [];
+  const lieux: Lieu[] = [];
+  for (const r of json.slice(0, 5) as { lat?: string; lon?: string; display_name?: string; boundingbox?: string[] }[]) {
+    const lat = Number(r.lat);
+    const lon = Number(r.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+    const b = r.boundingbox?.map(Number);
+    const cadre = b && b.length === 4 && b.every(Number.isFinite) ? ([[b[0], b[2]], [b[1], b[3]]] as Lieu["cadre"]) : undefined;
+    lieux.push(cadre ? { lat, lon, nom: r.display_name ?? "", cadre } : { lat, lon, nom: r.display_name ?? "" });
+  }
+  return lieux;
 }

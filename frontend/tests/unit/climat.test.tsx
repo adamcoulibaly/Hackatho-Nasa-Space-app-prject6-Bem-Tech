@@ -22,12 +22,12 @@ describe("GraceChart", () => {
 
 describe("RainChart", () => {
   it("marque les mois de la saison des pluies du contrat", () => {
-    const { container } = render(<RainChart mois={climat.pluieMensuelle} saison={climat.saisonPluies} />);
+    const { container } = render(<RainChart mois={climat.pluieMensuelle} saisons={climat.saisons ?? [climat.saisonPluies]} />);
     const barres = [...container.querySelectorAll("[data-mois]")];
     expect(barres).toHaveLength(12);
     const pluie = barres.filter((b) => b.getAttribute("data-saison") === "true").map((b) => b.getAttribute("data-mois"));
-    const { debut, fin } = climat.saisonPluies;
-    expect(pluie).toEqual(Array.from({ length: fin - debut + 1 }, (_, i) => String(debut + i)));
+    const attendus = (climat.saisons ?? [climat.saisonPluies]).flatMap((s) => Array.from({ length: s.fin - s.debut + 1 }, (_, i) => String(s.debut + i)));
+    expect(pluie).toEqual(attendus);
   });
 });
 

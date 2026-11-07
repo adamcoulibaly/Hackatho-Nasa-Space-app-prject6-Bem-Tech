@@ -77,8 +77,15 @@ a:hover { color: #00502B; }
 a, button { transition: opacity 100ms var(--ease-out); }
 a:active, button:active { opacity: 0.8; }
 
-/* Carte : la recherche et le centrage restent doux. */
+/* Carte : police du site et coins de parcelle faciles à attraper au doigt. */
 .leaflet-container { font-family: inherit; }
+.forosat-sommet {
+  background: #FFFFFF;
+  border: 3px solid #F77F00;
+  border-radius: 50%;
+  box-sizing: border-box;
+  cursor: grab;
+}
 
 @media print {
   .no-print { display: none !important; }

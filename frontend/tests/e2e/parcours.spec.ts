@@ -126,6 +126,7 @@ test("carte : dessiner la parcelle met à jour la surface", async ({ page, isMob
 test("carte : la couche SMAP signale qu'elle commence en 2015", async ({ page }) => {
   await page.goto("/parcelle");
   await page.getByRole("button", { name: "Humidité du sol" }).click();
+  await expect(page.getByLabel(/Année/)).toBeVisible();
   await page.getByLabel(/Année/).fill("2010");
   await expect(page.getByText(/données à partir de 2015/)).toBeVisible();
 });
@@ -135,4 +136,59 @@ test("assistant IA sans clé : l'écran le dit clairement", async ({ page }) => 
   await page.goto("/rotations/B");
   await page.getByRole("button", { name: "Expliquer simplement" }).click();
   await expect(page.getByRole("alert").filter({ hasText: "pas encore configuré" })).toBeVisible();
+});
+
+async function toucher(page: import("@playwright/test").Page, isMobile: boolean, x: number, y: number) {
+  if (isMobile) await page.touchscreen.tap(x, y);
+  else await page.mouse.click(x, y);
+  await page.waitForTimeout(350);
+}
+
+test("carte : on ferme le contour en touchant le premier point, et on peut retirer un point", async ({ page, isMobile }) => {
+  await page.goto("/parcelle");
+  const carte = page.getByTestId("carte");
+  await expect(carte.locator(".leaflet-pane").first()).toBeAttached();
+  await page.getByRole("button", { name: "Dessiner ma parcelle" }).click();
+  await carte.scrollIntoViewIfNeeded();
+  const b = (await carte.boundingBox())!;
+  const cx = b.x + b.width / 2;
+  const cy = b.y + b.height / 2 - 40;
+  for (const [dx, dy] of [[-50, -40], [50, -40], [50, 40], [0, 60]]) await toucher(page, isMobile, cx + dx, cy + dy);
+  await page.getByRole("button", { name: "Retirer le dernier point" }).click();
+  await expect(page.getByText(/^3 points · ≈ /)).toBeVisible();
+  await toucher(page, isMobile, cx - 50, cy - 40); // premier point
+  await expect(page.getByText(/Parcelle enregistrée : .* ha\. Région détectée : Poro/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Redessiner ma parcelle" })).toBeVisible();
+});
+
+test("carte : fond satellite par défaut, plan au choix", async ({ page }) => {
+  await page.goto("/parcelle");
+  await expect(page.getByRole("button", { name: "Satellite" })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Plan" }).click();
+  await expect(page.getByRole("button", { name: "Plan" })).toHaveAttribute("aria-pressed", "true");
+});
+
+test("toutes les régions : le climat suit la région choisie", async ({ page }) => {
+  await page.goto("/parcelle");
+  await expect(page.locator("#region option")).toHaveCount(33);
+  await page.getByLabel("Région").selectOption("gbeke");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await expect(page).toHaveURL(/\/climat$/);
+  await expect(page.getByText(/Étape 2 sur 3 · Gbêkê/i)).toBeVisible();
+  await expect(page.getByText(/NASA POWER, Bouaké/)).toBeVisible();
+  await expect(page.getByText(/exemples de Korhogo/)).toBeVisible();
+  await page.goto("/rotations");
+  await expect(page.getByText(/exemple calculé pour Korhogo/)).toBeVisible();
+});
+
+test("carte : le mode dessin garde les styles de Leaflet (tuiles visibles)", async ({ page }) => {
+  await page.goto("/parcelle");
+  const carte = page.getByTestId("carte");
+  await expect(carte).toHaveClass(/leaflet-container/);
+  await page.getByRole("button", { name: "Dessiner ma parcelle" }).click();
+  await expect(carte).toHaveClass(/leaflet-container/);
+  await expect(carte).toHaveClass(/leaflet-crosshair/);
+  await page.getByRole("button", { name: "Annuler" }).click();
+  await expect(carte).toHaveClass(/leaflet-container/);
+  await expect(carte).not.toHaveClass(/leaflet-crosshair/);
 });

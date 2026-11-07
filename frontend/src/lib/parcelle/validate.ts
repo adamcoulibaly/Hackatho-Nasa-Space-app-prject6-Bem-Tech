@@ -1,11 +1,12 @@
 import { z } from "zod";
+import { REGION_IDS } from "@/lib/regions";
 
-export type Region = "Poro (Korhogo)" | "Gbêkê (Bouaké)";
 export type Eau = "pluie" | "irrigation";
 export type Materiel = "daba" | "traction" | "tracteur";
 
 export type Parcelle = {
-  region: Region;
+  /** Identifiant de la région (voir lib/regions). */
+  region: string;
   surface: number;
   cultures: string[];
   eau: Eau;
@@ -29,7 +30,7 @@ export const PRIORITES = [
 ] as const;
 
 export const DEFAULT_PARCELLE: Parcelle = {
-  region: "Poro (Korhogo)",
+  region: "poro",
   surface: 2,
   cultures: ["Maïs", "Coton"],
   eau: "pluie",
@@ -47,7 +48,7 @@ export function validateParcelle(p: Parcelle): { ok: boolean; erreurs: string[] 
 
 /** Forme attendue d'une parcelle relue depuis le stockage local. */
 export const ParcelleSchema = z.object({
-  region: z.enum(["Poro (Korhogo)", "Gbêkê (Bouaké)"]),
+  region: z.enum(REGION_IDS),
   surface: z.number(),
   cultures: z.array(z.string()),
   eau: z.enum(["pluie", "irrigation"]),

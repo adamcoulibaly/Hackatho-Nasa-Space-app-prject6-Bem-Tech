@@ -1,0 +1,266 @@
+[
+  {
+    "id": "abidjan",
+    "nom": "District autonome d'Abidjan",
+    "chefLieu": "Abidjan",
+    "district": "Lagunes",
+    "lat": 5.3204,
+    "lon": -4.0161
+  },
+  {
+    "id": "yamoussoukro",
+    "nom": "District autonome de Yamoussoukro",
+    "chefLieu": "Yamoussoukro",
+    "district": "Lacs",
+    "lat": 6.82,
+    "lon": -5.2776
+  },
+  {
+    "id": "gbokle",
+    "nom": "Gbôklé",
+    "chefLieu": "Sassandra",
+    "district": "Bas-Sassandra",
+    "lat": 4.949,
+    "lon": -6.0922
+  },
+  {
+    "id": "nawa",
+    "nom": "Nawa",
+    "chefLieu": "Soubré",
+    "district": "Bas-Sassandra",
+    "lat": 5.785,
+    "lon": -6.5933
+  },
+  {
+    "id": "san-pedro",
+    "nom": "San-Pédro",
+    "chefLieu": "San-Pédro",
+    "district": "Bas-Sassandra",
+    "lat": 4.759,
+    "lon": -6.6464
+  },
+  {
+    "id": "indenie-djuablin",
+    "nom": "Indénié-Djuablin",
+    "chefLieu": "Abengourou",
+    "district": "Comoé",
+    "lat": 6.7269,
+    "lon": -3.4968
+  },
+  {
+    "id": "sud-comoe",
+    "nom": "Sud-Comoé",
+    "chefLieu": "Aboisso",
+    "district": "Comoé",
+    "lat": 5.7126,
+    "lon": -3.2076
+  },
+  {
+    "id": "folon",
+    "nom": "Folon",
+    "chefLieu": "Minignan",
+    "district": "Denguélé",
+    "lat": 9.9986,
+    "lon": -7.8361
+  },
+  {
+    "id": "kabadougou",
+    "nom": "Kabadougou",
+    "chefLieu": "Odienné",
+    "district": "Denguélé",
+    "lat": 9.5044,
+    "lon": -7.5619
+  },
+  {
+    "id": "goh",
+    "nom": "Gôh",
+    "chefLieu": "Gagnoa",
+    "district": "Gôh-Djiboua",
+    "lat": 6.1335,
+    "lon": -5.9511
+  },
+  {
+    "id": "loh-djiboua",
+    "nom": "Lôh-Djiboua",
+    "chefLieu": "Divo",
+    "district": "Gôh-Djiboua",
+    "lat": 5.8405,
+    "lon": -5.3549
+  },
+  {
+    "id": "belier",
+    "nom": "Bélier",
+    "chefLieu": "Toumodi",
+    "district": "Lacs",
+    "lat": 6.5602,
+    "lon": -5.0161
+  },
+  {
+    "id": "iffou",
+    "nom": "Iffou",
+    "chefLieu": "Daoukro",
+    "district": "Lacs",
+    "lat": 7.0579,
+    "lon": -3.9661
+  },
+  {
+    "id": "moronou",
+    "nom": "Moronou",
+    "chefLieu": "Bongouanou",
+    "district": "Lacs",
+    "lat": 6.6475,
+    "lon": -4.2047
+  },
+  {
+    "id": "nzi",
+    "nom": "N'Zi",
+    "chefLieu": "Dimbokro",
+    "district": "Lacs",
+    "lat": 6.6494,
+    "lon": -4.7041
+  },
+  {
+    "id": "agneby-tiassa",
+    "nom": "Agnéby-Tiassa",
+    "chefLieu": "Agboville",
+    "district": "Lagunes",
+    "lat": 5.9307,
+    "lon": -4.2131
+  },
+  {
+    "id": "grands-ponts",
+    "nom": "Grands-Ponts",
+    "chefLieu": "Dabou",
+    "district": "Lagunes",
+    "lat": 5.324,
+    "lon": -4.3723
+  },
+  {
+    "id": "la-me",
+    "nom": "La Mé",
+    "chefLieu": "Adzopé",
+    "district": "Lagunes",
+    "lat": 6.1058,
+    "lon": -3.864
+  },
+  {
+    "id": "cavally",
+    "nom": "Cavally",
+    "chefLieu": "Guiglo",
+    "district": "Montagnes",
+    "lat": 6.4303,
+    "lon": -7.5909
+  },
+  {
+    "id": "guemon",
+    "nom": "Guémon",
+    "chefLieu": "Duékoué",
+    "district": "Montagnes",
+    "lat": 6.714,
+    "lon": -7.4252
+  },
+  {
+    "id": "tonkpi",
+    "nom": "Tonkpi",
+    "chefLieu": "Man",
+    "district": "Montagnes",
+    "lat": 7.4103,
+    "lon": -7.5504
+  },
+  {
+    "id": "haut-sassandra",
+    "nom": "Haut-Sassandra",
+    "chefLieu": "Daloa",
+    "district": "Sassandra-Marahoué",
+    "lat": 6.8869,
+    "lon": -6.453
+  },
+  {
+    "id": "marahoue",
+    "nom": "Marahoué",
+    "chefLieu": "Bouaflé",
+    "district": "Sassandra-Marahoué",
+    "lat": 6.9802,
+    "lon": -5.7458
+  },
+  {
+    "id": "bagoue",
+    "nom": "Bagoué",
+    "chefLieu": "Boundiali",
+    "district": "Savanes",
+    "lat": 9.5232,
+    "lon": -6.482
+  },
+  {
+    "id": "poro",
+    "nom": "Poro",
+    "chefLieu": "Korhogo",
+    "district": "Savanes",
+    "lat": 9.4581,
+    "lon": -5.6316
+  },
+  {
+    "id": "tchologo",
+    "nom": "Tchologo",
+    "chefLieu": "Ferkessédougou",
+    "district": "Savanes",
+    "lat": 9.594,
+    "lon": -5.1976
+  },
+  {
+    "id": "gbeke",
+    "nom": "Gbêkê",
+    "chefLieu": "Bouaké",
+    "district": "Vallée du Bandama",
+    "lat": 7.689,
+    "lon": -5.0284
+  },
+  {
+    "id": "hambol",
+    "nom": "Hambol",
+    "chefLieu": "Katiola",
+    "district": "Vallée du Bandama",
+    "lat": 8.0912,
+    "lon": -5.1507
+  },
+  {
+    "id": "bafing",
+    "nom": "Bafing",
+    "chefLieu": "Touba",
+    "district": "Woroba",
+    "lat": 8.2841,
+    "lon": -7.6818
+  },
+  {
+    "id": "bere",
+    "nom": "Béré",
+    "chefLieu": "Mankono",
+    "district": "Woroba",
+    "lat": 8.0448,
+    "lon": -6.0743
+  },
+  {
+    "id": "worodougou",
+    "nom": "Worodougou",
+    "chefLieu": "Séguéla",
+    "district": "Woroba",
+    "lat": 7.9614,
+    "lon": -6.6702
+  },
+  {
+    "id": "bounkani",
+    "nom": "Bounkani",
+    "chefLieu": "Bouna",
+    "district": "Zanzan",
+    "lat": 9.2687,
+    "lon": -2.999
+  },
+  {
+    "id": "gontougo",
+    "nom": "Gontougo",
+    "chefLieu": "Bondoukou",
+    "district": "Zanzan",
+    "lat": 8.0843,
+    "lon": -2.7993
+  }
+]

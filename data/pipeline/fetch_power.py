@@ -14,8 +14,8 @@ RAW = Path(__file__).resolve().parent.parent / "raw" / "power_korhogo_monthly.js
 URL = "https://power.larc.nasa.gov/api/temporal/monthly/point"
 
 
-def main(argv: list[str]) -> int:
-    lat, lon, debut, fin = (argv + ["9.46", "-5.63", "2005", "2025"][len(argv):])[:4]
+def telecharger(lat: float | str, lon: float | str, debut: int | str = 2005, fin: int | str = 2025) -> bytes:
+    """Réponse JSON brute de NASA POWER (pluie corrigée et température max., mensuelles)."""
     params = {
         "parameters": "T2M_MAX,PRECTOTCORR",
         "community": "AG",
@@ -27,7 +27,12 @@ def main(argv: list[str]) -> int:
     }
     req = urllib.request.Request(f"{URL}?{urllib.parse.urlencode(params)}", headers={"User-Agent": "forosat-hackathon"})
     with urllib.request.urlopen(req, timeout=120) as r:
-        corps = r.read()
+        return r.read()
+
+
+def main(argv: list[str]) -> int:
+    lat, lon, debut, fin = (argv + ["9.46", "-5.63", "2005", "2025"][len(argv):])[:4]
+    corps = telecharger(lat, lon, debut, fin)
     RAW.parent.mkdir(parents=True, exist_ok=True)
     RAW.write_bytes(corps)
     print(f"{len(corps)} octets écrits dans {RAW}")

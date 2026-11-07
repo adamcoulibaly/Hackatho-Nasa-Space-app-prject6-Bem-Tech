@@ -45,7 +45,13 @@ Commandes à lancer depuis `frontend/` : l'application cherche les données dans
 
 ## Carte
 
-Leaflet avec le fond OpenStreetMap et des couches satellite NASA GIBS (vraies couleurs, végétation, chaleur du sol, humidité du sol SMAP) au choix de l'année. Recherche de localité (Nominatim), « Ma position » et dessin de la parcelle (la surface est calculée). Aucune clé d'API n'est nécessaire.
+Leaflet, sans clé d'API :
+- fond **satellite détaillé** (Esri World Imagery, pour voir les champs) ou **plan** (OpenStreetMap) ;
+- couches NASA GIBS au choix de l'année : végétation (NDVI MODIS), chaleur du sol (MODIS), humidité du sol (SMAP, depuis 2015) ;
+- recherche de lieu (Nominatim, plusieurs résultats au choix), « Ma position » ;
+- dessin de la parcelle : zoom automatique, surface en direct, fermeture en touchant le premier point, dernier point retirable, coins déplaçables ensuite ; la région est détectée d'après la parcelle.
+
+Les images Esri sont soumises aux conditions d'utilisation d'Esri (attribution affichée sur la carte).
 
 ## Assistant IA
 
@@ -59,10 +65,11 @@ Dans `data/pipeline/` (Python 3, sans dépendance à installer) :
 cd data/pipeline
 python3 fetch_power.py        # télécharge NASA POWER (pluie, chaleur) de Korhogo vers data/raw/
 python3 build_climat.py       # met à jour data/pilot/korhogo/climat.json avec les vraies valeurs
-python3 -m unittest test_indicators
+python3 build_regions.py      # climat réel des 33 régions et districts (data/regions/<id>.json)
+python3 -m unittest test_indicators test_climat_region
 ```
 
-Aujourd'hui seuls la **pluie** et la **chaleur** sont réelles (NASA POWER). Sol, végétation, eau stockée et alertes restent des valeurs d'exemple ; l'écran Climat l'indique. Prochaines sources : GPM, SMAP, MODIS/Landsat, SRTM, puis ECOSTRESS et GRACE (compte NASA Earthdata nécessaire).
+Aujourd'hui seuls la **pluie** et la **chaleur** sont réelles (NASA POWER), pour **les 31 régions et 2 districts** (au chef-lieu de chacun ; une ou deux saisons des pluies détectées). Les rotations restent l'exemple calculé pour Korhogo, et l'écran le dit hors de la zone pilote. Sol, végétation, eau stockée et alertes restent des valeurs d'exemple ; l'écran Climat l'indique. Prochaines sources : GPM, SMAP, MODIS/Landsat, SRTM, puis ECOSTRESS et GRACE (compte NASA Earthdata nécessaire).
 
 ## Règles d'équipe
 

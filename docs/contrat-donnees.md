@@ -10,6 +10,9 @@ Les écrans lisent uniquement `data/pilot/korhogo/*.json`, validés par les sch�
 | `sources.json` | 5 étapes de méthode, 8 sources NASA, 4 approches IA comparées, liste « là où l'humain décide » | Membre 5 (contenu) |
 | `lexique.json` | 14 termes : définition simple et pourquoi c'est utile | Membre 5 |
 
+## Régions
+`frontend/src/lib/regions.json` liste les 31 régions et 2 districts autonomes (chef-lieu géocodé sur OpenStreetMap). `data/regions/<id>.json` donne le climat de chacune, au même format que `climat.json`, avec `saisons` (une ou deux saisons des pluies) et `meta.region`. L'interface les sert en JSON statique sur `/api/climat/<id>`.
+
 ## Provenance
 `climat.json` peut contenir `meta` : `reel` (ce qui vient de données réelles), `source`, `periode` et `tendancePluie`. L'écran Climat affiche alors une note « Données réelles » et précise que le reste est en valeurs d'exemple. Sans `meta`, tout est présenté comme exemple.
 

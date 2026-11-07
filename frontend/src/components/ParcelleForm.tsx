@@ -2,7 +2,8 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useParcelle } from "@/lib/parcelle/context";
-import { CULTURES, PRIORITES, validateParcelle, type Eau, type Materiel, type Region } from "@/lib/parcelle/validate";
+import { CULTURES, PRIORITES, validateParcelle, type Eau, type Materiel } from "@/lib/parcelle/validate";
+import { libelleRegion, regionsParDistrict } from "@/lib/regions";
 
 const FIELD = "h-12 rounded-[14px] border border-line bg-white px-3 text-[15px] text-ink";
 
@@ -41,9 +42,12 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1.5">
           <label htmlFor="region" className="text-sm font-semibold">Région</label>
-          <select id="region" className={FIELD} value={parcelle.region} onChange={(e) => setParcelle({ region: e.target.value as Region })}>
-            <option>Poro (Korhogo)</option>
-            <option>Gbêkê (Bouaké)</option>
+          <select id="region" className={FIELD} value={parcelle.region} onChange={(e) => setParcelle({ region: e.target.value })}>
+            {regionsParDistrict().map(([groupe, regions]) => (
+              <optgroup key={groupe} label={groupe}>
+                {regions.map((r) => <option key={r.id} value={r.id}>{libelleRegion(r)}</option>)}
+              </optgroup>
+            ))}
           </select>
         </div>
         <div className="flex flex-col gap-1.5">

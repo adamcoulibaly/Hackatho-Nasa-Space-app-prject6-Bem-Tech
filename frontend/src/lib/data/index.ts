@@ -17,8 +17,12 @@ function dataDir(): string {
   return process.env.FOROSAT_DATA_DIR ?? path.resolve(process.cwd(), "..", "data", "pilot", "korhogo");
 }
 
-async function load<T>(name: string, schema: ZodType<T>): Promise<T> {
-  const file = path.join(dataDir(), `${name}.json`);
+function regionsDir(): string {
+  return process.env.FOROSAT_REGIONS_DIR ?? path.resolve(process.cwd(), "..", "data", "regions");
+}
+
+async function load<T>(name: string, schema: ZodType<T>, dir: string = dataDir()): Promise<T> {
+  const file = path.join(dir, `${name}.json`);
   let raw: string;
   try {
     raw = await fs.readFile(file, "utf8");
@@ -47,4 +51,10 @@ export const getLexique = (): Promise<Terme[]> => load("lexique", LexiqueSchema)
 export async function getRotation(id: string): Promise<Rotation | null> {
   const all = await getRotations();
   return all.find((r) => r.id === id) ?? null;
+}
+
+/** Climat réel (pluie, chaleur) d'une région, les autres indicateurs restant en exemple. */
+export function getClimatRegion(id: string): Promise<Climat> {
+  if (!/^[a-z-]+$/.test(id)) return Promise.reject(new DataError(`Région « ${id} » inconnue.`));
+  return load(id, ClimatSchema, regionsDir());
 }

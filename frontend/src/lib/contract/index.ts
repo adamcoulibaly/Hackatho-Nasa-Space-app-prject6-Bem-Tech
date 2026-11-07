@@ -21,6 +21,8 @@ export const ClimatSchema = z.object({
   indicateurs: z.array(z.object({ label: z.string(), valeur: z.string(), source: z.string(), accent: z.boolean().optional() })).min(1),
   pluieMensuelle: z.array(z.number().nonnegative()).length(12),
   saisonPluies: z.object({ debut: mois, fin: mois }),
+  /** Toutes les saisons des pluies (le sud en a souvent deux). */
+  saisons: z.array(z.object({ debut: mois, fin: mois })).min(1).optional(),
   matrice: z
     .array(
       z.object({
@@ -56,6 +58,9 @@ export const ClimatSchema = z.object({
       source: z.string(),
       periode: z.string(),
       tendancePluie: z.string().optional(),
+      region: z.string().optional(),
+      /** Ville d'où viennent les indicateurs encore en valeurs d'exemple. */
+      exempleDe: z.string().optional(),
     })
     .optional(),
   /** État du moment, pour le tableau de bord. */

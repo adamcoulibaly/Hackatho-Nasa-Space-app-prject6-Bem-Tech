@@ -63,6 +63,37 @@ def saison_des_pluies(pluie12: Sequence[float]) -> Optional[tuple[int, int]]:
     return (debut + 1, (debut + longueur - 1) % 12 + 1)
 
 
+def saisons_des_pluies(pluie12: Sequence[float], part_min: float = 0.10) -> list[tuple[int, int]]:
+    """Toutes les saisons des pluies : suites de mois au-dessus de la moyenne mensuelle (circulaire),
+    gardées si elles apportent au moins `part_min` de la pluie de l'année. Triées par mois de début.
+
+    Le nord ivoirien a une saison, le sud en a souvent deux.
+    """
+    total = sum(pluie12)
+    if total <= 0:
+        return []
+    moyenne = total / 12
+    pluvieux = [v >= moyenne for v in pluie12]
+    if all(pluvieux):
+        return [(1, 12)]
+    depart = next(i for i in range(12) if not pluvieux[i]) + 1
+    saisons: list[tuple[int, int]] = []
+    i = 0
+    while i < 12:
+        idx = (depart + i) % 12
+        if pluvieux[idx]:
+            longueur = 0
+            while i + longueur < 12 and pluvieux[(depart + i + longueur) % 12]:
+                longueur += 1
+            mois = [(idx + k) % 12 for k in range(longueur)]
+            if sum(pluie12[m] for m in mois) >= part_min * total:
+                saisons.append((idx + 1, (idx + longueur - 1) % 12 + 1))
+            i += longueur
+        else:
+            i += 1
+    return sorted(saisons)
+
+
 def mann_kendall(serie: Sequence[float]) -> dict:
     """Test de tendance de Mann-Kendall (seuil bilatéral à 5 %, sans correction des ex aequo)."""
     n = len(serie)

@@ -281,7 +281,7 @@
         4
       ],
       "saison": true,
-      "conseil": "Presque toute l'eau tombe entre mai et octobre : c'est la seule fenêtre pour vos cultures pluviales."
+      "conseil": "La pluie tombe surtout de mai à octobre : c'est la fenêtre pour les cultures pluviales."
     },
     {
       "id": "chaleur",
@@ -400,8 +400,16 @@
       "pluie",
       "chaleur"
     ],
-    "source": "NASA POWER (MERRA-2 / IMERG), point 9,46 N · 5,63 O",
+    "region": "poro",
+    "source": "NASA POWER, Korhogo (9,46 N · 5,63 O)",
     "periode": "2005–2025",
-    "tendancePluie": "Pluie annuelle sans tendance nette sur la période (test de Mann-Kendall, z = 0.45, 21 années)."
-  }
+    "tendancePluie": "Pluie annuelle sans tendance nette sur la période (test de Mann-Kendall, z = 0.45, 21 années).",
+    "exempleDe": "Korhogo"
+  },
+  "saisons": [
+    {
+      "debut": 5,
+      "fin": 10
+    }
+  ]
 }

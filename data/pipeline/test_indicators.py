@@ -71,3 +71,24 @@ class TestNiveau(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestSaisons(unittest.TestCase):
+    def test_une_saison_au_nord(self):
+        from indicators import saisons_des_pluies
+        self.assertEqual(saisons_des_pluies(EXEMPLE), [(5, 9)])
+
+    def test_deux_saisons_au_sud(self):
+        from indicators import saisons_des_pluies
+        sud = [20, 50, 110, 160, 280, 420, 180, 40, 60, 170, 150, 70]
+        self.assertEqual(saisons_des_pluies(sud), [(4, 7), (10, 11)])
+
+    def test_un_mois_isole_et_faible_n_est_pas_une_saison(self):
+        from indicators import saisons_des_pluies
+        # février dépasse à peine la moyenne : moins de 10 % de la pluie de l'année
+        pluie = [0, 90, 0, 0, 120, 150, 190, 260, 200, 60, 0, 0]
+        self.assertEqual(saisons_des_pluies(pluie), [(5, 9)])
+
+    def test_aucune_pluie(self):
+        from indicators import saisons_des_pluies
+        self.assertEqual(saisons_des_pluies([0] * 12), [])
