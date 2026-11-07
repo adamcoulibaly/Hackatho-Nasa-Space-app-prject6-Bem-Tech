@@ -49,6 +49,15 @@ export const ClimatSchema = z.object({
       }),
     )
     .min(1),
+  /** Provenance : ce qui vient de données réelles (le reste est en valeurs d'exemple). */
+  meta: z
+    .object({
+      reel: z.array(z.string()),
+      source: z.string(),
+      periode: z.string(),
+      tendancePluie: z.string().optional(),
+    })
+    .optional(),
   /** État du moment, pour le tableau de bord. */
   actuel: z.object({
     saison: z.string(),

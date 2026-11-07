@@ -43,6 +43,19 @@ L'interface ne lit les données que par `frontend/src/lib/data`. Pour remplacer 
 
 Commandes à lancer depuis `frontend/` : l'application cherche les données dans `../data/pilot/korhogo`.
 
+## Pipeline de données NASA
+
+Dans `data/pipeline/` (Python 3, sans dépendance à installer) :
+
+```bash
+cd data/pipeline
+python3 fetch_power.py        # télécharge NASA POWER (pluie, chaleur) de Korhogo vers data/raw/
+python3 build_climat.py       # met à jour data/pilot/korhogo/climat.json avec les vraies valeurs
+python3 -m unittest test_indicators
+```
+
+Aujourd'hui seuls la **pluie** et la **chaleur** sont réelles (NASA POWER). Sol, végétation, eau stockée et alertes restent des valeurs d'exemple ; l'écran Climat l'indique. Prochaines sources : GPM, SMAP, MODIS/Landsat, SRTM, puis ECOSTRESS et GRACE (compte NASA Earthdata nécessaire).
+
 ## Règles d'équipe
 
 Une branche GitHub par membre, un push par jour, et tout blocage signalé le jour même dans le groupe.

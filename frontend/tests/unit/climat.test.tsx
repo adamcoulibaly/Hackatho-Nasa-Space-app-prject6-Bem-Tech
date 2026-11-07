@@ -21,12 +21,13 @@ describe("GraceChart", () => {
 });
 
 describe("RainChart", () => {
-  it("marque la saison des pluies (mai à octobre)", () => {
+  it("marque les mois de la saison des pluies du contrat", () => {
     const { container } = render(<RainChart mois={climat.pluieMensuelle} saison={climat.saisonPluies} />);
     const barres = [...container.querySelectorAll("[data-mois]")];
     expect(barres).toHaveLength(12);
     const pluie = barres.filter((b) => b.getAttribute("data-saison") === "true").map((b) => b.getAttribute("data-mois"));
-    expect(pluie).toEqual(["5", "6", "7", "8", "9", "10"]);
+    const { debut, fin } = climat.saisonPluies;
+    expect(pluie).toEqual(Array.from({ length: fin - debut + 1 }, (_, i) => String(debut + i)));
   });
 });
 

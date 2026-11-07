@@ -30,7 +30,7 @@ export default async function ClimatPage() {
         <RequireParcelle>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-col gap-2">
-              <span className="text-[13px] uppercase tracking-[0.14em] text-muted">Étape 2 sur 3 · valeurs d'exemple</span>
+              <span className="text-[13px] uppercase tracking-[0.14em] text-muted">{climat.meta ? "Étape 2 sur 3" : "Étape 2 sur 3 · valeurs d'exemple"}</span>
               <h1 className="m-0 font-display text-[clamp(30px,3.4vw,46px)] font-bold leading-[1.05] tracking-[-0.04em]">
                 Le climat de votre champ, <span className="font-serif font-normal italic text-green-dark">vu de l'espace.</span>
               </h1>
@@ -38,6 +38,12 @@ export default async function ClimatPage() {
             <Link href="/rotations" className="inline-flex h-[52px] items-center rounded-full bg-orange px-6 text-base font-bold text-ink no-underline hover:text-ink">Voir les 3 rotations</Link>
           </div>
 
+          {climat.meta && (
+            <p role="note" className="m-0 rounded-2xl bg-[#D7F0E2] px-4 py-3 text-[15px] leading-normal text-[#00502B]">
+              <strong>Données réelles :</strong> {climat.meta.reel.join(" et ")} ({climat.meta.source}, {climat.meta.periode}).
+              {climat.meta.tendancePluie ? ` ${climat.meta.tendancePluie}` : ""} Les autres indicateurs (sol, végétation, eau stockée) restent des valeurs d'exemple.
+            </p>
+          )}
           <div className="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-3.5">
             {climat.indicateurs.map((k, i) => (
               <div key={k.label} className={`flex flex-col gap-2.5 rounded-3xl p-[22px] ${i === 0 ? "bg-ink text-paper" : "bg-white"}`}>

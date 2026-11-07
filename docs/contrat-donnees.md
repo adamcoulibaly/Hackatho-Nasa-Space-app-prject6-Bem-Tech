@@ -10,6 +10,9 @@ Les écrans lisent uniquement `data/pilot/korhogo/*.json`, validés par les sch�
 | `sources.json` | 5 étapes de méthode, 8 sources NASA, 4 approches IA comparées, liste « là où l'humain décide » | Membre 5 (contenu) |
 | `lexique.json` | 14 termes : définition simple et pourquoi c'est utile | Membre 5 |
 
+## Provenance
+`climat.json` peut contenir `meta` : `reel` (ce qui vient de données réelles), `source`, `periode` et `tendancePluie`. L'écran Climat affiche alors une note « Données réelles » et précise que le reste est en valeurs d'exemple. Sans `meta`, tout est présenté comme exemple.
+
 ## Règles
 - Critères de score (1 à 5) : `fertilite`, `eau`, `secheresse`, `revenu`, `erosion`, `fourrage`, `marche`.
 - Une valeur manquante dans une série est `null` et s'affiche comme lacune, jamais comme zéro.

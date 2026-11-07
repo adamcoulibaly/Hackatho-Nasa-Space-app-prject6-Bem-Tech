@@ -25,12 +25,12 @@ describe("ClimatTabs", () => {
     const user = userEvent.setup();
     render(<ClimatTabs onglets={climat.onglets} />);
     expect(screen.getByRole("button", { name: "Pluie" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText("260 mm en août")).toBeInTheDocument();
+    expect(screen.getByText(/^\d+ mm en /)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Chaleur" }));
     expect(screen.getByRole("button", { name: "Chaleur" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText("36 °C en mars")).toBeInTheDocument();
+    expect(screen.getByText(/^\d+ °C en /)).toBeInTheDocument();
     expect(screen.getByText(/harmattan/i)).toBeInTheDocument();
-    expect(screen.queryByText("260 mm en août")).not.toBeInTheDocument();
+    expect(screen.queryByText(/mm en /)).not.toBeInTheDocument();
   });
 });
 

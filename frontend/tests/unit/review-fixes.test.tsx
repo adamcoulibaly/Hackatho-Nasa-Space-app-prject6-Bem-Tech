@@ -79,3 +79,17 @@ describe("I-6 : le contrat accepte des données plus riches", () => {
     expect(container.querySelectorAll("[data-annee]")).toHaveLength(22);
   });
 });
+
+describe("données réelles : meta et affichage", () => {
+  it("le contrat exige source et période quand meta est présente", () => {
+    const c = load("climat");
+    expect(() => ClimatSchema.parse({ ...c, meta: { reel: ["pluie"] } })).toThrow();
+  });
+  it("l'écran climat dit ce qui vient de la NASA et ce qui reste en exemple", async () => {
+    localStorage.setItem("forosat.parcelle", JSON.stringify({ parcelle: DEFAULT_PARCELLE, saisie: true }));
+    const { default: ClimatPage } = await import("@/app/climat/page");
+    render(<ParcelleProvider>{await ClimatPage()}</ParcelleProvider>);
+    expect(await screen.findByText(/NASA POWER/, { selector: "p *, p" })).toBeInTheDocument();
+    expect(screen.getByText(/autres indicateurs.*valeurs d'exemple/i)).toBeInTheDocument();
+  });
+});
