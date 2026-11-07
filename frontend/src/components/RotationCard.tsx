@@ -6,7 +6,7 @@ export function RotationCard({ rotation, dark = false }: { rotation: Rotation; d
   const r = rotation;
   const muted = dark ? "text-[#C9D4CD]" : "text-muted";
   return (
-    <article className={`flex flex-col gap-5 rounded-[28px] p-[26px] ${dark ? "bg-ink text-paper" : "bg-white text-ink"}`}>
+    <article className={`transition-transform duration-200 ease-out hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:transform-none flex flex-col gap-5 rounded-[28px] p-[26px] ${dark ? "bg-ink text-paper" : "bg-white text-ink"}`}>
       <div className="flex items-center justify-between gap-2">
         <span className={`font-display text-[40px] font-extrabold leading-none tracking-[-0.05em] ${r.recommandee ? "text-orange" : dark ? "text-paper" : "text-muted"}`}>{r.id}</span>
         <span className={`rounded-full px-3 py-1.5 text-[13px] font-bold ${r.recommandee ? "bg-orange text-ink" : "bg-[#E7ECE6] text-ink"}`}>

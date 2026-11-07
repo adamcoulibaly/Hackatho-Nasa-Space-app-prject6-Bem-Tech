@@ -16,7 +16,7 @@ export function GraceChart({ data }: { data: Climat["grace"] }) {
         <div className="flex min-w-[640px] flex-col gap-1.5">
           <div className="relative grid h-[140px] gap-1" style={cols}>
             <div aria-hidden="true" className="absolute inset-x-0 top-[70px] h-px bg-ink" />
-            {data.map((g) => {
+            {data.map((g, i) => {
               const b = graceBar(g);
               return (
                 <div key={g.annee} data-annee={g.annee} data-gap={b.gap} className="flex h-[140px] flex-col" title={b.gap ? `${g.annee} : pas de mesure` : `${g.annee} : écart ${g.ecart}`}>
@@ -24,8 +24,8 @@ export function GraceChart({ data }: { data: Climat["grace"] }) {
                     <div role="img" aria-label={`${g.annee} : Pas de mesure`} className="h-[140px] rounded" style={{ background: HACHURE }} />
                   ) : (
                     <>
-                      <div className="flex h-[70px] items-end"><div className="w-full rounded-t-[3px] bg-green" style={{ height: b.up }} /></div>
-                      <div className="flex h-[70px] items-start"><div className="w-full rounded-b-[3px] bg-orange" style={{ height: b.down }} /></div>
+                      <div className="flex h-[70px] items-end"><div className="bar-grow w-full rounded-t-[3px] bg-green" style={{ height: b.up, ["--i" as string]: i } as React.CSSProperties} /></div>
+                      <div className="flex h-[70px] items-start"><div className="bar-grow-down w-full rounded-b-[3px] bg-orange" style={{ height: b.down, ["--i" as string]: i } as React.CSSProperties} /></div>
                     </>
                   )}
                 </div>

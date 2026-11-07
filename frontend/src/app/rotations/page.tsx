@@ -2,6 +2,7 @@ import { ParcelleHeader } from "@/components/ParcelleHeader";
 import { RequireParcelle } from "@/components/RequireParcelle";
 import { PrioritesRappel } from "@/components/PrioritesRappel";
 import { RotationCard } from "@/components/RotationCard";
+import { BottomNav } from "@/components/BottomNav";
 import { getRotations } from "@/lib/data";
 
 export const metadata = { title: "Comparer les rotations — ForoSat" };
@@ -12,7 +13,7 @@ export default async function RotationsPage() {
   return (
     <>
       <ParcelleHeader current="rotations" />
-      <main className="mx-auto flex max-w-[1360px] flex-col gap-6 px-6 pb-14 pt-8">
+      <main className="mx-auto flex max-w-[1360px] flex-col gap-6 px-6 pb-28 pt-8 md:pb-14">
         <RequireParcelle>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-col gap-2">
@@ -41,6 +42,7 @@ export default async function RotationsPage() {
           </section>
         </RequireParcelle>
       </main>
+      <BottomNav current="rotations" />
     </>
   );
 }

@@ -9,7 +9,7 @@ export function ScoreBar({ label, level, dark = false }: { label: string; level:
       </div>
       <div className="flex gap-1" role="img" aria-label={`${label} : ${scoreWord(level)}, ${level} sur 5`}>
         {scoreSegments(level, dark).map((c, i) => (
-          <div key={i} className="h-2 flex-grow rounded-[3px]" style={{ background: c }} />
+          <div key={i} className="seg-grow h-2 flex-grow rounded-[3px]" style={{ background: c, ["--i" as string]: i } as React.CSSProperties} />
         ))}
       </div>
     </li>

@@ -4,6 +4,7 @@ import { ParcelleHeader } from "@/components/ParcelleHeader";
 import { CalendrierTrois } from "@/components/CalendrierTrois";
 import { ConfianceBreakdown } from "@/components/ConfianceBreakdown";
 import { RainSimulator } from "@/components/RainSimulator";
+import { BottomNav } from "@/components/BottomNav";
 import { getRotation, getRotations } from "@/lib/data";
 
 export const dynamicParams = false;
@@ -28,7 +29,7 @@ export default async function RotationPage({ params }: { params: Promise<{ id: s
   return (
     <>
       <ParcelleHeader current="rotations" />
-      <main className="mx-auto flex max-w-[1360px] flex-col gap-[22px] px-6 pb-14 pt-8">
+      <main className="mx-auto flex max-w-[1360px] flex-col gap-[22px] px-6 pb-28 pt-8 md:pb-14">
         <Link href="/rotations" className="inline-flex min-h-[44px] items-center text-sm font-semibold">← Toutes les rotations</Link>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-2">
@@ -92,6 +93,7 @@ export default async function RotationPage({ params }: { params: Promise<{ id: s
 
         <p className="m-0 rounded-[20px] bg-ink p-5 text-base text-paper">Validez avec un conseiller agricole avant de vous lancer : ForoSat aide à décider, il ne décide pas à votre place.</p>
       </main>
+      <BottomNav current="rotations" />
     </>
   );
 }

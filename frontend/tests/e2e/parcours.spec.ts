@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const ROUTES = ["/", "/parcelle", "/climat", "/rotations", "/rotations/B", "/fiche/B", "/methode", "/lexique", "/conseiller"];
+const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/fiche/B", "/methode", "/lexique", "/conseiller"];
 
 test("parcours complet : parcelle → climat → rotations → détail → fiche", async ({ page }) => {
   await page.goto("/parcelle");
@@ -60,3 +60,36 @@ for (const route of ROUTES) {
     expect(sw).toBeLessThanOrEqual(iw);
   });
 }
+
+test("l'écran d'entrée mène au formulaire de parcelle", async ({ page }) => {
+  await page.goto("/bienvenue");
+  await page.getByRole("link", { name: "Commencer" }).click();
+  await expect(page).toHaveURL(/\/parcelle$/);
+});
+
+test("le tableau de bord résume le champ et mène aux rotations", async ({ page }) => {
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.waitForURL(/\/climat$/);
+  await page.goto("/tableau");
+  await expect(page.getByText(/Sol nu jusqu'en/)).toBeVisible();
+  await page.getByRole("link", { name: /Rotation conseillée/ }).click();
+  await expect(page).toHaveURL(/\/rotations$/);
+});
+
+test("l'en-tête n'affiche aucun numéro", async ({ page, isMobile }) => {
+  test.skip(isMobile, "sur téléphone, la barre du bas remplace la navigation du haut");
+  await page.goto("/parcelle");
+  const nav = page.getByRole("navigation", { name: "Étapes" });
+  await expect(nav).not.toContainText(/\d/);
+});
+
+test("mouvement réduit : le contenu reste visible et immobile", async ({ browser }) => {
+  const ctx = await browser.newContext({ reducedMotion: "reduce" });
+  const page = await ctx.newPage();
+  await page.goto("http://localhost:3100/parcelle");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  const anim = await page.evaluate(() => getComputedStyle(document.querySelector("main > *")!).animationName);
+  expect(anim).toBe("fade");
+  await ctx.close();
+});

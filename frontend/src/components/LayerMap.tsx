@@ -13,7 +13,7 @@ export function LayerMap({ couches, surface }: { couches: Couche[]; surface: num
 
   return (
     <div className="relative min-w-0 flex-[999_1_560px] overflow-hidden rounded-[28px] bg-[#0B1A13] p-2.5">
-      <div role="img" aria-label={`Carte simulée : ${couche.label}, année ${year}`} className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(${MOSAIC_COLS}, minmax(0, 1fr))` }}>
+      <div key={couche.id} role="img" aria-label={`Carte simulée : ${couche.label}, année ${year}`} className="fade-in grid gap-0.5" style={{ gridTemplateColumns: `repeat(${MOSAIC_COLS}, minmax(0, 1fr))` }}>
         {cells.map((c, i) => (
           <div key={i} className="aspect-square rounded-[1px]" style={{ background: c }} />
         ))}

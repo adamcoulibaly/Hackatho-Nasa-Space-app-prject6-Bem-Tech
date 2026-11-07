@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <>
       <SiteHeader />
-      <main>
+      <main data-scroll>
         <section className="mx-auto flex max-w-[1360px] flex-col items-start gap-6 px-6 pb-16 pt-14">
           <span className="rounded-full border border-line px-3.5 py-2 text-sm text-muted">NASA Space Apps 2026 · Défi 6</span>
           <h1 className="m-0 max-w-4xl font-display text-[clamp(40px,6vw,84px)] font-bold leading-none tracking-[-0.05em]">
@@ -102,7 +102,7 @@ export default function Home() {
             ))}
           </ol>
           <div className="flex flex-wrap gap-3">
-            <Link href="/parcelle" className={`${CTA} bg-orange text-ink hover:text-ink`}>Commencer</Link>
+            <Link href="/bienvenue" className={`${CTA} bg-orange text-ink hover:text-ink`}>Commencer</Link>
             <Link href="/methode" className={`${CTA} border border-ink text-ink hover:text-ink`}>Méthode et incertitude</Link>
           </div>
         </section>

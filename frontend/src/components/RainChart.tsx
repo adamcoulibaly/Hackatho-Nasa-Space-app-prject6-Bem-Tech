@@ -19,7 +19,7 @@ export function RainChart({ mois, saison }: { mois: number[]; saison: { debut: n
             return (
               <div key={m} data-mois={m} data-saison={enSaison} className="flex flex-col items-center gap-1.5">
                 <span className="text-xs font-semibold text-muted">{v}</span>
-                <div className="w-full max-w-[46px] rounded-t-[10px] rounded-b-[4px]" style={{ height: barHeight(v, max, 170), background: enSaison ? "#009E60" : "#C9D3CD" }} />
+                <div className="bar-grow w-full max-w-[46px] rounded-t-[10px] rounded-b-[4px]" style={{ height: barHeight(v, max, 170), background: enSaison ? "#009E60" : "#C9D3CD", ["--i" as string]: i } as React.CSSProperties} />
               </div>
             );
           })}

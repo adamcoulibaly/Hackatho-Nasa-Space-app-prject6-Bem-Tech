@@ -1,16 +1,18 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
 
-export type Step = "parcelle" | "climat" | "rotations" | "lexique";
+export type Step = "parcelle" | "climat" | "rotations" | "tableau" | "lexique";
 
 const STEPS: { id: Step; label: string; href: string }[] = [
-  { id: "parcelle", label: "1 · Parcelle", href: "/parcelle" },
-  { id: "climat", label: "2 · Climat", href: "/climat" },
-  { id: "rotations", label: "3 · Rotations", href: "/rotations" },
+  { id: "parcelle", label: "Parcelle", href: "/parcelle" },
+  { id: "climat", label: "Climat", href: "/climat" },
+  { id: "rotations", label: "Rotations", href: "/rotations" },
+  { id: "tableau", label: "Tableau de bord", href: "/tableau" },
   { id: "lexique", label: "Lexique", href: "/lexique" },
 ];
 
-export function SiteHeader({ current, badge }: { current?: Step; badge?: string }) {
+/** `bottomNav` : la barre du bas remplace la navigation du haut sur téléphone. */
+export function SiteHeader({ current, badge, bottomNav = false }: { current?: Step; badge?: string; bottomNav?: boolean }) {
   return (
     <header className="bg-ink text-paper no-print">
       <div className="mx-auto flex max-w-[1360px] flex-wrap items-center gap-x-7 gap-y-3 px-6 py-3">
@@ -20,7 +22,7 @@ export function SiteHeader({ current, badge }: { current?: Step; badge?: string 
             foro<span className="text-orange">sat</span>
           </span>
         </Link>
-        <nav aria-label="Étapes" className="flex flex-grow flex-wrap gap-1">
+        <nav aria-label="Étapes" className={`${bottomNav ? "max-md:hidden " : ""}flex flex-grow flex-wrap gap-1`}>
           {STEPS.map((s) => {
             const active = s.id === current;
             return (

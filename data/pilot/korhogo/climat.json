@@ -258,5 +258,141 @@
       "titre": "Août–septembre",
       "texte": "Le sol est le plus humide : bonne fenêtre pour une légumineuse en fin de saison."
     }
-  ]
+  ],
+  "onglets": [
+    {
+      "id": "pluie",
+      "label": "Pluie",
+      "big": "260 mm en août",
+      "source": "GPM",
+      "legende": "Pluie moyenne par mois",
+      "valeurs": [
+        5,
+        15,
+        40,
+        80,
+        120,
+        150,
+        190,
+        260,
+        200,
+        90,
+        20,
+        5
+      ],
+      "saison": true,
+      "conseil": "Presque toute l'eau tombe entre mai et octobre : c'est la seule fenêtre pour vos cultures pluviales."
+    },
+    {
+      "id": "chaleur",
+      "label": "Chaleur",
+      "big": "36 °C en mars",
+      "source": "POWER + ECOSTRESS",
+      "legende": "Température maximale moyenne",
+      "valeurs": [
+        34,
+        36,
+        36,
+        35,
+        33,
+        31,
+        29,
+        29,
+        30,
+        31,
+        33,
+        33
+      ],
+      "min": 26,
+      "conseil": "L'harmattan puis la chaleur, de décembre à avril, dessèchent vite un sol nu. Pas de gel ici : c'est la chaleur à surveiller."
+    },
+    {
+      "id": "sol",
+      "label": "Sol",
+      "big": "Humide en sept.",
+      "source": "SMAP",
+      "legende": "Humidité du sol (indice 0 à 4)",
+      "valeurs": [
+        0,
+        0,
+        0,
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        3,
+        1,
+        0
+      ],
+      "conseil": "Le sol garde l'eau jusqu'en octobre : bonne période pour semer une légumineuse de couverture."
+    },
+    {
+      "id": "veg",
+      "label": "Végét.",
+      "big": "Pic en août",
+      "source": "Landsat / HLS",
+      "legende": "Couverture végétale (indice 0 à 4)",
+      "valeurs": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        4,
+        3,
+        2,
+        1
+      ],
+      "conseil": "Votre champ reste nu près de 8 mois par an : c'est là que le sol s'appauvrit le plus."
+    }
+  ],
+  "actuel": {
+    "saison": "Saison sèche",
+    "titre": "Sol nu jusqu'en",
+    "accent": "mai",
+    "texte": "Une culture de couverture protégerait votre sol de la chaleur.",
+    "moisCourant": 11,
+    "tuiles": [
+      {
+        "label": "Pluie (30 j)",
+        "valeur": "Très faible",
+        "source": "GPM",
+        "niveau": "alerte"
+      },
+      {
+        "label": "Chaleur",
+        "valeur": "34 °C",
+        "source": "NASA POWER",
+        "niveau": "alerte"
+      },
+      {
+        "label": "Humidité du sol",
+        "valeur": "Faible",
+        "source": "SMAP",
+        "niveau": "neutre"
+      },
+      {
+        "label": "Végétation",
+        "valeur": "En baisse",
+        "source": "Landsat",
+        "niveau": "ok"
+      }
+    ],
+    "extras": [
+      {
+        "label": "Érosion · SRTM",
+        "valeur": "Modérée"
+      },
+      {
+        "label": "Chaleur · ECOSTRESS",
+        "valeur": "Stress élevé",
+        "accent": true
+      }
+    ]
+  }
 }

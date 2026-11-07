@@ -33,6 +33,32 @@ export const ClimatSchema = z.object({
     .min(1),
   grace: z.array(z.object({ annee: z.number().int(), ecart: z.number().nullable() })).min(2),
   alertes: z.array(z.object({ type: z.enum(["surveiller", "favorable"]), titre: z.string(), texte: z.string() })).min(1),
+  /** Un onglet par indicateur pour l'affichage téléphone (12 valeurs mensuelles). */
+  onglets: z
+    .array(
+      z.object({
+        id: z.enum(["pluie", "chaleur", "sol", "veg"]),
+        label: z.string(),
+        big: z.string(),
+        source: z.string(),
+        legende: z.string(),
+        valeurs: z.array(z.number()).length(12),
+        min: z.number().optional(),
+        saison: z.boolean().optional(),
+        conseil: z.string(),
+      }),
+    )
+    .min(1),
+  /** État du moment, pour le tableau de bord. */
+  actuel: z.object({
+    saison: z.string(),
+    titre: z.string(),
+    accent: z.string(),
+    texte: z.string(),
+    moisCourant: mois,
+    tuiles: z.array(z.object({ label: z.string(), valeur: z.string(), source: z.string(), niveau: z.enum(["alerte", "ok", "neutre"]) })).min(1),
+    extras: z.array(z.object({ label: z.string(), valeur: z.string(), accent: z.boolean().optional() })),
+  }),
 });
 export type Climat = z.infer<typeof ClimatSchema>;
 

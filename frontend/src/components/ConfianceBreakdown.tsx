@@ -18,7 +18,7 @@ export function ConfianceBreakdown({ confiance }: { confiance: Rotation["confian
             <li key={f.key} className="m-0 flex list-none flex-col gap-1.5">
               <div className="flex justify-between gap-2 text-sm"><span>{f.label}</span><span className="font-bold">{scoreWord(lv)}</span></div>
               <div className="flex gap-1" role="img" aria-label={`${f.label} : ${scoreWord(lv)}, ${lv} sur 5`}>
-                {scoreSegments(lv, false).map((c, i) => <div key={i} className="h-2 flex-grow rounded-[3px]" style={{ background: c }} />)}
+                {scoreSegments(lv, false).map((c, i) => <div key={i} className="seg-grow h-2 flex-grow rounded-[3px]" style={{ background: c, ["--i" as string]: i } as React.CSSProperties} />)}
               </div>
             </li>
           );

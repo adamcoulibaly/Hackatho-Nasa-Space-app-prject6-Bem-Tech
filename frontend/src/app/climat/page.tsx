@@ -5,12 +5,14 @@ import { RainChart } from "@/components/RainChart";
 import { YearMatrix } from "@/components/YearMatrix";
 import { GraceChart } from "@/components/GraceChart";
 import { AlertCard } from "@/components/AlertCard";
+import { ClimatTabs } from "@/components/ClimatTabs";
+import { BottomNav } from "@/components/BottomNav";
 import { getClimat } from "@/lib/data";
 
 export const metadata = { title: "Profil climatique — ForoSat" };
 
-const Card = ({ titre, aide, children }: { titre: string; aide?: string; children: React.ReactNode }) => (
-  <section className="flex flex-col gap-4 rounded-[28px] bg-white p-[26px]">
+const Card = ({ titre, aide, children, className = "" }: { titre: string; aide?: string; children: React.ReactNode; className?: string }) => (
+  <section className={`flex flex-col gap-4 rounded-[28px] bg-white p-[26px] ${className}`}>
     <div className="flex flex-wrap items-baseline justify-between gap-2.5">
       <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">{titre}</h2>
       {aide && <span className="text-sm text-muted">{aide}</span>}
@@ -24,7 +26,7 @@ export default async function ClimatPage() {
   return (
     <>
       <ParcelleHeader current="climat" />
-      <main className="mx-auto flex max-w-[1360px] flex-col gap-[22px] px-6 pb-14 pt-8">
+      <main className="mx-auto flex max-w-[1360px] flex-col gap-[22px] px-6 pb-28 pt-8 md:pb-14">
         <RequireParcelle>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-col gap-2">
@@ -46,10 +48,11 @@ export default async function ClimatPage() {
             ))}
           </div>
 
-          <Card titre="Pluie mois par mois" aide="Moyenne en mm · la bande claire marque la saison des pluies">
+          <div className="md:hidden"><ClimatTabs onglets={climat.onglets} /></div>
+          <Card className="max-md:hidden" titre="Pluie mois par mois" aide="Moyenne en mm · la bande claire marque la saison des pluies">
             <RainChart mois={climat.pluieMensuelle} saison={climat.saisonPluies} />
           </Card>
-          <Card titre="L'année d'un coup d'œil" aide="Plus la case est foncée, plus la valeur est élevée">
+          <Card className="max-md:hidden" titre="L'année d'un coup d'œil" aide="Plus la case est foncée, plus la valeur est élevée">
             <YearMatrix lignes={climat.matrice} />
           </Card>
           <Card titre="L'eau stockée dans la zone, sur 20 ans">
@@ -63,6 +66,7 @@ export default async function ClimatPage() {
           </div>
         </RequireParcelle>
       </main>
+      <BottomNav current="climat" />
     </>
   );
 }
