@@ -43,6 +43,14 @@ L'interface ne lit les données que par `frontend/src/lib/data`. Pour remplacer 
 
 Commandes à lancer depuis `frontend/` : l'application cherche les données dans `../data/pilot/korhogo`.
 
+## Carte
+
+Leaflet avec le fond OpenStreetMap et des couches satellite NASA GIBS (vraies couleurs, végétation, chaleur du sol, humidité du sol SMAP) au choix de l'année. Recherche de localité (Nominatim), « Ma position » et dessin de la parcelle (la surface est calculée). Aucune clé d'API n'est nécessaire.
+
+## Assistant IA
+
+L'assistant reformule une rotation en langage simple et répond aux questions, à partir des seules données ForoSat ; le score reste calculé par les règles. Il appelle un fournisseur compatible OpenAI côté serveur (`/api/ia`), la clé ne part jamais dans le navigateur. Réglages dans `frontend/.env.example` : `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL` (OpenRouter et un modèle gratuit par défaut). En production, les ajouter dans Vercel, Settings > Environment Variables.
+
 ## Pipeline de données NASA
 
 Dans `data/pipeline/` (Python 3, sans dépendance à installer) :

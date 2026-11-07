@@ -4,6 +4,7 @@ import { ParcelleHeader } from "@/components/ParcelleHeader";
 import { CalendrierTrois } from "@/components/CalendrierTrois";
 import { ConfianceBreakdown } from "@/components/ConfianceBreakdown";
 import { RainSimulator } from "@/components/RainSimulator";
+import { AssistantIA } from "@/components/AssistantIA";
 import { BottomNav } from "@/components/BottomNav";
 import { getRotation, getRotations } from "@/lib/data";
 
@@ -76,6 +77,10 @@ export default async function RotationPage({ params }: { params: Promise<{ id: s
             </ul>
           </Section>
         </div>
+
+        <Section titre="Demander à l'assistant IA">
+          <AssistantIA rotationId={rotation.id} />
+        </Section>
 
         <Section titre="Et si… la pluie ou la chaleur changeait ?">
           <RainSimulator rotations={toutes} courante={rotation.id} />

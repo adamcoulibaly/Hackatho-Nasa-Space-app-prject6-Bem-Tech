@@ -129,3 +129,10 @@ test("carte : la couche SMAP signale qu'elle commence en 2015", async ({ page })
   await page.getByLabel(/Année/).fill("2010");
   await expect(page.getByText(/données à partir de 2015/)).toBeVisible();
 });
+
+test("assistant IA sans clé : l'écran le dit clairement", async ({ page }) => {
+  test.skip(!!process.env.LLM_API_KEY, "une clé est configurée");
+  await page.goto("/rotations/B");
+  await page.getByRole("button", { name: "Expliquer simplement" }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "pas encore configuré" })).toBeVisible();
+});
