@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { margin: 0; background: #F4F6F1; color: #07120D; }
+a { color: #00703C; }
+a:hover { color: #00502B; }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+}
