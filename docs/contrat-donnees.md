@@ -6,7 +6,7 @@ Les écrans lisent uniquement `data/pilot/korhogo/*.json`, validés par les sch�
 |---|---|---|
 | `climat.json` | 4 indicateurs, pluie mensuelle (12 valeurs en mm), saison des pluies (mois de début et de fin), matrice annuelle (6 lignes × 12 mois, niveaux 0 à 4), série GRACE (21 années 2005–2025, `ecart: null` = **lacune**), 3 alertes, `onglets` (4 indicateurs de 12 valeurs pour l'affichage téléphone : pluie, chaleur, sol, végétation) et `actuel` (état du moment pour le tableau de bord : saison, tuiles, extras) | Membre 1 (données) |
 | `rotations.json` | 3 rotations A, B, C : séquence, 7 scores de 1 à 5, note, pourquoi, données citées, risques, **lacune**, **confiance** (niveau et 4 facteurs de 1 à 5), calendrier sur 3 ans | Membres 2 et 3 (agronomie, moteur) |
-| `couches.json` | 4 couches de la carte : source, échelle, palette de 8 couleurs | Membre 1 |
+| `couches.json` | Couches satellite de la carte, servies en tuiles par NASA GIBS sans clé : nom de couche GIBS, format, zoom natif, jour de l'année affiché, première année disponible, opacité | Membre 1 |
 | `sources.json` | 5 étapes de méthode, 8 sources NASA, 4 approches IA comparées, liste « là où l'humain décide » | Membre 5 (contenu) |
 | `lexique.json` | 14 termes : définition simple et pourquoi c'est utile | Membre 5 |
 

@@ -96,18 +96,27 @@ export const RotationSchema = z.object({
 export type Rotation = z.infer<typeof RotationSchema>;
 export const RotationsSchema = z.array(RotationSchema).length(3);
 
-/* ---------- couches de la carte ---------- */
+/* ---------- couches de la carte (tuiles NASA GIBS, sans clé) ---------- */
 export const CoucheSchema = z.object({
-  id: z.enum(["veg", "eau", "ero", "tend"]),
+  id: z.enum(["couleurs", "veg", "chaleur", "sol"]),
   label: z.string(),
   source: z.string(),
   echelle: z.string(),
-  palette: z.array(z.string()).length(8),
-  motif: z.object({ fx: z.number(), fy: z.number() }),
+  gibs: z.object({
+    couche: z.string(),
+    format: z.enum(["png", "jpg"]),
+    /** Zoom maximal des tuiles natives (GoogleMapsCompatible_LevelN). */
+    niveau: z.number().int().min(1).max(12),
+    /** Jour de l'année affiché, au format MM-JJ (ex. « 08-01 » pour août). */
+    date: z.string().regex(/^\d{2}-\d{2}$/),
+    /** Première année disponible. */
+    depuis: z.number().int(),
+  }),
+  opacite: z.number().min(0).max(1),
 });
 export type Couche = z.infer<typeof CoucheSchema>;
 export type CoucheId = Couche["id"];
-export const CouchesSchema = z.array(CoucheSchema).length(4);
+export const CouchesSchema = z.array(CoucheSchema).min(1);
 
 /* ---------- méthode ---------- */
 export const SourcesSchema = z.object({

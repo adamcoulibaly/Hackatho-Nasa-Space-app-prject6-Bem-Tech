@@ -93,3 +93,31 @@ test("mouvement réduit : le contenu reste visible et immobile", async ({ browse
   expect(anim).toBe("fade");
   await ctx.close();
 });
+
+test("carte : dessiner la parcelle met à jour la surface", async ({ page, isMobile }) => {
+  await page.goto("/parcelle");
+  const carte = page.getByTestId("carte");
+  await expect(carte.locator(".leaflet-container, .leaflet-pane").first()).toBeAttached();
+  await page.getByRole("button", { name: "Dessiner ma parcelle" }).click();
+  await carte.scrollIntoViewIfNeeded();
+  const box = (await carte.boundingBox())!;
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+  for (const [dx, dy] of [[-40, -40], [40, -40], [40, 40], [-40, 40]]) {
+    if (isMobile) await page.touchscreen.tap(cx + dx, cy + dy);
+    else await page.mouse.click(cx + dx, cy + dy);
+    await page.waitForTimeout(350); // évite qu'un deuxième toucher rapide soit lu comme un double-tap (zoom)
+  }
+  await page.getByRole("button", { name: /Terminer le contour \(4 points\)/ }).click();
+  await expect(page.getByText(/Parcelle enregistrée : .* ha\./)).toBeVisible();
+  const surface = Number(await page.getByLabel("Surface (ha)").inputValue());
+  expect(surface).toBeGreaterThan(0);
+  expect(surface).not.toBe(2);
+});
+
+test("carte : la couche SMAP signale qu'elle commence en 2015", async ({ page }) => {
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Humidité du sol" }).click();
+  await page.getByLabel(/Année/).fill("2010");
+  await expect(page.getByText(/données à partir de 2015/)).toBeVisible();
+});

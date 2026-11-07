@@ -11,6 +11,9 @@ export type Parcelle = {
   eau: Eau;
   priorites: string[];
   materiel: Materiel;
+  /** Contour dessiné sur la carte, en [latitude, longitude]. Reste sur l'appareil. */
+  contour?: [number, number][];
+  centre?: [number, number];
 };
 
 export const CULTURES = ["Maïs", "Coton", "Igname", "Manioc", "Arachide", "Riz", "Sorgho", "Niébé"] as const;
@@ -50,4 +53,6 @@ export const ParcelleSchema = z.object({
   eau: z.enum(["pluie", "irrigation"]),
   priorites: z.array(z.string()),
   materiel: z.enum(["daba", "traction", "tracteur"]),
+  contour: z.array(z.tuple([z.number(), z.number()])).optional(),
+  centre: z.tuple([z.number(), z.number()]).optional(),
 });

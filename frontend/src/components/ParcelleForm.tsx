@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useParcelle } from "@/lib/parcelle/context";
 import { CULTURES, PRIORITES, validateParcelle, type Eau, type Materiel, type Region } from "@/lib/parcelle/validate";
 
@@ -17,6 +17,14 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
   const { parcelle, setParcelle } = useParcelle();
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [surfaceTexte, setSurfaceTexte] = useState(String(parcelle.surface));
+
+  // Une surface calculée ailleurs (parcelle dessinée sur la carte) remplace le texte du champ.
+  useEffect(() => {
+    if (Number.isFinite(parcelle.surface) && Number(surfaceTexte) !== parcelle.surface) {
+      setSurfaceTexte(String(parcelle.surface));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parcelle.surface]);
 
   const toggle = (liste: string[], valeur: string) =>
     liste.includes(valeur) ? liste.filter((v) => v !== valeur) : [...liste, valeur];
