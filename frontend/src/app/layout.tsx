@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ParcelleProvider } from "@/lib/parcelle/context";
 
 export const metadata: Metadata = {
   title: "ForoSat — choisir sa prochaine rotation",
@@ -17,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="stylesheet" href={FONTS} />
       </head>
-      <body className="font-sans bg-paper text-ink min-h-screen">{children}</body>
+      <body className="font-sans bg-paper text-ink min-h-screen"><ParcelleProvider>{children}</ParcelleProvider></body>
     </html>
   );
 }
