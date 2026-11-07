@@ -1,0 +1,351 @@
+[
+  {
+    "id": "A",
+    "tag": "Actuelle",
+    "recommandee": false,
+    "sequence": [
+      "Maïs",
+      "Coton"
+    ],
+    "scores": {
+      "fertilite": 2,
+      "eau": 3,
+      "secheresse": 3,
+      "revenu": 4,
+      "erosion": 2,
+      "fourrage": 3,
+      "marche": 4
+    },
+    "note": "Deux cultures exigeantes qui puisent dans le sol sans le nourrir. Revenu correct, mais la fertilité baisse d'année en année.",
+    "pourquoi": [
+      "Le maïs et le coton prélèvent beaucoup d'éléments du sol sans lui en rendre.",
+      "Le sol reste nu de novembre à mai, exposé à la chaleur et à l'érosion."
+    ],
+    "donnees": [
+      {
+        "source": "Landsat",
+        "texte": "Végétation absente de novembre à mai sur la parcelle (30 m)."
+      },
+      {
+        "source": "ECOSTRESS",
+        "texte": "Sol nu très chaud de février à avril."
+      }
+    ],
+    "risques": [
+      "Fertilité en baisse sur plusieurs années si la rotation ne change pas."
+    ],
+    "lacune": "aucune mesure de sol récente sur la parcelle.",
+    "confiance": {
+      "niveau": "élevée",
+      "facteurs": {
+        "accordSources": 4,
+        "finesse": 2,
+        "historique": 5,
+        "verification": 1
+      }
+    },
+    "calendrier": [
+      {
+        "annee": 1,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 1,
+        "finMois": 5
+      },
+      {
+        "annee": 1,
+        "culture": "Maïs",
+        "type": "culture",
+        "debutMois": 6,
+        "finMois": 9
+      },
+      {
+        "annee": 1,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 10,
+        "finMois": 12
+      },
+      {
+        "annee": 2,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 1,
+        "finMois": 5
+      },
+      {
+        "annee": 2,
+        "culture": "Coton",
+        "type": "culture",
+        "debutMois": 6,
+        "finMois": 11
+      },
+      {
+        "annee": 2,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 12,
+        "finMois": 12
+      },
+      {
+        "annee": 3,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 1,
+        "finMois": 5
+      },
+      {
+        "annee": 3,
+        "culture": "Maïs",
+        "type": "culture",
+        "debutMois": 6,
+        "finMois": 9
+      },
+      {
+        "annee": 3,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 10,
+        "finMois": 12
+      }
+    ]
+  },
+  {
+    "id": "B",
+    "tag": "Recommandée",
+    "recommandee": true,
+    "sequence": [
+      "Maïs",
+      "Arachide",
+      "Coton"
+    ],
+    "scores": {
+      "fertilite": 4,
+      "eau": 3,
+      "secheresse": 3,
+      "revenu": 4,
+      "erosion": 3,
+      "fourrage": 4,
+      "marche": 4
+    },
+    "note": "L'arachide fixe l'azote de l'air dans le sol : moins d'engrais pour le coton et un sol plus riche.",
+    "pourquoi": [
+      "L'arachide capte l'azote de l'air et le laisse dans le sol pour le coton.",
+      "Alterner les familles de plantes casse le cycle des ravageurs du coton.",
+      "Le niébé de couverture protège le sol nu pendant la saison sèche."
+    ],
+    "donnees": [
+      {
+        "source": "GPM",
+        "texte": "Pluies suffisantes de juin à septembre pour l'arachide."
+      },
+      {
+        "source": "SMAP",
+        "texte": "Sol encore humide en octobre : fenêtre pour une couverture."
+      },
+      {
+        "source": "Landsat",
+        "texte": "Végétation absente de novembre à mai sur la parcelle (30 m)."
+      },
+      {
+        "source": "ECOSTRESS",
+        "texte": "Sol nu très chaud de février à avril : une couverture le protège."
+      },
+      {
+        "source": "SRTM",
+        "texte": "Pente faible : risque d'érosion modéré, sauf en bordure de bas-fond."
+      }
+    ],
+    "risques": [
+      "Confiance moyenne : peu de mesures au sol dans la zone pour vérifier les données satellites.",
+      "L'arachide craint un arrêt brutal des pluies en août."
+    ],
+    "lacune": "prix de l'arachide au marché local non intégré.",
+    "confiance": {
+      "niveau": "moyenne",
+      "facteurs": {
+        "accordSources": 4,
+        "finesse": 2,
+        "historique": 5,
+        "verification": 1
+      }
+    },
+    "calendrier": [
+      {
+        "annee": 1,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 1,
+        "finMois": 5
+      },
+      {
+        "annee": 1,
+        "culture": "Maïs",
+        "type": "culture",
+        "debutMois": 6,
+        "finMois": 9
+      },
+      {
+        "annee": 1,
+        "culture": "Niébé de couverture",
+        "type": "couverture",
+        "debutMois": 10,
+        "finMois": 12
+      },
+      {
+        "annee": 2,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 1,
+        "finMois": 4
+      },
+      {
+        "annee": 2,
+        "culture": "Arachide",
+        "type": "culture",
+        "debutMois": 5,
+        "finMois": 8
+      },
+      {
+        "annee": 2,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 9,
+        "finMois": 12
+      },
+      {
+        "annee": 3,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 1,
+        "finMois": 5
+      },
+      {
+        "annee": 3,
+        "culture": "Coton",
+        "type": "culture",
+        "debutMois": 6,
+        "finMois": 11
+      },
+      {
+        "annee": 3,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 12,
+        "finMois": 12
+      }
+    ]
+  },
+  {
+    "id": "C",
+    "tag": "Anti-sécheresse",
+    "recommandee": false,
+    "sequence": [
+      "Sorgho",
+      "Niébé",
+      "Maïs"
+    ],
+    "scores": {
+      "fertilite": 4,
+      "eau": 5,
+      "secheresse": 5,
+      "revenu": 3,
+      "erosion": 4,
+      "fourrage": 5,
+      "marche": 3
+    },
+    "note": "Le sorgho et le niébé supportent bien le manque de pluie. Le plus sûr si les saisons deviennent plus sèches.",
+    "pourquoi": [
+      "Le sorgho et le niébé résistent mieux au manque de pluie.",
+      "Le niébé fixe l'azote de l'air et nourrit le sol pour le maïs qui suit."
+    ],
+    "donnees": [
+      {
+        "source": "GPM",
+        "texte": "Pluies concentrées de juin à septembre : les cycles courts s'y adaptent."
+      },
+      {
+        "source": "SMAP",
+        "texte": "Sol encore humide en octobre : fenêtre pour le niébé."
+      }
+    ],
+    "risques": [
+      "Revenu et marché moins sûrs que pour le coton."
+    ],
+    "lacune": "demande locale de sorgho à vérifier.",
+    "confiance": {
+      "niveau": "moyenne",
+      "facteurs": {
+        "accordSources": 4,
+        "finesse": 2,
+        "historique": 5,
+        "verification": 1
+      }
+    },
+    "calendrier": [
+      {
+        "annee": 1,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 1,
+        "finMois": 5
+      },
+      {
+        "annee": 1,
+        "culture": "Sorgho",
+        "type": "culture",
+        "debutMois": 6,
+        "finMois": 10
+      },
+      {
+        "annee": 1,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 11,
+        "finMois": 12
+      },
+      {
+        "annee": 2,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 1,
+        "finMois": 6
+      },
+      {
+        "annee": 2,
+        "culture": "Niébé",
+        "type": "culture",
+        "debutMois": 7,
+        "finMois": 10
+      },
+      {
+        "annee": 2,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 11,
+        "finMois": 12
+      },
+      {
+        "annee": 3,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 1,
+        "finMois": 5
+      },
+      {
+        "annee": 3,
+        "culture": "Maïs",
+        "type": "culture",
+        "debutMois": 6,
+        "finMois": 9
+      },
+      {
+        "annee": 3,
+        "culture": "Sol nu",
+        "type": "sol_nu",
+        "debutMois": 10,
+        "finMois": 12
+      }
+    ]
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "veg",
+    "label": "Végétation",
+    "source": "Végétation · Landsat / HLS 30 m",
+    "echelle": "faible → dense",
+    "palette": [
+      "#3B1F0A",
+      "#7A3D00",
+      "#C45F00",
+      "#F77F00",
+      "#7FA33A",
+      "#009E60",
+      "#00703C",
+      "#0B5130"
+    ],
+    "motif": {
+      "fx": 0.3,
+      "fy": 0.42
+    }
+  },
+  {
+    "id": "eau",
+    "label": "Stress hydrique",
+    "source": "Stress hydrique · ECOSTRESS + SMAP",
+    "echelle": "humide → sec",
+    "palette": [
+      "#0B5130",
+      "#00703C",
+      "#009E60",
+      "#7FA33A",
+      "#F7C26B",
+      "#F77F00",
+      "#C45F00",
+      "#7A3D00"
+    ],
+    "motif": {
+      "fx": 0.18,
+      "fy": 0.25
+    }
+  },
+  {
+    "id": "ero",
+    "label": "Érosion",
+    "source": "Risque d'érosion · pente SRTM",
+    "echelle": "faible → fort",
+    "palette": [
+      "#F4F6F1",
+      "#E7ECE6",
+      "#D2BE87",
+      "#F7C26B",
+      "#F77F00",
+      "#C45F00",
+      "#A04F00",
+      "#3B1F0A"
+    ],
+    "motif": {
+      "fx": 0.5,
+      "fy": 0.15
+    }
+  },
+  {
+    "id": "tend",
+    "label": "Tendance 20 ans",
+    "source": "Humidité du sol · SMAP + GRACE",
+    "echelle": "baisse → hausse",
+    "palette": [
+      "#7A3D00",
+      "#C45F00",
+      "#F77F00",
+      "#F7C26B",
+      "#BFE3CF",
+      "#5CC394",
+      "#009E60",
+      "#00703C"
+    ],
+    "motif": {
+      "fx": 0.12,
+      "fy": 0.2
+    }
+  }
+]

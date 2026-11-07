@@ -1,0 +1,138 @@
+{
+  "etapes": [
+    {
+      "titre": "Collecte",
+      "texte": "8 sources NASA sur la zone pilote, plus SoilGrids pour le sol."
+    },
+    {
+      "titre": "Grille commune",
+      "texte": "Tout ramené au mois et au même maillage, de 30 m à la zone."
+    },
+    {
+      "titre": "Détection par IA",
+      "texte": "Saison des pluies, sol nu, anomalies, années de stress."
+    },
+    {
+      "titre": "Score des rotations",
+      "texte": "Règles agronomiques pondérées par les priorités du paysan."
+    },
+    {
+      "titre": "Explication",
+      "texte": "Le pourquoi, les lacunes et un niveau de confiance."
+    }
+  ],
+  "sources": [
+    {
+      "nom": "Landsat / HLS",
+      "mesure": "Végétation (NDVI)",
+      "finesse": "30 m",
+      "finesseClasse": "fine",
+      "usage": "Sol nu, état des cultures sur la parcelle",
+      "priorite": "MVP"
+    },
+    {
+      "nom": "SRTM",
+      "mesure": "Altitude, pente",
+      "finesse": "30 m",
+      "finesseClasse": "fine",
+      "usage": "Risque d'érosion",
+      "priorite": "MVP"
+    },
+    {
+      "nom": "ECOSTRESS",
+      "mesure": "Température de surface, évapotranspiration",
+      "finesse": "≈ 70 m",
+      "finesseClasse": "fine",
+      "usage": "Stress de chaleur et stress hydrique",
+      "priorite": "Bonus"
+    },
+    {
+      "nom": "MODIS",
+      "mesure": "Végétation, chaque jour",
+      "finesse": "250 m",
+      "finesseClasse": "moyenne",
+      "usage": "Combler les jours nuageux de Landsat",
+      "priorite": "MVP"
+    },
+    {
+      "nom": "GPM IMERG",
+      "mesure": "Pluie, pluies extrêmes",
+      "finesse": "≈ 10 km",
+      "finesseClasse": "moyenne",
+      "usage": "Saison des pluies, fortes averses",
+      "priorite": "MVP"
+    },
+    {
+      "nom": "SMAP",
+      "mesure": "Humidité du sol",
+      "finesse": "9–36 km",
+      "finesseClasse": "grossiere",
+      "usage": "Fenêtres de semis, sécheresse",
+      "priorite": "MVP"
+    },
+    {
+      "nom": "NASA POWER",
+      "mesure": "Température, pluie, rayonnement",
+      "finesse": "≈ 50 km",
+      "finesseClasse": "grossiere",
+      "usage": "Climat sur 40 ans, chaleur",
+      "priorite": "MVP"
+    },
+    {
+      "nom": "GRACE / GRACE-FO",
+      "mesure": "Réserve d'eau totale",
+      "finesse": "≈ 300 km",
+      "finesseClasse": "grossiere",
+      "usage": "Tendance régionale de l'eau",
+      "priorite": "Bonus"
+    }
+  ],
+  "approches": [
+    {
+      "id": "regles",
+      "nom": "Règles agronomiques",
+      "role": "Recommander",
+      "verdict": "Retenu",
+      "explicabilite": 5,
+      "besoinDonnees": 1,
+      "precision": 3,
+      "description": "Chaque culture a une fiche : besoin en eau, durée du cycle, fixation d'azote, sensibilité à la chaleur. Le score compare ces besoins au climat observé. Chaque note se justifie en une phrase, ce qui est indispensable face à un agriculteur."
+    },
+    {
+      "id": "stats",
+      "nom": "Statistiques sur séries",
+      "role": "Détecter",
+      "verdict": "Retenu",
+      "explicabilite": 4,
+      "besoinDonnees": 2,
+      "precision": 3,
+      "description": "Anomalies par rapport à la normale, tendance sur 20 ans (test de Mann-Kendall), début et fin des pluies par cumul de pluie. Simple, robuste, explicable."
+    },
+    {
+      "id": "rf",
+      "nom": "Forêt aléatoire",
+      "role": "Détecter",
+      "verdict": "Testé",
+      "explicabilite": 3,
+      "besoinDonnees": 4,
+      "precision": 4,
+      "description": "Classe chaque mois de chaque pixel en sol nu, culture en place ou végétation stressée, à partir du NDVI, de l'humidité et de la température. Plus précis, mais il faut des exemples étiquetés sur le terrain, encore rares."
+    },
+    {
+      "id": "dl",
+      "nom": "Réseau de neurones profond",
+      "role": "—",
+      "verdict": "Écarté",
+      "explicabilite": 1,
+      "besoinDonnees": 5,
+      "precision": 4,
+      "description": "Pourrait mieux lire les images, mais demande énormément de données locales étiquetées et ses décisions sont difficiles à expliquer. Hors de portée en 9 jours, et contraire à l'esprit du défi."
+    }
+  ],
+  "humainDecide": [
+    "Prix et demande au marché local",
+    "Semences disponibles et leur coût",
+    "État réel du sol, maladies et ravageurs du coin",
+    "Main-d'œuvre et matériel de la famille"
+  ]
+}

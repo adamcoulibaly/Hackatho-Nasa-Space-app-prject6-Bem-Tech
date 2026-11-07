@@ -1,0 +1,86 @@
+[
+  {
+    "terme": "NDVI",
+    "tag": "MODIS · Landsat",
+    "definition": "Un indice qui mesure, depuis l'espace, à quel point la végétation est verte et dense.",
+    "pourquoi": "Il montre quand votre champ est couvert et quand le sol est nu."
+  },
+  {
+    "terme": "Humidité du sol",
+    "tag": "SMAP",
+    "definition": "La quantité d'eau présente dans les premiers centimètres du sol.",
+    "pourquoi": "Elle indique si une culture aura assez d'eau pour pousser."
+  },
+  {
+    "terme": "Évapotranspiration",
+    "tag": "ECOSTRESS",
+    "definition": "L'eau qui quitte le champ en s'évaporant du sol et en sortant des feuilles.",
+    "pourquoi": "Plus elle est forte, plus la culture a soif."
+  },
+  {
+    "terme": "Anomalie",
+    "tag": "Données",
+    "definition": "Un écart par rapport à la normale : plus sec, plus chaud ou plus humide que d'habitude.",
+    "pourquoi": "Elle aide à repérer les années difficiles."
+  },
+  {
+    "terme": "Bilan hydrique",
+    "tag": "GPM · POWER",
+    "definition": "La différence entre l'eau reçue (pluie) et l'eau perdue (évaporation).",
+    "pourquoi": "Négatif trop longtemps, il signale un stress hydrique."
+  },
+  {
+    "terme": "Rotation des cultures",
+    "tag": "Agronomie",
+    "definition": "Changer de culture d'une saison à l'autre sur un même champ.",
+    "pourquoi": "Le sol se repose et les ravageurs ont plus de mal à s'installer."
+  },
+  {
+    "terme": "Fixation de l'azote",
+    "tag": "Agronomie",
+    "definition": "Certaines plantes (arachide, niébé, soja) captent l'azote de l'air et le laissent dans le sol.",
+    "pourquoi": "Le sol devient plus fertile, avec moins d'engrais à acheter."
+  },
+  {
+    "terme": "Culture de couverture",
+    "tag": "Agronomie",
+    "definition": "Une plante semée pour protéger le sol entre deux récoltes.",
+    "pourquoi": "Elle limite l'érosion et garde l'humidité pendant la saison sèche."
+  },
+  {
+    "terme": "Stress de chaleur",
+    "tag": "ECOSTRESS",
+    "definition": "Quand la surface du champ devient si chaude que la plante ferme ses feuilles et arrête de pousser.",
+    "pourquoi": "En Côte d'Ivoire, pas de gel : c'est la chaleur et l'harmattan qu'il faut surveiller."
+  },
+  {
+    "terme": "Pente et érosion",
+    "tag": "SRTM",
+    "definition": "Le relief du terrain mesuré depuis l'espace. Plus la pente est forte, plus la pluie emporte la terre.",
+    "pourquoi": "Une culture qui couvre bien le sol limite ces pertes."
+  },
+  {
+    "terme": "Réserve d'eau",
+    "tag": "GRACE",
+    "definition": "Toute l'eau stockée dans une région : sol, nappes, rivières, mesurée par la gravité de la Terre.",
+    "pourquoi": "Elle montre si la région s'assèche sur plusieurs années."
+  },
+  {
+    "terme": "Grille commune",
+    "tag": "Méthode",
+    "definition": "Les satellites ne voient pas tous avec la même finesse. On ramène tout au même maillage et au même mois.",
+    "pourquoi": "Sans cela, impossible de comparer pluie, sol et végétation."
+  },
+  {
+    "terme": "Niveau de confiance",
+    "tag": "Méthode",
+    "definition": "À quel point ForoSat est sûr de son conseil : élevé, moyen ou faible.",
+    "pourquoi": "Il baisse quand les sources se contredisent ou que la parcelle est très petite."
+  },
+  {
+    "terme": "Satellite ou mesure au sol",
+    "tag": "Méthode",
+    "definition": "Le satellite voit de grandes zones chaque jour ; une mesure au sol est plus précise mais ponctuelle.",
+    "pourquoi": "Les combiner donne le résultat le plus fiable."
+  }
+]

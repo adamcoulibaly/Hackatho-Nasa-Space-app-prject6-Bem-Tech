@@ -1,0 +1,262 @@
+{
+  "indicateurs": [
+    {
+      "label": "Saison des pluies",
+      "valeur": "Mai → Oct",
+      "source": "Une seule saison · GPM"
+    },
+    {
+      "label": "Pluie annuelle moyenne",
+      "valeur": "1 175 mm",
+      "source": "NASA POWER"
+    },
+    {
+      "label": "Mois le plus chaud",
+      "valeur": "Mars · 36 °C",
+      "source": "Température max. · NASA POWER",
+      "accent": true
+    },
+    {
+      "label": "Sol nu dans l'année",
+      "valeur": "≈ 8 mois",
+      "source": "Végétation · Landsat / HLS 30 m"
+    }
+  ],
+  "pluieMensuelle": [
+    5,
+    15,
+    40,
+    80,
+    120,
+    150,
+    190,
+    260,
+    200,
+    90,
+    20,
+    5
+  ],
+  "saisonPluies": {
+    "debut": 5,
+    "fin": 10
+  },
+  "matrice": [
+    {
+      "label": "Pluie",
+      "source": "GPM",
+      "palette": "eau",
+      "valeurs": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        4,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "label": "Chaleur",
+      "source": "NASA POWER",
+      "palette": "chaud",
+      "valeurs": [
+        3,
+        4,
+        4,
+        4,
+        3,
+        2,
+        1,
+        1,
+        1,
+        2,
+        3,
+        3
+      ]
+    },
+    {
+      "label": "Humidité du sol",
+      "source": "SMAP",
+      "palette": "eau",
+      "valeurs": [
+        0,
+        0,
+        0,
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        3,
+        1,
+        0
+      ]
+    },
+    {
+      "label": "Végétation",
+      "source": "Landsat / HLS",
+      "palette": "veg",
+      "valeurs": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    {
+      "label": "Stress de chaleur",
+      "source": "ECOSTRESS",
+      "palette": "chaud",
+      "valeurs": [
+        3,
+        4,
+        4,
+        4,
+        3,
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "label": "Pluies extrêmes",
+      "source": "GPM",
+      "palette": "eau",
+      "valeurs": [
+        0,
+        0,
+        0,
+        1,
+        2,
+        2,
+        3,
+        4,
+        3,
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "grace": [
+    {
+      "annee": 2005,
+      "ecart": 3
+    },
+    {
+      "annee": 2006,
+      "ecart": 4
+    },
+    {
+      "annee": 2007,
+      "ecart": 2
+    },
+    {
+      "annee": 2008,
+      "ecart": 5
+    },
+    {
+      "annee": 2009,
+      "ecart": 3
+    },
+    {
+      "annee": 2010,
+      "ecart": 1
+    },
+    {
+      "annee": 2011,
+      "ecart": 2
+    },
+    {
+      "annee": 2012,
+      "ecart": 0
+    },
+    {
+      "annee": 2013,
+      "ecart": -1
+    },
+    {
+      "annee": 2014,
+      "ecart": 1
+    },
+    {
+      "annee": 2015,
+      "ecart": -2
+    },
+    {
+      "annee": 2016,
+      "ecart": -1
+    },
+    {
+      "annee": 2017,
+      "ecart": null
+    },
+    {
+      "annee": 2018,
+      "ecart": null
+    },
+    {
+      "annee": 2019,
+      "ecart": -3
+    },
+    {
+      "annee": 2020,
+      "ecart": -2
+    },
+    {
+      "annee": 2021,
+      "ecart": -4
+    },
+    {
+      "annee": 2022,
+      "ecart": -3
+    },
+    {
+      "annee": 2023,
+      "ecart": -2
+    },
+    {
+      "annee": 2024,
+      "ecart": -4
+    },
+    {
+      "annee": 2025,
+      "ecart": -5
+    }
+  ],
+  "alertes": [
+    {
+      "type": "surveiller",
+      "titre": "Début des pluies",
+      "texte": "Les premières pluies utiles semblent arriver plus tard certaines années. Semer trop tôt devient risqué."
+    },
+    {
+      "type": "surveiller",
+      "titre": "Harmattan et chaleur",
+      "texte": "De décembre à avril, l'harmattan puis la chaleur dessèchent le sol nu (ECOSTRESS). Pas de risque de gel ici : c'est la chaleur qu'il faut surveiller."
+    },
+    {
+      "type": "favorable",
+      "titre": "Août–septembre",
+      "texte": "Le sol est le plus humide : bonne fenêtre pour une légumineuse en fin de saison."
+    }
+  ]
+}
