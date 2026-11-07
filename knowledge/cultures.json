@@ -1,0 +1,219 @@
+[
+  {
+    "nom": "Maïs",
+    "famille": "poacées",
+    "cycleJours": 110,
+    "eauMm": [
+      500,
+      800
+    ],
+    "legumineuse": false,
+    "secheresse": 2,
+    "chaleur": 3,
+    "couverture": 2,
+    "fourrage": 4,
+    "travailSol": 3,
+    "revenu": 3,
+    "marche": 5,
+    "sources": [
+      "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
+      "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
+      "Revenu et marché : hypothèses en attendant les prix locaux"
+    ],
+    "hypotheses": [
+      "revenu",
+      "marche"
+    ],
+    "aValider": true
+  },
+  {
+    "nom": "Coton",
+    "famille": "malvacées",
+    "cycleJours": 160,
+    "eauMm": [
+      700,
+      1300
+    ],
+    "legumineuse": false,
+    "secheresse": 3,
+    "chaleur": 4,
+    "couverture": 2,
+    "fourrage": 2,
+    "travailSol": 4,
+    "revenu": 4,
+    "marche": 4,
+    "sources": [
+      "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
+      "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
+      "Revenu et marché : hypothèses en attendant les prix locaux"
+    ],
+    "hypotheses": [
+      "revenu",
+      "marche"
+    ],
+    "aValider": true
+  },
+  {
+    "nom": "Igname",
+    "famille": "dioscoréacées",
+    "cycleJours": 240,
+    "eauMm": [
+      1000,
+      1500
+    ],
+    "legumineuse": false,
+    "secheresse": 2,
+    "chaleur": 3,
+    "couverture": 3,
+    "fourrage": 1,
+    "travailSol": 5,
+    "revenu": 4,
+    "marche": 4,
+    "sources": [
+      "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
+      "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
+      "Revenu et marché : hypothèses en attendant les prix locaux"
+    ],
+    "hypotheses": [
+      "revenu",
+      "marche"
+    ],
+    "aValider": true
+  },
+  {
+    "nom": "Manioc",
+    "famille": "euphorbiacées",
+    "cycleJours": 300,
+    "eauMm": [
+      600,
+      1500
+    ],
+    "legumineuse": false,
+    "secheresse": 4,
+    "chaleur": 4,
+    "couverture": 3,
+    "fourrage": 2,
+    "travailSol": 3,
+    "revenu": 3,
+    "marche": 4,
+    "sources": [
+      "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
+      "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
+      "Revenu et marché : hypothèses en attendant les prix locaux"
+    ],
+    "hypotheses": [
+      "revenu",
+      "marche"
+    ],
+    "aValider": true
+  },
+  {
+    "nom": "Arachide",
+    "famille": "fabacées",
+    "cycleJours": 110,
+    "eauMm": [
+      500,
+      700
+    ],
+    "legumineuse": true,
+    "secheresse": 3,
+    "chaleur": 4,
+    "couverture": 4,
+    "fourrage": 4,
+    "travailSol": 3,
+    "revenu": 4,
+    "marche": 4,
+    "sources": [
+      "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
+      "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
+      "Revenu et marché : hypothèses en attendant les prix locaux"
+    ],
+    "hypotheses": [
+      "revenu",
+      "marche"
+    ],
+    "aValider": true
+  },
+  {
+    "nom": "Riz",
+    "famille": "poacées",
+    "cycleJours": 120,
+    "eauMm": [
+      1000,
+      1800
+    ],
+    "legumineuse": false,
+    "secheresse": 1,
+    "chaleur": 3,
+    "couverture": 3,
+    "fourrage": 3,
+    "travailSol": 3,
+    "revenu": 3,
+    "marche": 5,
+    "sources": [
+      "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
+      "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
+      "Revenu et marché : hypothèses en attendant les prix locaux",
+      "Riz pluvial : besoin en eau élevé ; avec irrigation de bas-fond, risque plus faible"
+    ],
+    "hypotheses": [
+      "revenu",
+      "marche"
+    ],
+    "aValider": true
+  },
+  {
+    "nom": "Sorgho",
+    "famille": "poacées",
+    "cycleJours": 110,
+    "eauMm": [
+      400,
+      650
+    ],
+    "legumineuse": false,
+    "secheresse": 5,
+    "chaleur": 5,
+    "couverture": 2,
+    "fourrage": 4,
+    "travailSol": 2,
+    "revenu": 2,
+    "marche": 3,
+    "sources": [
+      "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
+      "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
+      "Revenu et marché : hypothèses en attendant les prix locaux"
+    ],
+    "hypotheses": [
+      "revenu",
+      "marche"
+    ],
+    "aValider": true
+  },
+  {
+    "nom": "Niébé",
+    "famille": "fabacées",
+    "cycleJours": 80,
+    "eauMm": [
+      300,
+      500
+    ],
+    "legumineuse": true,
+    "secheresse": 4,
+    "chaleur": 5,
+    "couverture": 4,
+    "fourrage": 5,
+    "travailSol": 2,
+    "revenu": 3,
+    "marche": 4,
+    "sources": [
+      "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
+      "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
+      "Revenu et marché : hypothèses en attendant les prix locaux"
+    ],
+    "hypotheses": [
+      "revenu",
+      "marche"
+    ],
+    "aValider": true
+  }
+]

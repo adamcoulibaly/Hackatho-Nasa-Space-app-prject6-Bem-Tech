@@ -140,3 +140,28 @@ export type Sources = z.infer<typeof SourcesSchema>;
 export const TermeSchema = z.object({ terme: z.string(), tag: z.string(), definition: z.string(), pourquoi: z.string() });
 export type Terme = z.infer<typeof TermeSchema>;
 export const LexiqueSchema = z.array(TermeSchema).min(1);
+
+/* ---------- fiches cultures (knowledge/cultures.json) ---------- */
+export const CultureSchema = z.object({
+  nom: z.string(),
+  famille: z.enum(["poacées", "fabacées", "malvacées", "dioscoréacées", "euphorbiacées"]),
+  /** Durée typique du cycle, en jours. */
+  cycleJours: z.number().int().positive(),
+  /** Besoin en eau sur le cycle, en mm : [minimum, confortable]. */
+  eauMm: z.tuple([z.number().positive(), z.number().positive()]),
+  legumineuse: z.boolean(),
+  secheresse: niveau,
+  chaleur: niveau,
+  couverture: niveau,
+  fourrage: niveau,
+  /** Exigence en travail du sol (5 = buttage, labour lourd). */
+  travailSol: niveau,
+  revenu: niveau,
+  marche: niveau,
+  sources: z.array(z.string()).min(1),
+  /** Champs qui ne sont que des hypothèses. */
+  hypotheses: z.array(z.enum(["revenu", "marche"])),
+  aValider: z.literal(true),
+});
+export type Culture = z.infer<typeof CultureSchema>;
+export const CulturesSchema = z.array(CultureSchema).length(8);

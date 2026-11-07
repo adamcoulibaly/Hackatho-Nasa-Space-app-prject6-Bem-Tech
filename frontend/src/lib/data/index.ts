@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import type { ZodType } from "zod";
 import {
-  ClimatSchema, RotationsSchema, CouchesSchema, SourcesSchema, LexiqueSchema,
+  ClimatSchema, RotationsSchema, CulturesSchema, type Culture, CouchesSchema, SourcesSchema, LexiqueSchema,
   type Climat, type Rotation, type Couche, type Sources, type Terme,
 } from "@/lib/contract";
 
@@ -57,4 +57,10 @@ export async function getRotation(id: string): Promise<Rotation | null> {
 export function getClimatRegion(id: string): Promise<Climat> {
   if (!/^[a-z-]+$/.test(id)) return Promise.reject(new DataError(`Région « ${id} » inconnue.`));
   return load(id, ClimatSchema, regionsDir());
+}
+
+/** Fiches des 8 cultures (knowledge/cultures.json). */
+export function getCultures(): Promise<Culture[]> {
+  const dir = process.env.FOROSAT_KNOWLEDGE_DIR ?? path.resolve(process.cwd(), "..", "knowledge");
+  return load("cultures", CulturesSchema, dir);
 }
