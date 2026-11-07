@@ -1,4 +1,5 @@
-import type { Climat, Culture } from "@/lib/contract";
+import type { Climat, Culture, Rotation } from "@/lib/contract";
+import { construireRotation } from "./explications";
 import type { Parcelle } from "@/lib/parcelle/validate";
 import { extraireClimat, type ClimatResume } from "./climat";
 import { notesBrutes, notesRotation, scorePondere, type Notes } from "./notes";
@@ -50,4 +51,12 @@ export function choisirRotations(p: Parcelle, climat: Climat, cultures: Culture[
   return ([["A", a], ["B", b], ["C", c]] as const).map(([id, x]) => ({ id, sequence: x.s.map((k) => k.nom), cultures: x.s, scores: x.scores, score: x.score }));
 }
 
-export const calculerRotations = choisirRotations;
+export type RotationCalculee = Rotation & { score: number };
+
+/** Les 3 rotations complètes (A actuelle, B et C alternatives), ou null si aucune culture n'est saisie. */
+export function calculerRotations(p: Parcelle, climat: Climat, cultures: Culture[]): RotationCalculee[] | null {
+  const choix = choisirRotations(p, climat, cultures);
+  if (!choix) return null;
+  const cl = extraireClimat(climat);
+  return choix.map((ch) => construireRotation(ch, { climat, cl, p, scoreActuelle: choix[0].score }));
+}

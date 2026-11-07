@@ -81,7 +81,7 @@ export const RotationSchema = z.object({
   id: z.enum(["A", "B", "C"]),
   tag: z.string(),
   recommandee: z.boolean(),
-  sequence: z.array(z.string()).min(2).max(3),
+  sequence: z.array(z.string()).min(1).max(3),
   scores: z.object({
     fertilite: niveau, eau: niveau, secheresse: niveau, revenu: niveau, erosion: niveau, fourrage: niveau, marche: niveau,
   }),
