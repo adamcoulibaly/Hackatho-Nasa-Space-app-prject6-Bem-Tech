@@ -9,7 +9,7 @@ export function Tableau({ climat, reco }: { climat: Climat; reco: Rotation }) {
   const a = climat.actuel;
   const veg = climat.onglets.find((o) => o.id === "veg")?.valeurs ?? [];
   return (
-    <div className="flex flex-col gap-3.5">
+    <div data-stagger className="flex flex-col gap-3.5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex flex-col gap-0.5">
           <span className="text-sm text-muted">Valeurs d'exemple</span>
@@ -39,9 +39,9 @@ export function Tableau({ climat, reco }: { climat: Climat; reco: Rotation }) {
         </div>
       </section>
 
-      <div className="grid grid-cols-2 gap-2.5">
+      <div data-stagger className="grid grid-cols-2 gap-2.5">
         {a.tuiles.map((t) => (
-          <div key={t.label} data-testid="tuile" className="transition-transform duration-200 ease-out hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:transform-none flex flex-col gap-2 rounded-[22px] bg-white p-3.5">
+          <div key={t.label} data-testid="tuile" className="lift flex flex-col gap-2 rounded-[22px] bg-white p-3.5">
             <div className="flex items-center justify-between">
               <span className="text-[13px] text-muted">{t.label}</span>
               <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full" style={{ background: POINT[t.niveau] }} />

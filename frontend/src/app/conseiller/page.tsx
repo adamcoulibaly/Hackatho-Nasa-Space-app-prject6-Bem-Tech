@@ -27,7 +27,7 @@ export default function ConseillerPage() {
                 {["Agriculteur", "Village", "Actuelle", "Conseillée", "Confiance"].map((h) => <th key={h} scope="col" className="p-3 font-semibold">{h}</th>)}
               </tr>
             </thead>
-            <tbody>
+            <tbody data-stagger>
               {LIGNES.map((l) => (
                 <tr key={l.nom} className="border-t border-[#E3E8E2]">
                   <th scope="row" className="p-3 font-bold">{l.nom}</th>

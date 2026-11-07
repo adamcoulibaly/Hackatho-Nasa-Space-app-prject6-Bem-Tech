@@ -19,9 +19,9 @@ export function LexiqueSearch({ termes }: { termes: Terme[] }) {
           <button type="button" onClick={() => setQ("")} className="h-11 rounded-full bg-ink px-5 text-sm font-bold text-paper">Effacer la recherche</button>
         </div>
       ) : (
-        <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-3.5 p-0">
+        <ul data-stagger className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-3.5 p-0">
           {liste.map((t, i) => (
-            <li key={t.terme} className={`transition-transform duration-200 ease-out hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:transform-none flex flex-col gap-2.5 rounded-3xl p-[22px] ${i === 0 && !q ? "bg-ink text-paper" : "bg-white"}`}>
+            <li key={t.terme} className={`lift flex flex-col gap-2.5 rounded-3xl p-[22px] ${i === 0 && !q ? "bg-ink text-paper" : "bg-white"}`}>
               <span className={`self-start rounded-full px-2.5 py-1 text-xs font-bold ${i === 0 && !q ? "bg-orange text-ink" : "bg-[#E7ECE6] text-ink"}`}>{t.tag}</span>
               <h2 className="m-0 font-display text-lg font-bold tracking-[-0.02em]">{t.terme}</h2>
               <p className="m-0 text-[15px] leading-normal">{t.definition}</p>

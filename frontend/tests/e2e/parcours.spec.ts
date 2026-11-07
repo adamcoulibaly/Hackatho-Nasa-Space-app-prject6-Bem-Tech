@@ -84,14 +84,22 @@ test("l'en-tête n'affiche aucun numéro", async ({ page, isMobile }) => {
   await expect(nav).not.toContainText(/\d/);
 });
 
-test("mouvement réduit : le contenu reste visible et immobile", async ({ browser }) => {
+test("mouvement réduit : le contenu apparaît sans déplacement", async ({ browser }) => {
   const ctx = await browser.newContext({ reducedMotion: "reduce" });
   const page = await ctx.newPage();
   await page.goto("http://localhost:3100/parcelle");
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  const anim = await page.evaluate(() => getComputedStyle(document.querySelector("main > *")!).animationName);
-  expect(anim).toBe("fade");
+  const bloc = page.locator("main > *").first();
+  await expect(bloc).toHaveCSS("opacity", "1");
+  const translate = await bloc.evaluate((el) => getComputedStyle(el).translate);
+  expect(["none", "0px", "0px 0px"]).toContain(translate);
   await ctx.close();
+});
+
+test("les blocs sous la ligne de flottaison apparaissent au défilement", async ({ page }) => {
+  await page.goto("/");
+  const pied = page.locator("footer");
+  await pied.scrollIntoViewIfNeeded();
+  await expect(pied).toHaveCSS("opacity", "1");
 });
 
 test("carte : dessiner la parcelle met à jour la surface", async ({ page, isMobile }) => {

@@ -27,7 +27,7 @@ export default async function RotationsPage() {
           <p role="note" className="m-0 self-start rounded-2xl bg-[#FDE7CC] px-4 py-3 text-[15px] text-[#5C2E00]">
             Exemple de démonstration : vos choix ne modifient pas encore ce résultat. Le moteur de recommandation sera branché ensuite.
           </p>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-stretch gap-4">
+          <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-stretch gap-4">
             {rotations.map((r) => <RotationCard key={r.id} rotation={r} dark={r.recommandee} />)}
           </div>
           <section className="flex flex-wrap items-center gap-6 rounded-[28px] bg-white p-[26px]">

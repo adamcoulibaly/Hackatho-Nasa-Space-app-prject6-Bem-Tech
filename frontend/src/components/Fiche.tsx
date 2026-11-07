@@ -10,7 +10,7 @@ export function Fiche({ rotation }: { rotation: Rotation }) {
       <div className="flex h-2.5 shrink-0" aria-hidden="true">
         <div className="flex-grow bg-orange" /><div className="flex-grow bg-white" /><div className="flex-grow bg-green" />
       </div>
-      <div className="flex flex-col gap-[18px] px-[30px] py-[26px]">
+      <div data-stagger className="flex flex-col gap-[18px] px-[30px] py-[26px]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Logo size={40} />

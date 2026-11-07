@@ -21,9 +21,9 @@ export default async function MethodePage() {
           <p className="m-0 text-lg leading-relaxed text-muted">L'IA détecte les tendances dans les données. Des règles agronomiques transparentes font la recommandation. L'agriculteur et son conseiller décident.</p>
         </div>
 
-        <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5 p-0">
+        <ol data-stagger className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5 p-0">
           {src.etapes.map((e, i) => (
-            <li key={e.titre} className={`flex flex-col gap-2 rounded-3xl p-5 ${i === 2 ? "bg-ink text-paper" : "bg-white"}`}>
+            <li key={e.titre} className={`lift flex flex-col gap-2 rounded-3xl p-5 ${i === 2 ? "bg-ink text-paper" : "bg-white"}`}>
               <span className={`font-display text-sm font-bold ${i === 2 ? "text-orange" : "text-orange-dark"}`}>{String(i + 1).padStart(2, "0")}</span>
               <h2 className="m-0 font-display text-base font-bold">{e.titre}</h2>
               <p className={`m-0 text-sm leading-normal ${i === 2 ? "text-[#C9D4CD]" : "text-muted"}`}>{e.texte}</p>
@@ -52,7 +52,7 @@ export default async function MethodePage() {
                   <th scope="col" className="p-3 font-semibold">Priorité</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody data-stagger>
                 {src.sources.map((s) => (
                   <tr key={s.nom} className="border-t border-[#E3E8E2]">
                     <th scope="row" className="p-3 font-bold">{s.nom}</th>
@@ -67,7 +67,7 @@ export default async function MethodePage() {
           </div>
         </section>
 
-        <div className="grid gap-5 lg:grid-cols-2">
+        <div data-stagger className="grid gap-5 lg:grid-cols-2">
           <section className="flex flex-col gap-4 rounded-[28px] bg-white p-[26px]">
             <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">Confiance : exemple de la rotation {exemple.id}</h2>
             <ConfianceBreakdown confiance={exemple.confiance} />

@@ -11,13 +11,10 @@ a { color: #00703C; }
 a:hover { color: #00502B; }
 
 /* ---------- Mouvement ----------
-   Durées : 100, 150, 200 ou 300 ms. Entrée en ease-out. Seuls transform et opacity bougent.
-   Aucune boucle décorative. Le pas de décalage entre éléments est de 20 ms. */
+   Durées : 100, 150, 200 ou 300 ms. Entrée en ease-out. Seuls transform (et sa forme courte
+   translate) et opacity bougent. Aucune boucle décorative. Pas de décalage entre barres : 20 ms.
+   La classe js-motion n'est posée que par MotionRoot : sans JavaScript, tout reste visible. */
 
-@keyframes rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: none; }
-}
 @keyframes fade {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -31,26 +28,32 @@ a:hover { color: #00502B; }
   to   { transform: scaleX(1); }
 }
 
-/* Les blocs d'une page arrivent l'un après l'autre. */
-main > *,
-[data-stagger] > * {
-  animation: rise 300ms var(--ease-out) both;
+/* Révélation des blocs à leur entrée à l'écran, sur toutes les pages. */
+.js-motion main > *,
+.js-motion [data-stagger] > *,
+.js-motion [data-reveal] {
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out), translate 300ms var(--ease-out);
 }
-main > *:nth-child(2), [data-stagger] > *:nth-child(2) { animation-delay: 100ms; }
-main > *:nth-child(3), [data-stagger] > *:nth-child(3) { animation-delay: 150ms; }
-main > *:nth-child(n+4), [data-stagger] > *:nth-child(n+4) { animation-delay: 200ms; }
-
-/* Pages longues : chaque section apparaît quand elle entre à l'écran. */
-@supports (animation-timeline: view()) {
-  main[data-scroll] > * {
-    animation: rise linear both;
-    animation-delay: 0ms;
-    animation-timeline: view();
-    animation-range: entry 0% entry 35%;
+@media (prefers-reduced-motion: no-preference) {
+  .js-motion main > *,
+  .js-motion [data-stagger] > *,
+  .js-motion [data-reveal] {
+    translate: 0 8px;
   }
 }
+.js-motion main > [data-inview],
+.js-motion [data-stagger] > [data-inview],
+.js-motion [data-reveal][data-inview] {
+  opacity: 1;
+  translate: 0 0;
+}
+/* Les éléments d'une même grille arrivent en cascade. */
+.js-motion [data-stagger] > :nth-child(2) { transition-delay: 100ms; }
+.js-motion [data-stagger] > :nth-child(3) { transition-delay: 150ms; }
+.js-motion [data-stagger] > :nth-child(n+4) { transition-delay: 200ms; }
 
-/* Les barres des graphiques poussent depuis leur base. */
+/* Les barres et jauges poussent depuis leur base, une fois visibles. */
 .bar-grow, .bar-grow-down, .seg-grow {
   animation: grow-y 300ms var(--ease-out) both;
   animation-delay: calc(var(--i, 0) * 20ms);
@@ -58,32 +61,41 @@ main > *:nth-child(n+4), [data-stagger] > *:nth-child(n+4) { animation-delay: 20
 }
 .bar-grow-down { transform-origin: top; }
 .seg-grow { animation-name: grow-x; transform-origin: left; }
+.js-motion .bar-grow, .js-motion .bar-grow-down, .js-motion .seg-grow { animation-play-state: paused; }
+.js-motion [data-inview] .bar-grow,
+.js-motion [data-inview] .bar-grow-down,
+.js-motion [data-inview] .seg-grow { animation-play-state: running; }
 
 /* Un changement de couche ou d'onglet s'affiche en fondu. */
 .fade-in { animation: fade 200ms var(--ease-out) both; }
+
+/* Les cartes se soulèvent légèrement au survol. */
+.lift { transition: transform 200ms var(--ease-out); }
+.lift:hover { transform: translateY(-2px); }
 
 /* Retour tactile des boutons et liens. */
 a, button { transition: opacity 100ms var(--ease-out); }
 a:active, button:active { opacity: 0.8; }
 
+/* Carte : la recherche et le centrage restent doux. */
+.leaflet-container { font-family: inherit; }
+
 @media print {
   .no-print { display: none !important; }
   body { background: #fff; }
-  main > *, [data-stagger] > * { animation: none; }
+  .js-motion main > *, .js-motion [data-stagger] > *, .js-motion [data-reveal] { opacity: 1; translate: none; }
 }
 
-/* Mouvement réduit : plus aucun déplacement, seulement un fondu bref ou rien. */
+/* Mouvement réduit : aucun déplacement, seulement un fondu bref ou rien. */
 @media (prefers-reduced-motion: reduce) {
-  main > *,
-  [data-stagger] > *,
-  main[data-scroll] > *,
-  .fade-in {
-    animation: fade 100ms linear both;
-    animation-delay: 0ms;
-    animation-timeline: auto;
+  .js-motion main > *,
+  .js-motion [data-stagger] > *,
+  .js-motion [data-reveal] {
+    transition: opacity 100ms linear;
+    transition-delay: 0ms;
   }
-  .bar-grow, .bar-grow-down, .seg-grow {
-    animation: none;
-  }
+  .bar-grow, .bar-grow-down, .seg-grow { animation: none; }
+  .fade-in { animation: fade 100ms linear both; }
+  .lift, .lift:hover { transition: none; transform: none; }
   a, button { transition: none; }
 }

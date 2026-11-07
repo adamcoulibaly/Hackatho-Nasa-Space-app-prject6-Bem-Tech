@@ -44,9 +44,9 @@ export default async function ClimatPage() {
               {climat.meta.tendancePluie ? ` ${climat.meta.tendancePluie}` : ""} Les autres indicateurs (sol, végétation, eau stockée) restent des valeurs d'exemple.
             </p>
           )}
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-3.5">
+          <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-3.5">
             {climat.indicateurs.map((k, i) => (
-              <div key={k.label} className={`flex flex-col gap-2.5 rounded-3xl p-[22px] ${i === 0 ? "bg-ink text-paper" : "bg-white"}`}>
+              <div key={k.label} className={`lift flex flex-col gap-2.5 rounded-3xl p-[22px] ${i === 0 ? "bg-ink text-paper" : "bg-white"}`}>
                 <span className={`text-sm ${i === 0 ? "text-[#9DB0A5]" : "text-muted"}`}>{k.label}</span>
                 <span className={`font-display text-[30px] font-bold tracking-[-0.03em] ${k.accent ? "text-orange-dark" : ""}`}>{k.valeur}</span>
                 <span className={`text-[13px] ${i === 0 ? "text-[#9DB0A5]" : "text-muted"}`}>{k.source}</span>
@@ -67,7 +67,7 @@ export default async function ClimatPage() {
               Écart à la moyenne de la réserve d'eau totale (GRACE puis GRACE-FO, valeurs d'exemple). La réserve baisse depuis une dizaine d'années. Les colonnes hachurées marquent une <strong className="text-ink">lacune de données</strong> : la fin de GRACE en 2017 et le lancement de GRACE-FO en 2018. Mesure à grande échelle (plusieurs centaines de km) : elle décrit la région, pas la parcelle.
             </p>
           </Card>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3.5">
+          <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3.5">
             {climat.alertes.map((a) => <AlertCard key={a.titre} alerte={a} />)}
           </div>
         </RequireParcelle>

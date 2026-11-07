@@ -43,9 +43,9 @@ export default async function RotationPage({ params }: { params: Promise<{ id: s
           <Link href={`/fiche/${rotation.id}`} className="inline-flex h-[52px] items-center rounded-full bg-orange px-6 text-base font-bold text-ink no-underline hover:text-ink">Partager la fiche</Link>
         </div>
 
-        <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5 p-0">
+        <ol data-stagger className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5 p-0">
           {rotation.sequence.map((culture, i) => (
-            <li key={culture + i} className={`flex flex-col gap-1.5 rounded-3xl p-[22px] ${rotation.recommandee && i === 1 ? "bg-ink text-paper" : "bg-white"}`}>
+            <li key={culture + i} className={`lift flex flex-col gap-1.5 rounded-3xl p-[22px] ${rotation.recommandee && i === 1 ? "bg-ink text-paper" : "bg-white"}`}>
               <span className="text-[13px] uppercase tracking-[0.12em] opacity-70">{`Année ${i + 1}`}</span>
               <span className="font-display text-[30px] font-bold tracking-[-0.03em]">{culture}</span>
             </li>
@@ -54,7 +54,7 @@ export default async function RotationPage({ params }: { params: Promise<{ id: s
 
         <Section titre="Le calendrier sur 3 ans"><CalendrierTrois calendrier={rotation.calendrier} /></Section>
 
-        <div className="grid gap-[22px] lg:grid-cols-2">
+        <div data-stagger className="grid gap-[22px] lg:grid-cols-2">
           <Section titre="Pourquoi cette rotation">
             <ol className="m-0 flex list-none flex-col gap-3 p-0">
               {rotation.pourquoi.map((p, i) => (
@@ -81,7 +81,7 @@ export default async function RotationPage({ params }: { params: Promise<{ id: s
           <RainSimulator rotations={toutes} courante={rotation.id} />
         </Section>
 
-        <div className="grid gap-[22px] lg:grid-cols-2">
+        <div data-stagger className="grid gap-[22px] lg:grid-cols-2">
           <Section titre="Risques & incertitudes">
             <ul className="m-0 flex flex-col gap-2 pl-5 text-[15px] leading-normal">
               {rotation.risques.map((r) => <li key={r}>{r}</li>)}

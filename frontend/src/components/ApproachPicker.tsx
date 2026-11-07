@@ -15,7 +15,7 @@ export function ApproachPicker({ approches }: { approches: Sources["approches"] 
   const sel = approches.find((a) => a.id === id) ?? approches[0];
   return (
     <div className="flex flex-col gap-4">
-      <div role="group" aria-label="Approches comparées" className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3">
+      <div role="group" aria-label="Approches comparées" data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3">
         {approches.map((a) => {
           const on = a.id === id;
           return (
