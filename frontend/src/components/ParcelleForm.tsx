@@ -6,7 +6,14 @@ import { CULTURES, PRIORITES, validateParcelle, type Eau, type Materiel, type Re
 
 const FIELD = "h-12 rounded-[14px] border border-line bg-white px-3 text-[15px] text-ink";
 
+/** Le formulaire n'est monté qu'une fois le stockage local lu : sinon le champ de surface garderait la valeur par défaut. */
 export function ParcelleForm({ onSubmit }: { onSubmit: () => void }) {
+  const { pret } = useParcelle();
+  if (!pret) return <div aria-busy="true" className="min-h-[400px] max-w-[460px] rounded-[28px] bg-white" />;
+  return <ParcelleFormChamps onSubmit={onSubmit} />;
+}
+
+function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
   const { parcelle, setParcelle } = useParcelle();
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [surfaceTexte, setSurfaceTexte] = useState(String(parcelle.surface));

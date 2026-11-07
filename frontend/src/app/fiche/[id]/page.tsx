@@ -5,6 +5,8 @@ import { ShareActions } from "@/components/ShareActions";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getRotation, getRotations } from "@/lib/data";
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return (await getRotations()).map((r) => ({ id: r.id }));
 }

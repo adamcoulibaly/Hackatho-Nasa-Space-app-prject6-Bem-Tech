@@ -9,7 +9,15 @@ export function RainSimulator({ rotations, courante }: { rotations: Rotation[]; 
   const [pluie, setPluie] = useState(-20);
   const [chaleur, setChaleur] = useState(0);
   const resultats = rotations.map((r) => ({ r, ...simulate(r, pluie, chaleur) }));
-  const meilleure = resultats.reduce((a, b) => (b.secheresse + b.eau > a.secheresse + a.eau ? b : a));
+  const total = (x: { secheresse: number; eau: number }) => x.secheresse + x.eau;
+  const top = Math.max(...resultats.map(total));
+  const gagnantes = resultats.filter((x) => total(x) === top).map((x) => x.r.id);
+  const verdict =
+    gagnantes.length === resultats.length
+      ? "les rotations ne se distinguent plus"
+      : gagnantes.length === 1
+        ? `la rotation ${gagnantes[0]} résiste le mieux`
+        : `les rotations ${gagnantes.join(" et ")} résistent le mieux`;
   const fmt = (n: number, u: string) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n)} ${u}`;
 
   return (
@@ -34,7 +42,7 @@ export function RainSimulator({ rotations, courante }: { rotations: Rotation[]; 
         ))}
       </div>
       <p className="m-0 text-[15px] leading-normal text-muted">
-        Dans ce scénario, la rotation <strong className="text-ink">{meilleure.r.id}</strong> résiste le mieux. Simulation simple (valeurs d'exemple) : chaque tranche de 15 % de pluie en moins, ou de 2 °C en plus, retire un niveau.
+        Dans ce scénario, <strong className="text-ink">{verdict}</strong>. Simulation simple (valeurs d'exemple) : chaque tranche de 15 % de pluie en moins, ou de 2 °C en plus, retire un niveau.
       </p>
     </div>
   );

@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export type Region = "Poro (Korhogo)" | "Gbêkê (Bouaké)";
 export type Eau = "pluie" | "irrigation";
 export type Materiel = "daba" | "traction" | "tracteur";
@@ -39,3 +41,13 @@ export function validateParcelle(p: Parcelle): { ok: boolean; erreurs: string[] 
   if (p.priorites.length === 0) erreurs.push("Choisissez au moins une priorité.");
   return { ok: erreurs.length === 0, erreurs };
 }
+
+/** Forme attendue d'une parcelle relue depuis le stockage local. */
+export const ParcelleSchema = z.object({
+  region: z.enum(["Poro (Korhogo)", "Gbêkê (Bouaké)"]),
+  surface: z.number(),
+  cultures: z.array(z.string()),
+  eau: z.enum(["pluie", "irrigation"]),
+  priorites: z.array(z.string()),
+  materiel: z.enum(["daba", "traction", "tracteur"]),
+});

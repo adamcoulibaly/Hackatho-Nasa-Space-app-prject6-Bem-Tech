@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { DEFAULT_PARCELLE, type Parcelle } from "./validate";
+import { DEFAULT_PARCELLE, ParcelleSchema, type Parcelle } from "./validate";
 
 const KEY = "forosat.parcelle";
 
@@ -24,8 +24,15 @@ function read(): Stored {
     if (!raw) return { parcelle: DEFAULT_PARCELLE, saisie: false };
     const v = JSON.parse(raw) as Partial<Stored>;
     if (!v || typeof v !== "object" || !v.parcelle) throw new Error("format");
-    return { parcelle: { ...DEFAULT_PARCELLE, ...v.parcelle }, saisie: v.saisie === true };
+    const parcelle = ParcelleSchema.safeParse({ ...DEFAULT_PARCELLE, ...v.parcelle });
+    if (!parcelle.success) throw new Error("types");
+    return { parcelle: parcelle.data, saisie: v.saisie === true };
   } catch {
+    try {
+      localStorage.removeItem(KEY);
+    } catch {
+      /* stockage indisponible */
+    }
     return { parcelle: DEFAULT_PARCELLE, saisie: false };
   }
 }

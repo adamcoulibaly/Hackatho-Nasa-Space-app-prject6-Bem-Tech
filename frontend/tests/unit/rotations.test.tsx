@@ -22,7 +22,7 @@ describe("RotationCard", () => {
   it("ne marque pas la rotation actuelle comme recommandée", () => {
     render(<RotationCard rotation={A} />);
     expect(screen.queryByText("Recommandée")).not.toBeInTheDocument();
-    expect(screen.getByText("Actuelle")).toBeInTheDocument();
+    expect(screen.getByText("Actuelle (exemple)")).toBeInTheDocument();
   });
 });
 

@@ -6,6 +6,8 @@ import { ConfianceBreakdown } from "@/components/ConfianceBreakdown";
 import { RainSimulator } from "@/components/RainSimulator";
 import { getRotation, getRotations } from "@/lib/data";
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return (await getRotations()).map((r) => ({ id: r.id }));
 }
@@ -31,7 +33,7 @@ export default async function RotationPage({ params }: { params: Promise<{ id: s
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-2">
             <span className="text-[13px] uppercase tracking-[0.14em] text-muted">
-              {rotation.recommandee ? "Recommandée pour vos priorités" : rotation.tag} · valeurs d'exemple
+              {rotation.recommandee ? "Recommandée (exemple)" : rotation.tag} · valeurs d'exemple
             </span>
             <h1 className="m-0 font-display text-[clamp(30px,3.4vw,46px)] font-bold leading-[1.05] tracking-[-0.04em]">
               Rotation {rotation.id}

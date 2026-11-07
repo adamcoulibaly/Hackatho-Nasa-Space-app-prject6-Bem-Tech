@@ -18,7 +18,7 @@ const mois = z.number().int().min(1).max(12);
 
 /* ---------- climat ---------- */
 export const ClimatSchema = z.object({
-  indicateurs: z.array(z.object({ label: z.string(), valeur: z.string(), source: z.string(), accent: z.boolean().optional() })).length(4),
+  indicateurs: z.array(z.object({ label: z.string(), valeur: z.string(), source: z.string(), accent: z.boolean().optional() })).min(1),
   pluieMensuelle: z.array(z.number().nonnegative()).length(12),
   saisonPluies: z.object({ debut: mois, fin: mois }),
   matrice: z
@@ -30,9 +30,9 @@ export const ClimatSchema = z.object({
         valeurs: z.array(z.number().int().min(0).max(4)).length(12),
       }),
     )
-    .length(6),
-  grace: z.array(z.object({ annee: z.number().int(), ecart: z.number().nullable() })).length(21),
-  alertes: z.array(z.object({ type: z.enum(["surveiller", "favorable"]), titre: z.string(), texte: z.string() })).length(3),
+    .min(1),
+  grace: z.array(z.object({ annee: z.number().int(), ecart: z.number().nullable() })).min(2),
+  alertes: z.array(z.object({ type: z.enum(["surveiller", "favorable"]), titre: z.string(), texte: z.string() })).min(1),
 });
 export type Climat = z.infer<typeof ClimatSchema>;
 
@@ -76,13 +76,13 @@ export const CouchesSchema = z.array(CoucheSchema).length(4);
 
 /* ---------- méthode ---------- */
 export const SourcesSchema = z.object({
-  etapes: z.array(z.object({ titre: z.string(), texte: z.string() })).length(5),
+  etapes: z.array(z.object({ titre: z.string(), texte: z.string() })).min(1),
   sources: z
     .array(z.object({ nom: z.string(), mesure: z.string(), finesse: z.string(), finesseClasse: z.enum(["fine", "moyenne", "grossiere"]), usage: z.string(), priorite: z.enum(["MVP", "Bonus"]) }))
-    .length(8),
+    .min(1),
   approches: z
     .array(z.object({ id: z.string(), nom: z.string(), role: z.string(), verdict: z.enum(["Retenu", "Testé", "Écarté"]), explicabilite: niveau, besoinDonnees: niveau, precision: niveau, description: z.string() }))
-    .length(4),
+    .min(1),
   humainDecide: z.array(z.string()).min(1),
 });
 export type Sources = z.infer<typeof SourcesSchema>;
@@ -90,4 +90,4 @@ export type Sources = z.infer<typeof SourcesSchema>;
 /* ---------- lexique ---------- */
 export const TermeSchema = z.object({ terme: z.string(), tag: z.string(), definition: z.string(), pourquoi: z.string() });
 export type Terme = z.infer<typeof TermeSchema>;
-export const LexiqueSchema = z.array(TermeSchema).length(14);
+export const LexiqueSchema = z.array(TermeSchema).min(1);
