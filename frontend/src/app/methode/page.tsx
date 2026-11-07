@@ -1,15 +1,13 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { ApproachPicker } from "@/components/ApproachPicker";
-import { ConfianceBreakdown } from "@/components/ConfianceBreakdown";
-import { getRotations, getSources } from "@/lib/data";
+import { getSources } from "@/lib/data";
 
 export const metadata = { title: "Méthode et incertitude — ForoSat" };
 
 const FINESSE = { fine: "bg-[#D7F0E2] text-[#00502B]", moyenne: "bg-[#FDE7CC] text-[#7A3D00]", grossiere: "bg-[#E7ECE6] text-ink" };
 
 export default async function MethodePage() {
-  const [src, rotations] = await Promise.all([getSources(), getRotations()]);
-  const exemple = rotations.find((r) => r.recommandee) ?? rotations[0];
+  const src = await getSources();
   return (
     <>
       <SiteHeader />
@@ -69,8 +67,14 @@ export default async function MethodePage() {
 
         <div data-stagger className="grid gap-5 lg:grid-cols-2">
           <section className="flex flex-col gap-4 rounded-[28px] bg-white p-[26px]">
-            <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">Confiance : exemple de la rotation {exemple.id}</h2>
-            <ConfianceBreakdown confiance={exemple.confiance} />
+            <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">Comment la confiance est calculée</h2>
+            <ul className="m-0 flex flex-col gap-2 pl-5 text-[15px] leading-normal">
+              <li><strong>Accord entre les sources :</strong> combien de sources indépendantes confirment le climat (aujourd'hui NASA POWER seule).</li>
+              <li><strong>Finesse des données :</strong> la maille NASA POWER (environ 50 km) est grossière face à une parcelle de quelques hectares.</li>
+              <li><strong>Années d'historique :</strong> 20 ans ou plus donnent la note maximale.</li>
+              <li><strong>Vérification sur le terrain :</strong> aucune mesure de sol ni retour d'agriculteur pour l'instant.</li>
+            </ul>
+            <p className="m-0 text-sm text-muted">La moyenne des quatre donne le niveau affiché sur chaque rotation : élevée, moyenne ou faible.</p>
           </section>
           <section className="flex flex-col gap-4 rounded-[28px] bg-ink p-[26px] text-paper">
             <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">Là où l'humain décide</h2>

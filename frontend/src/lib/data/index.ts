@@ -2,8 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import type { ZodType } from "zod";
 import {
-  ClimatSchema, RotationsSchema, CulturesSchema, type Culture, CouchesSchema, SourcesSchema, LexiqueSchema,
-  type Climat, type Rotation, type Couche, type Sources, type Terme,
+  ClimatSchema, CulturesSchema, type Culture, CouchesSchema, SourcesSchema, LexiqueSchema,
+  type Climat, type Couche, type Sources, type Terme,
 } from "@/lib/contract";
 
 export class DataError extends Error {
@@ -43,15 +43,10 @@ async function load<T>(name: string, schema: ZodType<T>, dir: string = dataDir()
 }
 
 export const getClimat = (): Promise<Climat> => load("climat", ClimatSchema);
-export const getRotations = (): Promise<Rotation[]> => load("rotations", RotationsSchema);
 export const getCouches = (): Promise<Couche[]> => load("couches", CouchesSchema);
 export const getSources = (): Promise<Sources> => load("sources", SourcesSchema);
 export const getLexique = (): Promise<Terme[]> => load("lexique", LexiqueSchema);
 
-export async function getRotation(id: string): Promise<Rotation | null> {
-  const all = await getRotations();
-  return all.find((r) => r.id === id) ?? null;
-}
 
 /** Climat réel (pluie, chaleur) d'une région, les autres indicateurs restant en exemple. */
 export function getClimatRegion(id: string): Promise<Climat> {

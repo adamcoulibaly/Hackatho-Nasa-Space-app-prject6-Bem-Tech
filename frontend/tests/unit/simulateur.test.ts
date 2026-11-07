@@ -1,25 +1,23 @@
-import fs from "node:fs";
-import path from "node:path";
-import { RotationsSchema } from "@/lib/contract";
 import { simulate } from "@/lib/simulateur";
+import { rotations } from "../helpers/moteur";
 
-const [A, B, C] = RotationsSchema.parse(JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../../data/pilot/korhogo/rotations.json"), "utf8")));
+const [A, B, C] = rotations();
+const moins = (v: number, n: number) => Math.max(1, v - n);
 
 describe("simulate", () => {
   it("sans changement, renvoie les niveaux d'origine", () => {
-    expect(simulate(B, 0, 0)).toEqual({ secheresse: 3, eau: 3 });
+    expect(simulate(B, 0, 0)).toEqual({ secheresse: B.scores.secheresse, eau: B.scores.eau });
   });
   it("30 % de pluie en moins fait perdre 2 niveaux, borné à 1", () => {
-    expect(simulate(B, -30, 0)).toEqual({ secheresse: 1, eau: 1 });
+    expect(simulate(B, -30, 0)).toEqual({ secheresse: moins(B.scores.secheresse, 2), eau: moins(B.scores.eau, 2) });
   });
-  it("15 % de pluie en moins fait perdre 1 niveau", () => {
-    expect(simulate(C, -15, 0)).toEqual({ secheresse: 4, eau: 4 });
+  it("15 % de pluie en moins ou 2 °C de plus font perdre 1 niveau", () => {
+    const attendu = { secheresse: moins(C.scores.secheresse, 1), eau: moins(C.scores.eau, 1) };
+    expect(simulate(C, -15, 0)).toEqual(attendu);
+    expect(simulate(C, 0, 2)).toEqual(attendu);
   });
-  it("2 °C de plus fait perdre 1 niveau", () => {
-    expect(simulate(C, 0, 2)).toEqual({ secheresse: 4, eau: 4 });
-  });
-  it("plus de pluie ne fait jamais monter au-delà de 5", () => {
-    expect(simulate(C, 20, 0)).toEqual({ secheresse: 5, eau: 5 });
+  it("plus de pluie ne change rien", () => {
+    expect(simulate(C, 20, 0)).toEqual({ secheresse: C.scores.secheresse, eau: C.scores.eau });
   });
   it("ne modifie pas la rotation d'origine", () => {
     const avant = JSON.stringify(A);

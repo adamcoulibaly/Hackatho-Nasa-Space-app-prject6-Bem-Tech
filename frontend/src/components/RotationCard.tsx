@@ -13,7 +13,7 @@ export function RotationCard({ rotation, dark = false }: { rotation: Rotation; d
           {r.recommandee ? "Recommandée" : r.tag}
         </span>
       </div>
-      <div className="flex flex-wrap items-center gap-1.5 font-display text-xl font-bold tracking-[-0.02em]">
+      <div data-testid="sequence" className="flex flex-wrap items-center gap-1.5 font-display text-xl font-bold tracking-[-0.02em]">
         {r.sequence.map((c, i) => (
           <span key={c + i} className="contents">
             <span>{c}</span>

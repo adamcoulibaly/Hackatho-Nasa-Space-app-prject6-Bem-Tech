@@ -5,7 +5,8 @@ import { ParcelleProvider } from "@/lib/parcelle/context";
 import { ParcelleForm } from "@/components/ParcelleForm";
 import { RainSimulator } from "@/components/RainSimulator";
 import { GraceChart } from "@/components/GraceChart";
-import { LexiqueSchema, RotationsSchema, ClimatSchema } from "@/lib/contract";
+import { LexiqueSchema, ClimatSchema } from "@/lib/contract";
+import { rotations as calculer } from "../helpers/moteur";
 import { DEFAULT_PARCELLE } from "@/lib/parcelle/validate";
 import * as rotationPage from "@/app/rotations/[id]/page";
 import * as fichePage from "@/app/fiche/[id]/page";
@@ -13,7 +14,7 @@ import RotationsPage from "@/app/rotations/page";
 
 const D = path.resolve(__dirname, "../../../data/pilot/korhogo");
 const load = (n: string) => JSON.parse(fs.readFileSync(path.join(D, `${n}.json`), "utf8"));
-const rotations = RotationsSchema.parse(load("rotations"));
+const rotations = calculer();
 
 describe("I-1 : le formulaire reprend la parcelle sauvegardée", () => {
   beforeEach(() => localStorage.clear());
@@ -56,12 +57,12 @@ describe("I-4 : identifiants inconnus", () => {
   });
 });
 
-describe("I-5 : résultats d'exemple", () => {
+describe("I-5 : les résultats sont calculés, plus présentés comme exemple", () => {
   beforeEach(() => localStorage.setItem("forosat.parcelle", JSON.stringify({ parcelle: DEFAULT_PARCELLE, saisie: true })));
-  it("indique que les choix ne modifient pas encore le résultat", async () => {
+  it("la rotation actuelle est calculée et la mention d'exemple a disparu", async () => {
     render(<ParcelleProvider>{await RotationsPage()}</ParcelleProvider>);
-    expect(await screen.findByText(/vos choix ne modifient pas encore ce résultat/i)).toBeInTheDocument();
-    expect(screen.getByText("Actuelle (exemple)")).toBeInTheDocument();
+    expect(await screen.findByText("Actuelle")).toBeInTheDocument();
+    expect(screen.queryByText(/ne modifient pas encore/i)).not.toBeInTheDocument();
   });
 });
 

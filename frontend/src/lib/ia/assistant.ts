@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CRITERES, CRITERE_LABELS, type Climat, type Rotation } from "@/lib/contract";
+import { CRITERES, CRITERE_LABELS, RotationSchema, type Climat, type Rotation } from "@/lib/contract";
 import { scoreWord } from "@/lib/format";
 
 /** Fournisseur compatible OpenAI (OpenRouter par défaut, Groq, etc.). La clé reste côté serveur. */
@@ -16,7 +16,8 @@ export function configDepuisEnv(env: Record<string, string | undefined>): Config
 }
 
 export const DemandeSchema = z.object({
-  rotationId: z.enum(["A", "B", "C"]),
+  rotation: RotationSchema,
+  region: z.string().regex(/^[a-z-]+$/),
   question: z.string().trim().max(300).optional(),
 });
 export type Demande = z.infer<typeof DemandeSchema>;

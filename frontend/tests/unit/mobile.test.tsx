@@ -2,7 +2,8 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import fs from "node:fs";
 import path from "node:path";
-import { ClimatSchema, RotationsSchema } from "@/lib/contract";
+import { ClimatSchema } from "@/lib/contract";
+import { rotations as calculer } from "../helpers/moteur";
 import { ClimatTabs } from "@/components/ClimatTabs";
 import { Bienvenue } from "@/components/Bienvenue";
 import { BottomNav } from "@/components/BottomNav";
@@ -10,7 +11,7 @@ import { Tableau } from "@/components/Tableau";
 
 const load = (n: string) => JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../../data/pilot/korhogo/${n}.json`), "utf8"));
 const climat = ClimatSchema.parse(load("climat"));
-const rotations = RotationsSchema.parse(load("rotations"));
+const rotations = calculer();
 
 describe("contrat : onglets et état actuel", () => {
   it("4 onglets de 12 valeurs et un état actuel", () => {
@@ -68,7 +69,7 @@ describe("Tableau", () => {
     expect(screen.getByText(/Sol nu jusqu'en/)).toBeInTheDocument();
     expect(screen.getAllByTestId("tuile")).toHaveLength(4);
     expect(screen.getByRole("link", { name: /Rotation conseillée/ })).toHaveAttribute("href", "/rotations");
-    expect(screen.getByText("Maïs → Arachide → Coton")).toBeInTheDocument();
+    expect(screen.getByText(rotations[1].sequence.join(" → "))).toBeInTheDocument();
     expect(screen.getAllByTestId("ndvi-mois")).toHaveLength(12);
   });
 });

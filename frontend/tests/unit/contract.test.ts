@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { ClimatSchema, RotationsSchema, CouchesSchema, SourcesSchema, LexiqueSchema } from "@/lib/contract";
+import { ClimatSchema, RotationSchema, CouchesSchema, SourcesSchema, LexiqueSchema } from "@/lib/contract";
+import { rotations } from "../helpers/moteur";
 
 const DIR = path.resolve(__dirname, "../../../data/pilot/korhogo");
 const load = (n: string) => JSON.parse(fs.readFileSync(path.join(DIR, `${n}.json`), "utf8"));
@@ -18,20 +19,6 @@ describe("contrat de données — Korhogo", () => {
     expect(c.alertes).toHaveLength(3);
   });
 
-  it("rotations : A, B, C avec séquences et scores de la maquette", () => {
-    const r = RotationsSchema.parse(load("rotations"));
-    expect(r.map((x) => x.id)).toEqual(["A", "B", "C"]);
-    expect(r.map((x) => x.sequence)).toEqual([
-      ["Maïs", "Coton"],
-      ["Maïs", "Arachide", "Coton"],
-      ["Sorgho", "Niébé", "Maïs"],
-    ]);
-    const b = r[1];
-    expect(b.scores).toEqual({ fertilite: 4, eau: 3, secheresse: 3, revenu: 4, erosion: 3, fourrage: 4, marche: 4 });
-    for (const x of r) expect(x.lacune.length).toBeGreaterThan(0);
-    expect(b.confiance.niveau).toBe("moyenne");
-  });
-
   it("couches, sources et lexique", () => {
     expect(CouchesSchema.parse(load("couches"))).toHaveLength(4);
     const s = SourcesSchema.parse(load("sources"));
@@ -41,8 +28,7 @@ describe("contrat de données — Korhogo", () => {
   });
 
   it("rejette un score hors de 1 à 5", () => {
-    const r = load("rotations");
-    r[0].scores.fertilite = 6;
-    expect(() => RotationsSchema.parse(r)).toThrow();
+    const r = rotations()[0];
+    expect(() => RotationSchema.parse({ ...r, scores: { ...r.scores, fertilite: 6 } })).toThrow();
   });
 });

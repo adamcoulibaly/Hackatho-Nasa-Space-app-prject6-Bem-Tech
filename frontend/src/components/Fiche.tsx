@@ -43,11 +43,11 @@ export function Fiche({ rotation }: { rotation: Rotation }) {
         <section className="flex flex-col gap-1 rounded-[22px] bg-[#FDE7CC] px-[18px] py-4 text-[#5C2E00]">
           <h2 className="m-0 text-base font-bold">Attention</h2>
           {r.risques.map((x) => <p key={x} className="m-0 text-base leading-snug">{x}</p>)}
-          <p className="m-0 text-base leading-snug">Lacune : {r.lacune}</p>
+          <p className="m-0 text-base leading-snug">Lacunes : {r.lacune}</p>
         </section>
 
         <p className="m-0 border-t border-[#DDE3DC] pt-3.5 text-[13px] leading-normal text-muted">
-          Confiance : {r.confiance.niveau} · Données satellites NASA · valeurs d'exemple<br />
+          Confiance : {r.confiance.niveau} · Climat NASA POWER · fiches cultures à valider<br />
           ForoSat est une aide à la décision : il ne remplace pas l'avis d'un conseiller agricole.
         </p>
       </div>

@@ -8,16 +8,16 @@ export function prochaineCulture(r: Rotation): { culture: string; moisSemis: str
   return { culture: entree.culture, moisSemis: MOIS[entree.debutMois - 1] };
 }
 
-export function whatsappUrl(r: Rotation, origin: string): string {
+export function whatsappUrl(r: Rotation, lienAbsolu: string): string {
   const { culture, moisSemis } = prochaineCulture(r);
   const texte = [
-    `ForoSat — conseil de rotation ${r.id}`,
+    `ForoSat — rotation ${r.id}`,
     `${r.sequence.join(" → ")}`,
-    `À semer ensuite : ${culture}, vers ${moisSemis}.`,
+    `À semer : ${culture}, vers ${moisSemis}.`,
     r.note,
-    `Lacune : ${r.lacune}`,
-    `Confiance : ${r.confiance.niveau} (données d'exemple)`,
-    `Détail : ${origin}/fiche/${r.id}`,
+    `Lacunes : ${r.lacune}`,
+    `Confiance : ${r.confiance.niveau}`,
+    `Fiche : ${lienAbsolu}`,
   ].join("\n");
   return `https://wa.me/?text=${encodeURIComponent(texte)}`;
 }

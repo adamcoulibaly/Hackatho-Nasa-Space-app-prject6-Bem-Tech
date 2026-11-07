@@ -11,8 +11,8 @@ test("parcours complet : parcelle → climat → rotations → détail → fiche
   await page.getByRole("link", { name: "Voir le détail de la rotation B" }).click();
   await expect(page).toHaveURL(/\/rotations\/B$/);
   await page.getByRole("link", { name: "Partager la fiche" }).click();
-  await expect(page).toHaveURL(/\/fiche\/B$/);
-  await expect(page.getByText("Maïs → Arachide → Coton")).toBeVisible();
+  await expect(page).toHaveURL(/\/fiche\/B\?r=poro&/);
+  await expect(page.getByText(/^Rotation B · /)).toBeVisible();
   await expect(page.getByRole("link", { name: "Envoyer sur WhatsApp" })).toHaveAttribute("href", /^https:\/\/wa\.me\/\?text=.*fiche%2FB/);
 });
 
@@ -133,6 +133,9 @@ test("carte : la couche SMAP signale qu'elle commence en 2015", async ({ page })
 
 test("assistant IA sans clé : l'écran le dit clairement", async ({ page }) => {
   test.skip(!!process.env.LLM_API_KEY, "une clé est configurée");
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.waitForURL(/\/climat$/);
   await page.goto("/rotations/B");
   await page.getByRole("button", { name: "Expliquer simplement" }).click();
   await expect(page.getByRole("alert").filter({ hasText: "pas encore configuré" })).toBeVisible();
@@ -178,7 +181,7 @@ test("toutes les régions : le climat suit la région choisie", async ({ page })
   await expect(page.getByText(/NASA POWER, Bouaké/)).toBeVisible();
   await expect(page.getByText(/exemples de Korhogo/)).toBeVisible();
   await page.goto("/rotations");
-  await expect(page.getByText(/exemple calculé pour Korhogo/)).toBeVisible();
+  await expect(page.getByText(/Étape 3 sur 3 · Gbêkê/i)).toBeVisible();
 });
 
 test("carte : le mode dessin garde les styles de Leaflet (tuiles visibles)", async ({ page }) => {
@@ -191,4 +194,23 @@ test("carte : le mode dessin garde les styles de Leaflet (tuiles visibles)", asy
   await page.getByRole("button", { name: "Annuler" }).click();
   await expect(carte).toHaveClass(/leaflet-container/);
   await expect(carte).not.toHaveClass(/leaflet-crosshair/);
+});
+
+test("les priorités changent la rotation proposée", async ({ page }) => {
+  const sequenceB = async () => (await page.locator("article", { has: page.getByRole("link", { name: "Voir le détail de la rotation B" }) }).getByTestId("sequence").innerText()).replace(/\s+/g, " ");
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.goto("/rotations");
+  const avant = await sequenceB();
+  await page.goto("/parcelle");
+  for (const p of ["Rendre mon sol plus fertile", "Garder un bon revenu", "Nourrir mon bétail (fourrage)"]) await page.getByLabel(p).uncheck();
+  for (const p of ["Utiliser moins d'eau", "Résister aux sécheresses"]) await page.getByLabel(p).check();
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.goto("/rotations");
+  expect(await sequenceB()).not.toBe(avant);
+});
+
+test("un lien de fiche incomplet est signalé", async ({ page }) => {
+  await page.goto("/fiche/B?r=poro");
+  await expect(page.getByRole("heading", { name: "Lien incomplet" })).toBeVisible();
 });

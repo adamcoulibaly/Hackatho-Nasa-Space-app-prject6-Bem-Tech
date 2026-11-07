@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ClimatSchema, type Climat } from "@/lib/contract";
+import type { Climat } from "@/lib/contract";
+import { useClimatRegion } from "@/lib/useClimatRegion";
 import { useParcelle } from "@/lib/parcelle/context";
 import { regionParId, REGION_PILOTE } from "@/lib/regions";
 import { RainChart } from "./RainChart";
@@ -21,30 +21,12 @@ const Card = ({ titre, aide, children, className = "" }: { titre: string; aide?:
   </section>
 );
 
-type Etat = { statut: "pret"; climat: Climat } | { statut: "chargement" } | { statut: "erreur" };
-
-/** Climat de la région choisie : la zone pilote est déjà chargée, les autres régions viennent de /api/climat/<id>. */
+/** Climat de la région choisie (voir useClimatRegion). */
 export function ClimatVue({ initial }: { initial: Climat }) {
   const { parcelle } = useParcelle();
   const pilote = initial.meta?.region ?? REGION_PILOTE;
   const region = regionParId(parcelle.region);
-  const [etat, setEtat] = useState<Etat>({ statut: "pret", climat: initial });
-
-  useEffect(() => {
-    if (parcelle.region === pilote) {
-      setEtat({ statut: "pret", climat: initial });
-      return;
-    }
-    let annule = false;
-    setEtat({ statut: "chargement" });
-    fetch(`/api/climat/${parcelle.region}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((json) => !annule && setEtat({ statut: "pret", climat: ClimatSchema.parse(json) }))
-      .catch(() => !annule && setEtat({ statut: "erreur" }));
-    return () => {
-      annule = true;
-    };
-  }, [parcelle.region, pilote, initial]);
+  const etat = useClimatRegion(initial, parcelle.region);
 
   const entete = (
     <div className="flex flex-wrap items-end justify-between gap-4">

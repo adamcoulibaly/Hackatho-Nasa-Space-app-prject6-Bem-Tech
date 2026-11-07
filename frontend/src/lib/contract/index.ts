@@ -99,7 +99,6 @@ export const RotationSchema = z.object({
     .min(1),
 });
 export type Rotation = z.infer<typeof RotationSchema>;
-export const RotationsSchema = z.array(RotationSchema).length(3);
 
 /* ---------- couches de la carte (tuiles NASA GIBS, sans clé) ---------- */
 export const CoucheSchema = z.object({
