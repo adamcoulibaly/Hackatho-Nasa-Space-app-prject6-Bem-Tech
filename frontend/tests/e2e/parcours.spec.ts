@@ -251,3 +251,16 @@ test("rejeu : la rotation est rejouée sur les saisons réelles, chaque saison s
   await expect(pastille).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByText(/^2015 · /)).toBeVisible();
 });
+
+test("2050 : la projection s'affiche et le scénario se change", async ({ page }) => {
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.goto("/rotations");
+  await expect(page.getByText("Tient en 2050")).toHaveCount(1);
+  await page.goto("/rotations/B");
+  await expect(page.getByRole("heading", { name: "Votre champ vers 2050" })).toBeVisible();
+  await expect(page.getByText("Projection, pas prévision")).toBeVisible();
+  await page.getByRole("button", { name: "Pessimiste" }).click();
+  await expect(page.getByTestId("barre-ssp585")).toHaveAttribute("data-active", "true");
+  await expect(page.getByTestId("barre-ssp245")).toHaveAttribute("data-active", "false");
+});

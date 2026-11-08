@@ -1,9 +1,10 @@
-import type { Climat, Culture, Rotation, Saisons } from "@/lib/contract";
+import type { Climat, Culture, Projections, Rotation, Saisons } from "@/lib/contract";
 import { construireRotation } from "./explications";
 import type { Parcelle } from "@/lib/parcelle/validate";
 import { extraireClimat, type ClimatResume } from "./climat";
 import { notesBrutes, notesRotation, scorePondere, type Notes } from "./notes";
 import { rejouer } from "./rejeu";
+import { choisirTient2050, projeter } from "./projection";
 
 export type Choix = { id: "A" | "B" | "C"; sequence: string[]; cultures: Culture[]; scores: Notes; score: number };
 
@@ -61,13 +62,24 @@ export type RotationCalculee = Rotation & { score: number };
  * Les 3 rotations complètes (A actuelle, B et C alternatives), ou null si aucune culture n'est saisie.
  * `saisons` : verdicts des saisons réelles de la région ; null si leur chargement a échoué (signalé comme lacune).
  */
-export function calculerRotations(p: Parcelle, climat: Climat, cultures: Culture[], saisons?: Saisons | null): RotationCalculee[] | null {
+export function calculerRotations(
+  p: Parcelle,
+  climat: Climat,
+  cultures: Culture[],
+  saisons?: Saisons | null,
+  projections?: Projections | null,
+): RotationCalculee[] | null {
   const choix = choisirRotations(p, climat, cultures, saisons);
   if (!choix) return null;
   const cl = extraireClimat(climat);
-  return choix.map((ch) =>
-    construireRotation(ch, { climat, cl, p, scoreActuelle: choix[0].score, rejeu: saisons ? rejouer(ch.sequence, saisons) : undefined, sansRejeu: saisons === null }),
-  );
+  const rotations = choix.map((ch) => {
+    const rejeu = saisons ? rejouer(ch.sequence, saisons) : undefined;
+    const projection = rejeu && projections ? projeter(ch.sequence, rejeu, projections) ?? undefined : undefined;
+    const r = construireRotation(ch, { climat, cl, p, scoreActuelle: choix[0].score, rejeu, sansRejeu: saisons === null, sansProjections: projections === null });
+    return projection ? { ...r, projection } : r;
+  });
+  const robuste = choisirTient2050(rotations);
+  return rotations.map((r) => (r.id === robuste ? { ...r, tient2050: true as const } : r));
 }
 
 /** Rotation à mettre en avant : la recommandée, sinon l'actuelle (rien ne la bat pour ces priorités). */

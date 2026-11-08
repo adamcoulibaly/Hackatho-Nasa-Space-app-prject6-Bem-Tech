@@ -6,6 +6,8 @@ import { calculerRotations, type RotationCalculee } from "@/lib/moteur/rotations
 import type { Parcelle } from "@/lib/parcelle/validate";
 import { useClimatRegion } from "@/lib/useClimatRegion";
 import { useSaisons } from "@/lib/useSaisons";
+import { useDonneeRegion } from "@/lib/useDonneeRegion";
+import { ProjectionsSchema } from "@/lib/contract";
 
 export type EtatRotations =
   | { statut: "chargement" }
@@ -17,11 +19,12 @@ export type EtatRotations =
 export function useRotations(initial: Climat, cultures: Culture[], parcelle: Parcelle): EtatRotations {
   const climat = useClimatRegion(initial, parcelle.region);
   const saisons = useSaisons(parcelle.region);
+  const projections = useDonneeRegion("projections", parcelle.region, ProjectionsSchema);
   return useMemo(() => {
     if (climat.statut !== "pret") return climat;
     // On attend les saisons (rejeu) ; si elles manquent, les rotations sont calculées sans, et la lacune le dit.
-    if (saisons === undefined) return { statut: "chargement" };
-    const rotations = calculerRotations(parcelle, climat.climat, cultures, saisons);
+    if (saisons === undefined || projections === undefined) return { statut: "chargement" };
+    const rotations = calculerRotations(parcelle, climat.climat, cultures, saisons, projections);
     return rotations ? { statut: "pret", rotations, climat: climat.climat } : { statut: "vide" };
-  }, [climat, saisons, cultures, parcelle]);
+  }, [climat, saisons, projections, cultures, parcelle]);
 }

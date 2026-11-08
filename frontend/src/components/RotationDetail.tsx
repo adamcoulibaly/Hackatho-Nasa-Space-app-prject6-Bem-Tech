@@ -7,6 +7,8 @@ import { useRotations } from "@/lib/useRotations";
 import { lienFiche } from "@/lib/moteur/fiche-lien";
 import { CalendrierTrois } from "./CalendrierTrois";
 import { FriseRejeu } from "./FriseRejeu";
+import { Projection2050 } from "./Projection2050";
+import { phrase2050 } from "@/lib/moteur/projection";
 import { ConfianceBreakdown } from "./ConfianceBreakdown";
 import { RainSimulator } from "./RainSimulator";
 import { AssistantIA } from "./AssistantIA";
@@ -51,6 +53,12 @@ export function RotationDetail({ id, initial, cultures }: { id: "A" | "B" | "C";
 
       {rotation.rejeu && rotation.rejeu.total > 0 && (
         <Section titre={`Rejouée sur ${rotation.rejeu.total} saisons réelles`}><FriseRejeu rejeu={rotation.rejeu} /></Section>
+      )}
+
+      {rotation.projection && (
+        <Section titre="Votre champ vers 2050">
+          <Projection2050 projection={rotation.projection} phrase={phrase2050(etat.rotations)} />
+        </Section>
       )}
 
       <div data-stagger className="grid gap-[22px] lg:grid-cols-2">

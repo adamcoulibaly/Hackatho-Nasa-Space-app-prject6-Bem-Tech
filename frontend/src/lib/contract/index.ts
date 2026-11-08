@@ -112,6 +112,30 @@ export const RejeuSchema = z.object({
 });
 export type Rejeu = z.infer<typeof RejeuSchema>;
 
+const PartsModeleSchema = z.object({ reference: z.number().nullable(), futur: z.number().nullable() });
+/** Projections 2050 (data/projections/<region>.json) : part des bonnes saisons par culture, scénario et modèle. */
+export const ProjectionsSchema = z.object({
+  meta: z.object({
+    region: z.string(),
+    source: z.string(),
+    modeles: z.array(z.string()).min(1),
+    scenarios: z.object({ ssp245: z.string(), ssp585: z.string() }),
+    reference: z.string(),
+    futur: z.string(),
+  }),
+  cultures: z.record(z.string(), z.object({ ssp245: z.record(z.string(), PartsModeleSchema), ssp585: z.record(z.string(), PartsModeleSchema) })),
+});
+export type Projections = z.infer<typeof ProjectionsSchema>;
+
+const FourchetteSchema = z.object({ min: z.number().int(), max: z.number().int(), desaccord: z.boolean() });
+/** Bonnes saisons d'une rotation aujourd'hui (rejeu réel) et vers 2050 (fourchette des modèles), sur le même nombre de saisons. */
+export const ProjectionSchema = z.object({
+  aujourdhui: z.number().int(),
+  total: z.number().int(),
+  scenarios: z.object({ ssp245: FourchetteSchema, ssp585: FourchetteSchema }),
+});
+export type Projection = z.infer<typeof ProjectionSchema>;
+
 export const RotationSchema = z.object({
   id: z.enum(["A", "B", "C"]),
   tag: z.string(),
@@ -133,6 +157,9 @@ export const RotationSchema = z.object({
     .array(z.object({ annee: z.number().int().min(1).max(3), culture: z.string(), type: z.enum(["culture", "couverture", "sol_nu"]), debutMois: mois, finMois: mois }))
     .min(1),
   rejeu: RejeuSchema.optional(),
+  projection: ProjectionSchema.optional(),
+  /** Rotation dont le minimum pessimiste vers 2050 est le plus haut (une seule). */
+  tient2050: z.literal(true).optional(),
 });
 export type Rotation = z.infer<typeof RotationSchema>;
 

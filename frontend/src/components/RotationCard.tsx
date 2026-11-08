@@ -7,10 +7,13 @@ export function RotationCard({ rotation, dark = false }: { rotation: Rotation; d
   const muted = dark ? "text-[#C9D4CD]" : "text-muted";
   return (
     <article className={`lift flex min-w-0 flex-col gap-5 rounded-[28px] p-5 sm:p-[26px] ${dark ? "bg-ink text-paper" : "bg-white text-ink"}`}>
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <span className={`font-display text-[40px] font-extrabold leading-none tracking-[-0.05em] ${r.recommandee ? "text-orange" : dark ? "text-paper" : "text-muted"}`}>{r.id}</span>
-        <span className={`rounded-full px-3 py-1.5 text-[13px] font-bold ${r.recommandee ? "bg-orange text-ink" : "bg-[#E7ECE6] text-ink"}`}>
-          {r.recommandee ? "Recommandée" : r.tag}
+        <span className="flex flex-wrap justify-end gap-1.5">
+          {r.tient2050 && <span className="rounded-full bg-green px-3 py-1.5 text-[13px] font-bold text-ink">Tient en 2050</span>}
+          <span className={`rounded-full px-3 py-1.5 text-[13px] font-bold ${r.recommandee ? "bg-orange text-ink" : "bg-[#E7ECE6] text-ink"}`}>
+            {r.recommandee ? "Recommandée" : r.tag}
+          </span>
         </span>
       </div>
       <div data-testid="sequence" className="flex flex-wrap items-center gap-1.5 font-display text-xl font-bold tracking-[-0.02em]">
