@@ -72,7 +72,7 @@ test("le tableau de bord résume le champ et mène aux rotations", async ({ page
   await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
   await page.waitForURL(/\/climat$/);
   await page.goto("/tableau");
-  await expect(page.getByText(/Sol nu jusqu'en/)).toBeVisible();
+  await expect(page.getByText(/Mesures NASA POWER du/)).toBeVisible();
   await page.getByRole("link", { name: /Rotation conseillée/ }).click();
   await expect(page).toHaveURL(/\/rotations$/);
 });
@@ -179,7 +179,7 @@ test("toutes les régions : le climat suit la région choisie", async ({ page })
   await expect(page).toHaveURL(/\/climat$/);
   await expect(page.getByText(/Étape 2 sur 3 · Gbêkê/i)).toBeVisible();
   await expect(page.getByText(/NASA POWER, Bouaké/)).toBeVisible();
-  await expect(page.getByText(/exemples de Korhogo/)).toBeVisible();
+  await expect(page.getByText(/compte NASA Earthdata/)).toBeVisible();
   await page.goto("/rotations");
   await expect(page.getByText(/Étape 3 sur 3 · Gbêkê/i)).toBeVisible();
 });

@@ -42,7 +42,8 @@ async function load<T>(name: string, schema: ZodType<T>, dir: string = dataDir()
   return result.data;
 }
 
-export const getClimat = (): Promise<Climat> => load("climat", ClimatSchema);
+/** Climat de la zone pilote (Korhogo, région du Poro). */
+export const getClimat = (): Promise<Climat> => load("poro", ClimatSchema, regionsDir());
 export const getCouches = (): Promise<Couche[]> => load("couches", CouchesSchema);
 export const getSources = (): Promise<Sources> => load("sources", SourcesSchema);
 export const getLexique = (): Promise<Terme[]> => load("lexique", LexiqueSchema);

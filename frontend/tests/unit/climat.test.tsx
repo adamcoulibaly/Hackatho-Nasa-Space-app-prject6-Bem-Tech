@@ -8,11 +8,12 @@ import { NeedParcelle } from "@/components/NeedParcelle";
 import { ParcelleProvider } from "@/lib/parcelle/context";
 import { RequireParcelle } from "@/components/RequireParcelle";
 
-const climat = ClimatSchema.parse(JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../../data/pilot/korhogo/climat.json"), "utf8")));
+const climat = ClimatSchema.parse(JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../../data/regions/poro.json"), "utf8")));
+import { GRACE_TEST } from "../helpers/grace";
 
 describe("GraceChart", () => {
   it("rend 21 colonnes dont 2 lacunes (2017, 2018)", () => {
-    const { container } = render(<GraceChart data={climat.grace} />);
+    const { container } = render(<GraceChart data={GRACE_TEST} />);
     expect(container.querySelectorAll("[data-annee]")).toHaveLength(21);
     const trous = [...container.querySelectorAll('[data-gap="true"]')].map((e) => e.getAttribute("data-annee"));
     expect(trous).toEqual(["2017", "2018"]);

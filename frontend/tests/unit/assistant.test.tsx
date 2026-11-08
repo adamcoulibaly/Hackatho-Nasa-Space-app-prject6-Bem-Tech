@@ -7,7 +7,7 @@ import { rotations } from "../helpers/moteur";
 import { configDepuisEnv, construireMessages, repondre, DemandeSchema } from "@/lib/ia/assistant";
 import { AssistantIA } from "@/components/AssistantIA";
 
-const load = (n: string) => JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../../data/pilot/korhogo/${n}.json`), "utf8"));
+const load = (n: string) => JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../../data/regions/${n === "climat" ? "poro" : n}.json`), "utf8"));
 const climat = ClimatSchema.parse(load("climat"));
 const [, B] = rotations();
 

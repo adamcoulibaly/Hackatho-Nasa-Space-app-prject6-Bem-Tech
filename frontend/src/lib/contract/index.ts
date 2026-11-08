@@ -33,7 +33,8 @@ export const ClimatSchema = z.object({
       }),
     )
     .min(1),
-  grace: z.array(z.object({ annee: z.number().int(), ecart: z.number().nullable() })).min(2),
+  /** Eau stockée (GRACE) : absente tant que le compte Earthdata n'est pas branché. */
+  grace: z.array(z.object({ annee: z.number().int(), ecart: z.number().nullable() })).min(2).optional(),
   alertes: z.array(z.object({ type: z.enum(["surveiller", "favorable"]), titre: z.string(), texte: z.string() })).min(1),
   /** Un onglet par indicateur pour l'affichage téléphone (12 valeurs mensuelles). */
   onglets: z
@@ -72,7 +73,7 @@ export const ClimatSchema = z.object({
     moisCourant: mois,
     tuiles: z.array(z.object({ label: z.string(), valeur: z.string(), source: z.string(), niveau: z.enum(["alerte", "ok", "neutre"]) })).min(1),
     extras: z.array(z.object({ label: z.string(), valeur: z.string(), accent: z.boolean().optional() })),
-  }),
+  }).optional(),
 });
 export type Climat = z.infer<typeof ClimatSchema>;
 

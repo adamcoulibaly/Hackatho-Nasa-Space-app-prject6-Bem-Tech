@@ -13,6 +13,8 @@ import * as fichePage from "@/app/fiche/[id]/page";
 import RotationsPage from "@/app/rotations/page";
 
 const D = path.resolve(__dirname, "../../../data/pilot/korhogo");
+import { GRACE_TEST } from "../helpers/grace";
+const KORHOGO = path.resolve(__dirname, "../../../data/regions/poro.json");
 const load = (n: string) => JSON.parse(fs.readFileSync(path.join(D, `${n}.json`), "utf8"));
 const rotations = calculer();
 
@@ -73,24 +75,24 @@ describe("I-6 : le contrat accepte des données plus riches", () => {
     expect(LexiqueSchema.parse(l)).toHaveLength(15);
   });
   it("accepte une série GRACE plus longue et la dessine en entier", () => {
-    const c = load("climat");
-    c.grace.push({ annee: 2026, ecart: -1 });
+    const c = { ...JSON.parse(fs.readFileSync(KORHOGO, "utf8")), grace: [...GRACE_TEST, { annee: 2026, ecart: -1 }] };
     const climat = ClimatSchema.parse(c);
-    const { container } = render(<GraceChart data={climat.grace} />);
+    const { container } = render(<GraceChart data={climat.grace!} />);
     expect(container.querySelectorAll("[data-annee]")).toHaveLength(22);
   });
 });
 
 describe("données réelles : meta et affichage", () => {
   it("le contrat exige source et période quand meta est présente", () => {
-    const c = load("climat");
+    const c = JSON.parse(fs.readFileSync(KORHOGO, "utf8"));
     expect(() => ClimatSchema.parse({ ...c, meta: { reel: ["pluie"] } })).toThrow();
   });
-  it("l'écran climat dit ce qui vient de la NASA et ce qui reste en exemple", async () => {
+  it("l'écran climat cite ses sources et dit ce qui arrive avec Earthdata", async () => {
     localStorage.setItem("forosat.parcelle", JSON.stringify({ parcelle: DEFAULT_PARCELLE, saisie: true }));
     const { default: ClimatPage } = await import("@/app/climat/page");
     render(<ParcelleProvider>{await ClimatPage()}</ParcelleProvider>);
     expect(await screen.findByText(/NASA POWER/, { selector: "p *, p" })).toBeInTheDocument();
-    expect(screen.getByText(/autres indicateurs.*valeurs d'exemple/i)).toBeInTheDocument();
+    expect(screen.getByText(/végétation \(NDVI\) et l'eau stockée \(GRACE\)/i)).toBeInTheDocument();
+    expect(screen.queryByText(/valeurs d'exemple/i)).not.toBeInTheDocument();
   });
 });

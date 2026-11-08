@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { Climat } from "@/lib/contract";
 import { useClimatRegion } from "@/lib/useClimatRegion";
 import { useParcelle } from "@/lib/parcelle/context";
-import { regionParId, REGION_PILOTE } from "@/lib/regions";
+import { regionParId } from "@/lib/regions";
 import { RainChart } from "./RainChart";
 import { YearMatrix } from "./YearMatrix";
 import { GraceChart } from "./GraceChart";
@@ -24,7 +24,6 @@ const Card = ({ titre, aide, children, className = "" }: { titre: string; aide?:
 /** Climat de la région choisie (voir useClimatRegion). */
 export function ClimatVue({ initial }: { initial: Climat }) {
   const { parcelle } = useParcelle();
-  const pilote = initial.meta?.region ?? REGION_PILOTE;
   const region = regionParId(parcelle.region);
   const etat = useClimatRegion(initial, parcelle.region);
 
@@ -60,7 +59,6 @@ export function ClimatVue({ initial }: { initial: Climat }) {
   }
 
   const climat = etat.climat;
-  const exemple = climat.meta?.exempleDe && climat.meta.region !== pilote ? climat.meta.exempleDe : null;
   return (
     <>
       {entete}
@@ -68,9 +66,9 @@ export function ClimatVue({ initial }: { initial: Climat }) {
         <p role="note" className="m-0 rounded-2xl bg-[#D7F0E2] px-4 py-3 text-[15px] leading-normal text-[#00502B]">
           <strong>Données réelles :</strong> {climat.meta.reel.join(" et ")} ({climat.meta.source}, {climat.meta.periode}).
           {climat.meta.tendancePluie ? ` ${climat.meta.tendancePluie}` : ""}{" "}
-          {exemple
-            ? `Les autres indicateurs (sol, végétation, eau stockée, alertes) sont des exemples de ${exemple}, en attendant leurs données.`
-            : "Les autres indicateurs (sol, végétation, eau stockée) restent des valeurs d'exemple."}
+          {climat.grace && climat.onglets.some((o) => o.id === "veg")
+            ? ""
+            : "La végétation (NDVI) et l'eau stockée (GRACE) s'afficheront dès que le compte NASA Earthdata sera branché."}
         </p>
       )}
       <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-3.5">
@@ -90,12 +88,14 @@ export function ClimatVue({ initial }: { initial: Climat }) {
       <Card className="max-md:hidden" titre="L'année d'un coup d'œil" aide="Plus la case est foncée, plus la valeur est élevée">
         <YearMatrix lignes={climat.matrice} />
       </Card>
-      <Card titre="L'eau stockée dans la zone, sur 20 ans">
-        <GraceChart data={climat.grace} />
-        <p className="m-0 text-[15px] leading-normal text-muted">
-          Écart à la moyenne de la réserve d'eau totale (GRACE puis GRACE-FO, valeurs d'exemple{exemple ? ` de ${exemple}` : ""}). Les colonnes hachurées marquent une <strong className="text-ink">lacune de données</strong> : la fin de GRACE en 2017 et le lancement de GRACE-FO en 2018. Mesure à grande échelle (plusieurs centaines de km) : elle décrit la région, pas la parcelle.
-        </p>
-      </Card>
+      {climat.grace && (
+        <Card titre="L'eau stockée dans la zone, sur 20 ans">
+          <GraceChart data={climat.grace} />
+          <p className="m-0 text-[15px] leading-normal text-muted">
+            Écart à la moyenne de la réserve d'eau totale (GRACE puis GRACE-FO). Les colonnes hachurées marquent une <strong className="text-ink">lacune de données</strong> : la fin de GRACE en 2017 et le lancement de GRACE-FO en 2018. Mesure à grande échelle (plusieurs centaines de km) : elle décrit la région, pas la parcelle.
+          </p>
+        </Card>
+      )}
       <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3.5">
         {climat.alertes.map((a) => <AlertCard key={a.titre} alerte={a} />)}
       </div>

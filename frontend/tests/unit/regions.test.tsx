@@ -69,7 +69,7 @@ describe("ClimatVue", () => {
   });
 
   it("charge le climat de la région choisie", async () => {
-    const korhogo = ClimatSchema.parse(JSON.parse(fs.readFileSync(path.join(DATA, "pilot", "korhogo", "climat.json"), "utf8")));
+    const korhogo = ClimatSchema.parse(JSON.parse(fs.readFileSync(path.join(DATA, "regions", "poro.json"), "utf8")));
     const abidjan = lireRegion("abidjan");
     const appels: string[] = [];
     vi.stubGlobal("fetch", vi.fn(async (u: string) => {
@@ -80,11 +80,11 @@ describe("ClimatVue", () => {
     render(<ParcelleProvider><ClimatVue initial={korhogo} /></ParcelleProvider>);
     await waitFor(() => expect(screen.getByText(abidjan.indicateurs[1].valeur)).toBeInTheDocument());
     expect(appels).toEqual(["/api/climat/abidjan"]);
-    expect(screen.getByText(/exemples de Korhogo/i)).toBeInTheDocument();
+    expect(screen.getByText(/NASA POWER, Abidjan/)).toBeInTheDocument();
   });
 
   it("n'appelle rien pour la zone pilote", async () => {
-    const korhogo = ClimatSchema.parse(JSON.parse(fs.readFileSync(path.join(DATA, "pilot", "korhogo", "climat.json"), "utf8")));
+    const korhogo = ClimatSchema.parse(JSON.parse(fs.readFileSync(path.join(DATA, "regions", "poro.json"), "utf8")));
     const f = vi.fn();
     vi.stubGlobal("fetch", f);
     localStorage.setItem("forosat.parcelle", JSON.stringify({ parcelle: DEFAULT_PARCELLE, saisie: true }));

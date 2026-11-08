@@ -9,15 +9,15 @@ import { Bienvenue } from "@/components/Bienvenue";
 import { BottomNav } from "@/components/BottomNav";
 import { Tableau } from "@/components/Tableau";
 
-const load = (n: string) => JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../../data/pilot/korhogo/${n}.json`), "utf8"));
+const load = (n: string) => JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../../data/regions/${n === "climat" ? "poro" : n}.json`), "utf8"));
 const climat = ClimatSchema.parse(load("climat"));
 const rotations = calculer();
 
 describe("contrat : onglets et état actuel", () => {
-  it("4 onglets de 12 valeurs et un état actuel", () => {
-    expect(climat.onglets.map((o) => o.id)).toEqual(["pluie", "chaleur", "sol", "veg"]);
+  it("3 onglets réels de 12 valeurs et un état du moment", () => {
+    expect(climat.onglets.map((o) => o.id)).toEqual(["pluie", "chaleur", "sol"]);
     for (const o of climat.onglets) expect(o.valeurs).toHaveLength(12);
-    expect(climat.actuel.tuiles).toHaveLength(4);
+    expect(climat.actuel!.tuiles).toHaveLength(3);
   });
 });
 
@@ -30,7 +30,7 @@ describe("ClimatTabs", () => {
     await user.click(screen.getByRole("button", { name: "Chaleur" }));
     expect(screen.getByRole("button", { name: "Chaleur" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByText(/^\d+ °C en /)).toBeInTheDocument();
-    expect(screen.getByText(/harmattan/i)).toBeInTheDocument();
+    expect(screen.getByText(/plus chaud/i)).toBeInTheDocument();
     expect(screen.queryByText(/mm en /)).not.toBeInTheDocument();
   });
 });
@@ -64,12 +64,13 @@ describe("BottomNav", () => {
 });
 
 describe("Tableau", () => {
-  it("résume la saison, 4 tuiles et la rotation conseillée", () => {
+  it("résume la saison, l'état du moment réel et la rotation conseillée", () => {
     render(<Tableau climat={climat} reco={rotations[1]} />);
-    expect(screen.getByText(/Sol nu jusqu'en/)).toBeInTheDocument();
-    expect(screen.getAllByTestId("tuile")).toHaveLength(4);
+    expect(screen.getByText(climat.actuel!.titre, { exact: false })).toBeInTheDocument();
+    expect(screen.getByText(/Mesures NASA POWER du/)).toBeInTheDocument();
+    expect(screen.getAllByTestId("tuile")).toHaveLength(3);
     expect(screen.getByRole("link", { name: /Rotation conseillée/ })).toHaveAttribute("href", "/rotations");
     expect(screen.getByText(rotations[1].sequence.join(" → "))).toBeInTheDocument();
-    expect(screen.getAllByTestId("ndvi-mois")).toHaveLength(12);
+    expect(screen.queryAllByTestId("ndvi-mois")).toHaveLength(0); // végétation pas encore branchée
   });
 });

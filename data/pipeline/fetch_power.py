@@ -17,7 +17,7 @@ URL = "https://power.larc.nasa.gov/api/temporal/monthly/point"
 def telecharger(lat: float | str, lon: float | str, debut: int | str = 2005, fin: int | str = 2025) -> bytes:
     """Réponse JSON brute de NASA POWER (pluie corrigée et température max., mensuelles)."""
     params = {
-        "parameters": "T2M_MAX,PRECTOTCORR",
+        "parameters": "T2M_MAX,PRECTOTCORR,GWETROOT",
         "community": "AG",
         "latitude": lat,
         "longitude": lon,
@@ -26,6 +26,15 @@ def telecharger(lat: float | str, lon: float | str, debut: int | str = 2005, fin
         "format": "JSON",
     }
     req = urllib.request.Request(f"{URL}?{urllib.parse.urlencode(params)}", headers={"User-Agent": "forosat-hackathon"})
+    with urllib.request.urlopen(req, timeout=120) as r:
+        return r.read()
+
+
+def telecharger_jours(lat: float | str, lon: float | str, debut: str, fin: str) -> bytes:
+    """Série quotidienne (AAAAMMJJ) : pluie, température max., humidité du sol."""
+    params = {"parameters": "PRECTOTCORR,T2M_MAX,GWETROOT", "community": "AG", "latitude": lat, "longitude": lon, "start": debut, "end": fin, "format": "JSON"}
+    url = "https://power.larc.nasa.gov/api/temporal/daily/point"
+    req = urllib.request.Request(f"{url}?{urllib.parse.urlencode(params)}", headers={"User-Agent": "forosat-hackathon"})
     with urllib.request.urlopen(req, timeout=120) as r:
         return r.read()
 

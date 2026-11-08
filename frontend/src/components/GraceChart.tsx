@@ -3,7 +3,7 @@ import { graceBar } from "@/lib/format";
 
 const HACHURE = "repeating-linear-gradient(45deg, #E3E8E2 0 3px, #C9D3CD 3px 6px)";
 
-export function GraceChart({ data }: { data: Climat["grace"] }) {
+export function GraceChart({ data }: { data: NonNullable<Climat["grace"]> }) {
   const cols = { gridTemplateColumns: `repeat(${data.length}, minmax(0, 1fr))` };
   return (
     <div className="flex flex-col gap-3.5">

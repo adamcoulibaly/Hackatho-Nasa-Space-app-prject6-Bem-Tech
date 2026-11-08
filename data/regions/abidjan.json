@@ -17,9 +17,9 @@
       "accent": true
     },
     {
-      "label": "Sol nu dans l'année",
-      "valeur": "≈ 8 mois",
-      "source": "Végétation · Landsat / HLS 30 m · exemple Korhogo"
+      "label": "Sol le plus sec",
+      "valeur": "Février · 0,42",
+      "source": "Humidité du sol (0 à 1) · NASA POWER (MERRA-2)"
     }
   ],
   "pluieMensuelle": [
@@ -40,6 +40,16 @@
     "debut": 3,
     "fin": 6
   },
+  "saisons": [
+    {
+      "debut": 3,
+      "fin": 6
+    },
+    {
+      "debut": 10,
+      "fin": 10
+    }
+  ],
   "matrice": [
     {
       "label": "Pluie",
@@ -81,182 +91,39 @@
     },
     {
       "label": "Humidité du sol",
-      "source": "SMAP",
+      "source": "NASA POWER (MERRA-2)",
       "palette": "eau",
       "valeurs": [
         0,
         0,
-        0,
+        1,
         1,
         2,
-        3,
-        3,
         4,
         4,
-        3,
+        2,
         1,
-        0
+        2,
+        2,
+        2
       ]
-    },
-    {
-      "label": "Végétation",
-      "source": "Landsat / HLS",
-      "palette": "veg",
-      "valeurs": [
-        1,
-        0,
-        0,
-        0,
-        1,
-        2,
-        3,
-        4,
-        4,
-        3,
-        2,
-        1
-      ]
-    },
-    {
-      "label": "Stress de chaleur",
-      "source": "ECOSTRESS",
-      "palette": "chaud",
-      "valeurs": [
-        3,
-        4,
-        4,
-        4,
-        3,
-        1,
-        0,
-        0,
-        0,
-        1,
-        2,
-        3
-      ]
-    },
-    {
-      "label": "Pluies extrêmes",
-      "source": "GPM",
-      "palette": "eau",
-      "valeurs": [
-        0,
-        0,
-        0,
-        1,
-        2,
-        2,
-        3,
-        4,
-        3,
-        1,
-        0,
-        0
-      ]
-    }
-  ],
-  "grace": [
-    {
-      "annee": 2005,
-      "ecart": 3
-    },
-    {
-      "annee": 2006,
-      "ecart": 4
-    },
-    {
-      "annee": 2007,
-      "ecart": 2
-    },
-    {
-      "annee": 2008,
-      "ecart": 5
-    },
-    {
-      "annee": 2009,
-      "ecart": 3
-    },
-    {
-      "annee": 2010,
-      "ecart": 1
-    },
-    {
-      "annee": 2011,
-      "ecart": 2
-    },
-    {
-      "annee": 2012,
-      "ecart": 0
-    },
-    {
-      "annee": 2013,
-      "ecart": -1
-    },
-    {
-      "annee": 2014,
-      "ecart": 1
-    },
-    {
-      "annee": 2015,
-      "ecart": -2
-    },
-    {
-      "annee": 2016,
-      "ecart": -1
-    },
-    {
-      "annee": 2017,
-      "ecart": null
-    },
-    {
-      "annee": 2018,
-      "ecart": null
-    },
-    {
-      "annee": 2019,
-      "ecart": -3
-    },
-    {
-      "annee": 2020,
-      "ecart": -2
-    },
-    {
-      "annee": 2021,
-      "ecart": -4
-    },
-    {
-      "annee": 2022,
-      "ecart": -3
-    },
-    {
-      "annee": 2023,
-      "ecart": -2
-    },
-    {
-      "annee": 2024,
-      "ecart": -4
-    },
-    {
-      "annee": 2025,
-      "ecart": -5
     }
   ],
   "alertes": [
     {
       "type": "surveiller",
-      "titre": "Début des pluies",
-      "texte": "Les premières pluies utiles semblent arriver plus tard certaines années. Semer trop tôt devient risqué."
-    },
-    {
-      "type": "surveiller",
-      "titre": "Harmattan et chaleur",
-      "texte": "De décembre à avril, l'harmattan puis la chaleur dessèchent le sol nu (ECOSTRESS). Pas de risque de gel ici : c'est la chaleur qu'il faut surveiller."
+      "titre": "Sol très sec en février",
+      "texte": "C'est le mois où le sol est le plus sec (indice 0,42) : évitez de semer à ce moment."
     },
     {
       "type": "favorable",
-      "titre": "Août–septembre",
-      "texte": "Le sol est le plus humide : bonne fenêtre pour une légumineuse en fin de saison."
+      "titre": "Fenêtre humide : juin",
+      "texte": "Le sol est le plus humide : bonne période pour une légumineuse ou une culture de couverture."
+    },
+    {
+      "type": "favorable",
+      "titre": "Deux saisons des pluies",
+      "texte": "Une grande et une petite saison : deux cycles courts peuvent tenir dans l'année."
     }
   ],
   "onglets": [
@@ -281,7 +148,7 @@
         56
       ],
       "saison": true,
-      "conseil": "Deux saisons des pluies : une grande et une petite. On peut parfois faire deux cultures dans l'année."
+      "conseil": "Deux saisons des pluies : une grande et une petite. Deux cultures courtes peuvent parfois tenir dans l'année."
     },
     {
       "id": "chaleur",
@@ -304,116 +171,69 @@
         32.0
       ],
       "min": 26,
-      "conseil": "L'harmattan puis la chaleur, de décembre à avril, dessèchent vite un sol nu. Pas de gel ici : c'est la chaleur à surveiller."
+      "conseil": "C'est en février qu'il fait le plus chaud : un sol couvert garde mieux son humidité."
     },
     {
       "id": "sol",
       "label": "Sol",
-      "big": "Humide en sept.",
-      "source": "SMAP",
-      "legende": "Humidité du sol (indice 0 à 4)",
+      "big": "Humide en juin",
+      "source": "NASA POWER (MERRA-2)",
+      "legende": "Humidité de la zone racinaire (indice 0 à 1)",
       "valeurs": [
-        0,
-        0,
-        0,
-        1,
-        2,
-        3,
-        3,
-        4,
-        4,
-        3,
-        1,
-        0
+        0.45,
+        0.42,
+        0.46,
+        0.51,
+        0.57,
+        0.68,
+        0.68,
+        0.56,
+        0.5,
+        0.54,
+        0.57,
+        0.52
       ],
-      "conseil": "Le sol garde l'eau jusqu'en octobre : bonne période pour semer une légumineuse de couverture."
-    },
-    {
-      "id": "veg",
-      "label": "Végét.",
-      "big": "Pic en août",
-      "source": "Landsat / HLS",
-      "legende": "Couverture végétale (indice 0 à 4)",
-      "valeurs": [
-        1,
-        0,
-        0,
-        0,
-        1,
-        2,
-        3,
-        4,
-        4,
-        3,
-        2,
-        1
-      ],
-      "conseil": "Votre champ reste nu près de 8 mois par an : c'est là que le sol s'appauvrit le plus."
+      "min": 0.37,
+      "conseil": "Le sol est le plus humide en juin et le plus sec en février : semez quand l'humidité remonte, au début de la saison des pluies."
     }
   ],
-  "actuel": {
-    "saison": "Saison sèche",
-    "titre": "Sol nu jusqu'en",
-    "accent": "mai",
-    "texte": "Une culture de couverture protégerait votre sol de la chaleur.",
-    "moisCourant": 11,
-    "tuiles": [
-      {
-        "label": "Pluie (30 j)",
-        "valeur": "Très faible",
-        "source": "GPM",
-        "niveau": "alerte"
-      },
-      {
-        "label": "Chaleur",
-        "valeur": "34 °C",
-        "source": "NASA POWER",
-        "niveau": "alerte"
-      },
-      {
-        "label": "Humidité du sol",
-        "valeur": "Faible",
-        "source": "SMAP",
-        "niveau": "neutre"
-      },
-      {
-        "label": "Végétation",
-        "valeur": "En baisse",
-        "source": "Landsat",
-        "niveau": "ok"
-      }
-    ],
-    "extras": [
-      {
-        "label": "Érosion · SRTM",
-        "valeur": "Modérée"
-      },
-      {
-        "label": "Chaleur · ECOSTRESS",
-        "valeur": "Stress élevé",
-        "accent": true
-      }
-    ]
-  },
   "meta": {
     "reel": [
       "pluie",
-      "chaleur"
+      "chaleur",
+      "humidité du sol"
     ],
     "region": "abidjan",
     "source": "NASA POWER, Abidjan (5,32 N · 4,02 O)",
     "periode": "2005–2025",
-    "tendancePluie": "Pluie annuelle en hausse sur la période (test de Mann-Kendall, z = 3.05, 21 années).",
-    "exempleDe": "Korhogo"
+    "tendancePluie": "Pluie annuelle en hausse sur la période (test de Mann-Kendall, z = 3.05, 21 années)."
   },
-  "saisons": [
-    {
-      "debut": 3,
-      "fin": 6
-    },
-    {
-      "debut": 10,
-      "fin": 10
-    }
-  ]
+  "actuel": {
+    "saison": "Saison sèche",
+    "titre": "Prochaines pluies vers",
+    "accent": "mars",
+    "texte": "Mesures NASA POWER du 8 octobre au 4 novembre (28 jours).",
+    "moisCourant": 11,
+    "tuiles": [
+      {
+        "label": "Pluie (30 j)",
+        "valeur": "161 mm",
+        "source": "Normale ≈ 116 mm · NASA POWER",
+        "niveau": "ok"
+      },
+      {
+        "label": "Chaleur",
+        "valeur": "30 °C",
+        "source": "Normale 31 °C · NASA POWER",
+        "niveau": "ok"
+      },
+      {
+        "label": "Humidité du sol",
+        "valeur": "0,62",
+        "source": "Normale 0,57 · NASA POWER",
+        "niveau": "ok"
+      }
+    ],
+    "extras": []
+  }
 }
