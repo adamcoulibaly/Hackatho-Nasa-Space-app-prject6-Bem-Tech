@@ -1,6 +1,26 @@
 import Link from "next/link";
 import type { Climat, Rotation } from "@/lib/contract";
 import { mesuresRecentes, saisonDuMoment } from "@/lib/saison";
+import type { EtatSemis } from "@/lib/moteur/etat-semis";
+
+export type Semis = { etat: EtatSemis; depuis?: string; message: string; dateDonnees: string };
+
+const MOIS_LONG = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+const BADGE: Record<EtatSemis, string> = {
+  seche: "Saison sèche",
+  premieres_pluies: "Premières pluies",
+  fenetre_ouverte: "Fenêtre de semis ouverte",
+  poche_seche: "Poche sèche",
+};
+const TITRE: Partial<Record<EtatSemis, [string, string]>> = {
+  premieres_pluies: ["Premières pluies :", "attendez"],
+  fenetre_ouverte: ["C'est le moment de", "semer"],
+  poche_seche: ["Poche sèche :", "attendez"],
+};
+const jourLisible = (iso: string) => {
+  const [, m, j] = iso.split("-").map(Number);
+  return `${j === 1 ? "1er" : j} ${MOIS_LONG[m - 1]}`;
+};
 
 const NDVI = ["#3B1F0A", "#7A3D00", "#7FA33A", "#009E60", "#0B5130"];
 const INITIALES = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
@@ -34,7 +54,8 @@ function Frise({ climat, moisCourant }: { climat: Climat; moisCourant: number })
   );
 }
 
-export function Tableau({ climat, reco }: { climat: Climat; reco: Rotation }) {
+/** `semis` : état du jour (NASA POWER, /api/semis) ; sans lui, la saison est déduite des normales. */
+export function Tableau({ climat, reco, semis }: { climat: Climat; reco: Rotation; semis?: Semis }) {
   const mois = new Date().getMonth() + 1;
   const s = saisonDuMoment(climat.saisons ?? [climat.saisonPluies], mois);
   const a = climat.actuel && mesuresRecentes(climat.actuel.dateFin) ? climat.actuel : undefined;
@@ -50,12 +71,19 @@ export function Tableau({ climat, reco }: { climat: Climat; reco: Rotation }) {
 
       <section className="flex flex-col gap-3.5 rounded-[28px] bg-ink p-5 text-paper">
         <div className="flex items-center justify-between gap-2">
-          <span className="rounded-full bg-[#3A2208] px-[11px] py-[5px] text-[13px] font-bold text-[#FFB066]">{s.saison}</span>
-          <span className="text-[13px] text-[#9DB0A5]">Climat NASA POWER</span>
+          <span className={`rounded-full px-[11px] py-[5px] text-[13px] font-bold ${semis?.etat === "fenetre_ouverte" ? "bg-green text-ink" : "bg-[#3A2208] text-[#FFB066]"}`}>
+            {semis ? BADGE[semis.etat] : s.saison}
+          </span>
+          <span className="text-[13px] text-[#9DB0A5]">{semis ? "En direct · NASA POWER" : "Climat NASA POWER"}</span>
         </div>
         <h2 className="m-0 font-display text-[30px] font-bold leading-[1.05] tracking-[-0.04em]">
-          {s.titre} <span className="text-orange">{s.accent}</span>
+          {semis && TITRE[semis.etat] ? TITRE[semis.etat]![0] : s.titre} <span className="text-orange">{semis && TITRE[semis.etat] ? TITRE[semis.etat]![1] : s.accent}</span>
         </h2>
+        {semis && (
+          <p className="m-0 text-[15px] font-semibold leading-[1.45]">
+            {semis.message} <span className="font-normal text-[#9DB0A5]">{`(NASA POWER, pluie jusqu'au ${jourLisible(semis.dateDonnees)})`}</span>
+          </p>
+        )}
         <p className="m-0 text-[15px] leading-[1.45] text-[#C9D4CD]">
           {a ? a.texte : "Mesures récentes indisponibles (incomplètes ou trop anciennes) : seules les normales sont affichées."}
         </p>

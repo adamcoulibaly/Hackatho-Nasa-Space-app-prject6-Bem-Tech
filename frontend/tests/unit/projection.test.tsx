@@ -115,3 +115,14 @@ describe("intégration au moteur de rotations", () => {
     expect(sans[0].lacune).toContain("projections 2050 indisponibles");
   });
 });
+
+describe("route /api/projections", () => {
+  it("fichier absent : 404 au lieu de faire échouer le build", async () => {
+    const avant = process.env.FOROSAT_PROJECTIONS_DIR;
+    process.env.FOROSAT_PROJECTIONS_DIR = "/dossier/inexistant";
+    const { GET } = await import("@/app/api/projections/[region]/route");
+    const r = await GET(new Request("http://x/api/projections/poro"), { params: Promise.resolve({ region: "poro" }) });
+    expect(r.status).toBe(404);
+    process.env.FOROSAT_PROJECTIONS_DIR = avant;
+  });
+});

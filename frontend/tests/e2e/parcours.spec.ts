@@ -264,3 +264,14 @@ test("2050 : la projection s'affiche et le scénario se change", async ({ page }
   await expect(page.getByTestId("barre-ssp585")).toHaveAttribute("data-active", "true");
   await expect(page.getByTestId("barre-ssp245")).toHaveAttribute("data-active", "false");
 });
+
+test("semis : l'accueil affiche l'état de semis du jour", async ({ page }) => {
+  await page.route("**/api/semis/**", (route) =>
+    route.fulfill({ json: { etat: "fenetre_ouverte", depuis: "2026-06-02", message: "Pluies installées depuis le 2 juin : c'est le moment de semer.", dateDonnees: "2026-06-10" } }),
+  );
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.goto("/tableau");
+  await expect(page.getByText("Fenêtre de semis ouverte")).toBeVisible();
+  await expect(page.getByText(/Pluies installées depuis le 2 juin/)).toBeVisible();
+});
