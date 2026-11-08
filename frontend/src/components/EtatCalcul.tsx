@@ -7,7 +7,12 @@ export function EtatCalcul({ etat, region }: { etat: Exclude<EtatRotations, { st
   const lieu = regionParId(region)?.chefLieu ?? "votre région";
   if (etat.statut === "chargement") return <p aria-busy="true" className="m-0 rounded-2xl bg-white px-4 py-6 text-[15px] text-muted">Calcul des rotations pour {lieu}…</p>;
   if (etat.statut === "erreur")
-    return <p role="alert" className="m-0 rounded-2xl bg-[#FDE7CC] px-4 py-4 text-[15px] text-[#5C2E00]">Impossible de charger le climat de {lieu}. Vérifiez la connexion, puis rechargez la page.</p>;
+    return (
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-[#FDE7CC] px-4 py-4 text-[#5C2E00]">
+        <p role="alert" className="m-0 text-[15px]">Impossible de charger le climat de {lieu}. Vérifiez la connexion.</p>
+        <button type="button" onClick={etat.reessayer} className="h-11 rounded-full bg-ink px-5 text-sm font-bold text-paper">Réessayer</button>
+      </div>
+    );
   return (
     <p className="m-0 rounded-2xl bg-white px-4 py-4 text-[15px]">
       Indiquez au moins une culture à l'étape 1 pour calculer les rotations. <Link href="/parcelle">Aller à l'étape 1</Link>

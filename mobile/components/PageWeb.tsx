@@ -44,10 +44,15 @@ export function PageWeb({ chemin }: { chemin: string }) {
         return;
       }
       if (m.type === "position") {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") return;
-        const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-        repondre({ type: "position", lat: pos.coords.latitude, lon: pos.coords.longitude });
+        // La page attend toujours une réponse : position, refus ou GPS indisponible.
+        try {
+          const { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== "granted") return repondre({ type: "position", erreur: "refus" });
+          const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+          repondre({ type: "position", lat: pos.coords.latitude, lon: pos.coords.longitude });
+        } catch {
+          repondre({ type: "position", erreur: "indisponible" });
+        }
       } else if (m.type === "partager") {
         await Share.share({ message: `${m.texte}\n${m.url}` });
       }

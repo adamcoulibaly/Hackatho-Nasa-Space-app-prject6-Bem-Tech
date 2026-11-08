@@ -69,6 +69,8 @@ export const ClimatSchema = z.object({
     accent: z.string(),
     texte: z.string(),
     moisCourant: mois,
+    /** Dernier jour mesuré (AAAA-MM-JJ). */
+    dateFin: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
     tuiles: z.array(z.object({ label: z.string(), valeur: z.string(), source: z.string(), niveau: z.enum(["alerte", "ok", "neutre"]) })).min(1),
     extras: z.array(z.object({ label: z.string(), valeur: z.string(), accent: z.boolean().optional() })),
   }).optional(),

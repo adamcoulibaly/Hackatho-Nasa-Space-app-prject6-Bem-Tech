@@ -30,6 +30,8 @@ function candidats(cultures: Culture[]): Culture[][] {
 }
 
 const cle = (s: Culture[]) => s.map((c) => c.nom).join(" → ");
+/** Ensemble des cultures, sans ordre : une alternative doit en changer au moins une. */
+const ensemble = (s: Culture[]) => s.map((c) => c.nom).sort().join(",");
 /** Cultures de `a` absentes de `b`. */
 const nouvelles = (a: Culture[], b: Culture[]) => a.filter((c) => !b.includes(c)).length;
 
@@ -41,7 +43,7 @@ export function choisirRotations(p: Parcelle, climat: Climat, cultures: Culture[
   const cl = extraireClimat(climat);
 
   const classes = candidats(cultures)
-    .filter((s) => cle(s) !== cle(actuelle))
+    .filter((s) => ensemble(s) !== ensemble(actuelle))
     .map((s) => ({ s, ...evaluer(s, p, cl) }))
     .sort((x, y) => y.score - x.score || cle(x.s).localeCompare(cle(y.s), "fr"));
   const b = classes[0];
@@ -59,4 +61,9 @@ export function calculerRotations(p: Parcelle, climat: Climat, cultures: Culture
   if (!choix) return null;
   const cl = extraireClimat(climat);
   return choix.map((ch) => construireRotation(ch, { climat, cl, p, scoreActuelle: choix[0].score }));
+}
+
+/** Rotation à mettre en avant : la recommandée, sinon l'actuelle (rien ne la bat pour ces priorités). */
+export function rotationConseillee<T extends { recommandee: boolean }>(rotations: T[]): T {
+  return rotations.find((r) => r.recommandee) ?? rotations[0];
 }

@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import type { Rotation } from "@/lib/contract";
+import type { Parcelle } from "@/lib/parcelle/validate";
+import { lienFiche } from "@/lib/moteur/fiche-lien";
 
 type Etat = { statut: "repos" } | { statut: "attente" } | { statut: "ok"; texte: string } | { statut: "erreur"; message: string };
 
-export function AssistantIA({ rotation, region }: { rotation: Rotation; region: string }) {
+export function AssistantIA({ id, parcelle }: { id: "A" | "B" | "C"; parcelle: Parcelle }) {
   const [question, setQuestion] = useState("");
   const [etat, setEtat] = useState<Etat>({ statut: "repos" });
 
@@ -15,7 +16,7 @@ export function AssistantIA({ rotation, region }: { rotation: Rotation; region: 
       const r = await fetch("/api/ia", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rotation, region, question: avecQuestion ? question.trim() || undefined : undefined }),
+        body: JSON.stringify({ id, params: lienFiche(id, parcelle).split("?")[1], question: avecQuestion ? question.trim() || undefined : undefined }),
       });
       const json = (await r.json().catch(() => ({}))) as { texte?: string; erreur?: string };
       if (r.ok && json.texte) setEtat({ statut: "ok", texte: json.texte });

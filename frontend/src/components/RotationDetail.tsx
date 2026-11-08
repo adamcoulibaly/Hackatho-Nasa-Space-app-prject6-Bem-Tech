@@ -72,7 +72,7 @@ export function RotationDetail({ id, initial, cultures }: { id: "A" | "B" | "C";
       </div>
 
       <Section titre="Demander à l'assistant IA">
-        <AssistantIA rotation={rotation} region={parcelle.region} />
+        <AssistantIA id={id} parcelle={parcelle} />
       </Section>
 
       <Section titre="Et si… la pluie ou la chaleur changeait ?">

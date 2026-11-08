@@ -26,12 +26,14 @@ def etat_du_moment(brut_jours: dict, normales: dict, saisons: list[tuple[int, in
     if len(valides) < JOURS_MIN:
         return None
     d1, d2 = _date(valides[0]), _date(valides[-1])
-    m = d2.month - 1
+    jours = [_date(k) for k in valides]
     pluie = sum(p["PRECTOTCORR"][k] for k in valides)
     chaleur = sum(p["T2M_MAX"][k] for k in valides) / len(valides)
     sol = sum(p["GWETROOT"][k] for k in valides) / len(valides)
-    pluie_normale = normales["pluie"][m] * len(valides) / calendar.monthrange(d2.year, d2.month)[1]
-    n_chaleur, n_sol = normales["chaleur"][m], normales["sol"][m]
+    # Normale de chaque jour selon son propre mois : une fenêtre à cheval sur deux mois reste juste.
+    pluie_normale = sum(normales["pluie"][d.month - 1] / calendar.monthrange(d.year, d.month)[1] for d in jours)
+    n_chaleur = sum(normales["chaleur"][d.month - 1] for d in jours) / len(jours)
+    n_sol = sum(normales["sol"][d.month - 1] for d in jours) / len(jours)
 
     def niv_pluie() -> str:
         return "alerte" if pluie < 0.5 * pluie_normale else "ok" if pluie >= 0.9 * pluie_normale else "neutre"
@@ -56,6 +58,7 @@ def etat_du_moment(brut_jours: dict, normales: dict, saisons: list[tuple[int, in
         "accent": accent,
         "texte": f"Mesures NASA POWER du {_texte_date(d1)} au {_texte_date(d2)} ({len(valides)} jours).",
         "moisCourant": mois,
+        "dateFin": d2.isoformat(),
         "tuiles": [
             {"label": "Pluie (30 j)", "valeur": f"{pluie:.0f} mm", "source": f"Normale ≈ {pluie_normale:.0f} mm · NASA POWER", "niveau": niv_pluie()},
             {"label": "Chaleur", "valeur": f"{chaleur:.0f} °C", "source": f"Normale {n_chaleur:.0f} °C · NASA POWER", "niveau": niv_chaleur()},

@@ -64,9 +64,12 @@ describe("BottomNav", () => {
 });
 
 describe("Tableau", () => {
+  afterEach(() => vi.useRealTimers());
   it("résume la saison, l'état du moment réel et la rotation conseillée", () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-11-08T12:00:00Z"));
     render(<Tableau climat={climat} reco={rotations[1]} />);
-    expect(screen.getByText(climat.actuel!.titre, { exact: false })).toBeInTheDocument();
+    expect(screen.getByText(/Prochaines pluies vers/)).toBeInTheDocument(); // novembre, après la saison mai → octobre
     expect(screen.getByText(/Mesures NASA POWER du/)).toBeInTheDocument();
     expect(screen.getAllByTestId("tuile")).toHaveLength(3);
     expect(screen.getByRole("link", { name: /Rotation conseillée/ })).toHaveAttribute("href", "/rotations");

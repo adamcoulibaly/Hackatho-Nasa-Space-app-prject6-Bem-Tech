@@ -3,7 +3,7 @@
 const CLE = "forosat.app";
 
 export type MessageVersNatif = { type: "position" } | { type: "partager"; url: string; texte: string };
-export type MessageDuNatif = { type: "position"; lat: number; lon: number };
+export type MessageDuNatif = { type: "position"; lat: number; lon: number } | { type: "position"; erreur: "refus" | "indisponible" };
 
 type Pont = { postMessage: (m: string) => void };
 
@@ -34,7 +34,9 @@ export function ecouterNatif(rappel: (m: MessageDuNatif) => void): () => void {
     if (typeof data !== "string") return;
     try {
       const m = JSON.parse(data) as Partial<MessageDuNatif>;
-      if (m.type === "position" && Number.isFinite(m.lat) && Number.isFinite(m.lon)) rappel(m as MessageDuNatif);
+      if (m.type !== "position") return;
+      if ("erreur" in m && (m.erreur === "refus" || m.erreur === "indisponible")) rappel({ type: "position", erreur: m.erreur });
+      else if ("lat" in m && Number.isFinite(m.lat) && Number.isFinite(m.lon)) rappel(m as MessageDuNatif);
     } catch {
       /* message d'une autre origine : ignoré */
     }

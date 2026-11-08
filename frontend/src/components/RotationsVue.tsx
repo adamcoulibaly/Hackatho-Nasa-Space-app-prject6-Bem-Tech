@@ -3,6 +3,7 @@
 import type { Climat, Culture } from "@/lib/contract";
 import { useParcelle } from "@/lib/parcelle/context";
 import { useRotations } from "@/lib/useRotations";
+import { rotationConseillee } from "@/lib/moteur/rotations";
 import { regionParId } from "@/lib/regions";
 import { PrioritesRappel } from "./PrioritesRappel";
 import { RotationCard } from "./RotationCard";
@@ -25,7 +26,7 @@ export function RotationsVue({ initial, cultures }: { initial: Climat; cultures:
   );
   if (etat.statut !== "pret") return <>{entete}<EtatCalcul etat={etat} region={parcelle.region} /></>;
 
-  const reco = etat.rotations.find((r) => r.recommandee) ?? etat.rotations[1];
+  const reco = rotationConseillee(etat.rotations);
   return (
     <>
       {entete}
@@ -34,7 +35,7 @@ export function RotationsVue({ initial, cultures }: { initial: Climat; cultures:
       </div>
       <section className="flex flex-wrap items-center gap-6 rounded-[28px] bg-white p-[26px]">
         <div className="flex flex-[1_1_380px] flex-col gap-2">
-          <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">Pourquoi la rotation {reco.id} ressort ?</h2>
+          <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">{reco.id === "A" ? "Votre rotation actuelle reste la meilleure pour vos priorités" : `Pourquoi la rotation ${reco.id} ressort ?`}</h2>
           <ul className="m-0 flex flex-col gap-1 pl-5 text-base leading-relaxed text-muted">
             {reco.pourquoi.map((p) => <li key={p}>{p}</li>)}
           </ul>

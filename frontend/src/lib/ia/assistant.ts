@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { CRITERES, CRITERE_LABELS, RotationSchema, type Climat, type Rotation } from "@/lib/contract";
+import { CRITERES, CRITERE_LABELS, type Climat, type Culture, type Rotation } from "@/lib/contract";
+import { lireLienFiche } from "@/lib/moteur/fiche-lien";
+import { calculerRotations } from "@/lib/moteur/rotations";
 import { scoreWord } from "@/lib/format";
 
 /** Fournisseur compatible OpenAI (OpenRouter par défaut, Groq, etc.). La clé reste côté serveur. */
@@ -15,9 +17,13 @@ export function configDepuisEnv(env: Record<string, string | undefined>): Config
   };
 }
 
+/**
+ * La demande ne transporte que l'identifiant de la rotation et les paramètres de la parcelle (ceux du lien de fiche) :
+ * le serveur recalcule la rotation avec le moteur. Aucun texte libre autre que la question (300 caractères).
+ */
 export const DemandeSchema = z.object({
-  rotation: RotationSchema,
-  region: z.string().regex(/^[a-z-]+$/),
+  id: z.enum(["A", "B", "C"]),
+  params: z.string().max(500),
   question: z.string().trim().max(300).optional(),
 });
 export type Demande = z.infer<typeof DemandeSchema>;
@@ -88,4 +94,11 @@ export async function repondre(
   } catch {
     return { ok: false, statut: 502, erreur: INDISPONIBLE };
   }
+}
+
+/** Rotation recalculée par le moteur à partir des paramètres de la demande, ou null si la parcelle est invalide. */
+export function rotationDepuisDemande(d: Pick<Demande, "id" | "params">, ctx: { climat: Climat; cultures: Culture[] }): Rotation | null {
+  const parcelle = lireLienFiche(new URLSearchParams(d.params));
+  if (!parcelle) return null;
+  return calculerRotations(parcelle, ctx.climat, ctx.cultures)?.find((r) => r.id === d.id) ?? null;
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useParcelle } from "@/lib/parcelle/context";
-import { CULTURES, PRIORITES, validateParcelle, type Eau, type Materiel } from "@/lib/parcelle/validate";
+import { CULTURES, MAX_CULTURES, PRIORITES, validateParcelle, type Eau, type Materiel } from "@/lib/parcelle/validate";
 import { libelleRegion, regionsParDistrict } from "@/lib/regions";
 
 const FIELD = "h-12 rounded-[14px] border border-line bg-white px-3 text-[15px] text-ink";
@@ -17,6 +17,7 @@ export function ParcelleForm({ onSubmit }: { onSubmit: () => void }) {
 function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
   const { parcelle, setParcelle } = useParcelle();
   const [erreurs, setErreurs] = useState<string[]>([]);
+  const [tropDeCultures, setTropDeCultures] = useState(false);
   const [surfaceTexte, setSurfaceTexte] = useState(String(parcelle.surface));
 
   // Une surface calculée ailleurs (parcelle dessinée sur la carte) remplace le texte du champ.
@@ -68,7 +69,7 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
       </div>
 
       <fieldset className="m-0 flex flex-col gap-2.5 border-none p-0">
-        <legend className="mb-2.5 p-0 text-sm font-semibold">Ce que je cultive aujourd'hui</legend>
+        <legend className="mb-2.5 p-0 text-sm font-semibold">Ce que je cultive aujourd'hui <span className="font-normal text-muted">(3 au plus, dans l'ordre des saisons)</span></legend>
         <div className="flex flex-wrap gap-2">
           {CULTURES.map((c) => {
             const on = parcelle.cultures.includes(c);
@@ -77,7 +78,11 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
                 key={c}
                 type="button"
                 aria-pressed={on}
-                onClick={() => setParcelle({ cultures: toggle(parcelle.cultures, c) })}
+                onClick={() => {
+                  if (!on && parcelle.cultures.length >= MAX_CULTURES) return setTropDeCultures(true);
+                  setTropDeCultures(false);
+                  setParcelle({ cultures: toggle(parcelle.cultures, c) });
+                }}
                 className={`h-11 rounded-full border px-4 text-[15px] font-semibold ${on ? "border-ink bg-ink text-paper" : "border-line bg-white text-ink"}`}
               >
                 {c}
@@ -85,6 +90,7 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
             );
           })}
         </div>
+        {tropDeCultures && <p role="status" className="m-0 text-sm text-[#5C2E00]">3 cultures au plus : retirez-en une pour en choisir une autre.</p>}
       </fieldset>
 
       <fieldset className="m-0 flex flex-col gap-2.5 border-none p-0">

@@ -208,25 +208,26 @@
     "saison": "Saison sèche",
     "titre": "Prochaines pluies vers",
     "accent": "mai",
-    "texte": "Mesures NASA POWER du 8 octobre au 4 novembre (28 jours).",
+    "texte": "Mesures NASA POWER du 9 octobre au 4 novembre (27 jours).",
     "moisCourant": 11,
+    "dateFin": "2026-11-04",
     "tuiles": [
       {
         "label": "Pluie (30 j)",
-        "valeur": "71 mm",
-        "source": "Normale ≈ 19 mm · NASA POWER",
-        "niveau": "ok"
+        "valeur": "64 mm",
+        "source": "Normale ≈ 81 mm · NASA POWER",
+        "niveau": "neutre"
       },
       {
         "label": "Chaleur",
         "valeur": "34 °C",
-        "source": "Normale 36 °C · NASA POWER",
+        "source": "Normale 34 °C · NASA POWER",
         "niveau": "ok"
       },
       {
         "label": "Humidité du sol",
         "valeur": "0,67",
-        "source": "Normale 0,45 · NASA POWER",
+        "source": "Normale 0,50 · NASA POWER",
         "niveau": "ok"
       }
     ],

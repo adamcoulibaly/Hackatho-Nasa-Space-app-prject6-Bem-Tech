@@ -51,9 +51,10 @@ export function ClimatVue({ initial }: { initial: Climat }) {
     return (
       <>
         {entete}
-        <p role="alert" className="m-0 rounded-2xl bg-[#FDE7CC] px-4 py-4 text-[15px] text-[#5C2E00]">
-          Impossible de charger le climat de {region?.chefLieu ?? "cette région"}. Vérifiez la connexion, puis rechargez la page.
-        </p>
+        <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-[#FDE7CC] px-4 py-4 text-[#5C2E00]">
+          <p role="alert" className="m-0 text-[15px]">Impossible de charger le climat de {region?.chefLieu ?? "cette région"}. Vérifiez la connexion.</p>
+          <button type="button" onClick={etat.reessayer} className="h-11 rounded-full bg-ink px-5 text-sm font-bold text-paper">Réessayer</button>
+        </div>
       </>
     );
   }

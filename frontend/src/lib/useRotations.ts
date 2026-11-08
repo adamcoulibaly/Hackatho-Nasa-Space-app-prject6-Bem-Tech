@@ -8,7 +8,7 @@ import { useClimatRegion } from "@/lib/useClimatRegion";
 
 export type EtatRotations =
   | { statut: "chargement" }
-  | { statut: "erreur" }
+  | { statut: "erreur"; reessayer: () => void }
   | { statut: "vide" }
   | { statut: "pret"; rotations: RotationCalculee[]; climat: Climat };
 

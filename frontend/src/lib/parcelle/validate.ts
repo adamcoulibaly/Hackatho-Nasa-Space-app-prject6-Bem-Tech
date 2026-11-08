@@ -29,6 +29,9 @@ export const PRIORITES = [
   "Vendre facilement au marché local",
 ] as const;
 
+/** La rotation actuelle compte 3 cultures au plus, dans l'ordre où elles se suivent. */
+export const MAX_CULTURES = 3;
+
 export const DEFAULT_PARCELLE: Parcelle = {
   region: "poro",
   surface: 2,
@@ -42,6 +45,7 @@ export function validateParcelle(p: Parcelle): { ok: boolean; erreurs: string[] 
   const erreurs: string[] = [];
   if (!Number.isFinite(p.surface) || p.surface <= 0) erreurs.push("La surface doit être supérieure à 0.");
   if (p.cultures.length === 0) erreurs.push("Choisissez au moins une culture.");
+  if (p.cultures.length > MAX_CULTURES) erreurs.push("Choisissez 3 cultures au plus.");
   if (p.priorites.length === 0) erreurs.push("Choisissez au moins une priorité.");
   return { ok: erreurs.length === 0, erreurs };
 }

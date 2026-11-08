@@ -81,3 +81,19 @@ class TestClimatComplet(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestNormaleParJour(unittest.TestCase):
+    def test_normale_ponderee_par_le_mois_de_chaque_jour(self):
+        p = {"PRECTOTCORR": {}, "T2M_MAX": {}, "GWETROOT": {}}
+        from datetime import timedelta
+        d = date(2026, 10, 8)
+        for _ in range(28):  # 8 octobre → 4 novembre : 24 jours d'octobre, 4 de novembre
+            k = d.strftime("%Y%m%d")
+            p["PRECTOTCORR"][k], p["T2M_MAX"][k], p["GWETROOT"][k] = 1.0, 33.0, 0.5
+            d += timedelta(days=1)
+        normales = {"pluie": [0] * 9 + [101.0, 19.0, 0], "chaleur": [0] * 9 + [32.0, 36.0, 0], "sol": [0] * 9 + [0.6, 0.4, 0]}
+        e = etat_du_moment({"properties": {"parameter": p}}, normales, [(5, 10)], date(2026, 11, 7))
+        self.assertIn("Normale ≈ 81 mm", e["tuiles"][0]["source"])  # 101×24/31 + 19×4/30
+        self.assertIn("Normale 33 °C", e["tuiles"][1]["source"])  # (32×24 + 36×4) / 28 ≈ 32,6
+        self.assertEqual(e["dateFin"], "2026-11-04")

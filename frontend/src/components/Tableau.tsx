@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Climat, Rotation } from "@/lib/contract";
+import { mesuresRecentes, saisonDuMoment } from "@/lib/saison";
 
 const NDVI = ["#3B1F0A", "#7A3D00", "#7FA33A", "#009E60", "#0B5130"];
 const INITIALES = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
@@ -33,7 +34,9 @@ function Frise({ climat, moisCourant }: { climat: Climat; moisCourant: number })
 }
 
 export function Tableau({ climat, reco }: { climat: Climat; reco: Rotation }) {
-  const a = climat.actuel;
+  const mois = new Date().getMonth() + 1;
+  const s = saisonDuMoment(climat.saisons ?? [climat.saisonPluies], mois);
+  const a = climat.actuel && mesuresRecentes(climat.actuel.dateFin) ? climat.actuel : undefined;
   return (
     <div data-stagger className="flex flex-col gap-3.5">
       <div className="flex items-center justify-between gap-3">
@@ -45,23 +48,17 @@ export function Tableau({ climat, reco }: { climat: Climat; reco: Rotation }) {
       </div>
 
       <section className="flex flex-col gap-3.5 rounded-[28px] bg-ink p-5 text-paper">
-        {a ? (
-          <>
-            <div className="flex items-center justify-between gap-2">
-              <span className="rounded-full bg-[#3A2208] px-[11px] py-[5px] text-[13px] font-bold text-[#FFB066]">{a.saison}</span>
-              <span className="text-[13px] text-[#9DB0A5]">Vu par satellite</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <h2 className="m-0 font-display text-[30px] font-bold leading-[1.05] tracking-[-0.04em]">
-                {a.titre} <span className="text-orange">{a.accent}</span>
-              </h2>
-              <p className="m-0 text-[15px] leading-[1.45] text-[#C9D4CD]">{a.texte}</p>
-            </div>
-          </>
-        ) : (
-          <p className="m-0 text-[15px] text-[#C9D4CD]">État du moment indisponible : les dernières mesures NASA POWER sont incomplètes. Les normales ci-dessous restent valables.</p>
-        )}
-        <Frise climat={climat} moisCourant={a?.moisCourant ?? new Date().getMonth() + 1} />
+        <div className="flex items-center justify-between gap-2">
+          <span className="rounded-full bg-[#3A2208] px-[11px] py-[5px] text-[13px] font-bold text-[#FFB066]">{s.saison}</span>
+          <span className="text-[13px] text-[#9DB0A5]">Climat NASA POWER</span>
+        </div>
+        <h2 className="m-0 font-display text-[30px] font-bold leading-[1.05] tracking-[-0.04em]">
+          {s.titre} <span className="text-orange">{s.accent}</span>
+        </h2>
+        <p className="m-0 text-[15px] leading-[1.45] text-[#C9D4CD]">
+          {a ? a.texte : "Mesures récentes indisponibles (incomplètes ou trop anciennes) : seules les normales sont affichées."}
+        </p>
+        <Frise climat={climat} moisCourant={mois} />
       </section>
 
       {a && (
