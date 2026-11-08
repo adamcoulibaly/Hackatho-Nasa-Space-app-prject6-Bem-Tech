@@ -3,7 +3,7 @@ import type { Climat, Rotation } from "@/lib/contract";
 import { mesuresRecentes, saisonDuMoment } from "@/lib/saison";
 import type { EtatSemis } from "@/lib/moteur/etat-semis";
 
-export type Semis = { etat: EtatSemis; depuis?: string; message: string; dateDonnees: string };
+export type Semis = { etat: EtatSemis; depuis?: string; message: string; dateDonnees: string; cle?: string };
 
 const MOIS_LONG = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 const BADGE: Record<EtatSemis, string> = {
@@ -11,6 +11,7 @@ const BADGE: Record<EtatSemis, string> = {
   premieres_pluies: "Premières pluies",
   fenetre_ouverte: "Fenêtre de semis ouverte",
   poche_seche: "Poche sèche",
+  en_saison: "Saison des pluies en cours",
 };
 const TITRE: Partial<Record<EtatSemis, [string, string]>> = {
   premieres_pluies: ["Premières pluies :", "attendez"],

@@ -1,6 +1,6 @@
 /** État de semis du moment, à partir des pluies NASA POWER des derniers jours (règle de début des pluies de Sivakumar). */
 
-export type EtatSemis = "seche" | "premieres_pluies" | "fenetre_ouverte" | "poche_seche";
+export type EtatSemis = "seche" | "premieres_pluies" | "fenetre_ouverte" | "poche_seche" | "en_saison";
 export type Jour = { date: string; pluie: number | null };
 
 const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
@@ -23,7 +23,14 @@ function prochainDebut(saisons: Saison[], mois: number): number {
 }
 
 /** `saisons` : toutes les saisons des pluies de la région (une au nord, deux au sud). */
-export function etatSemis(jours: Jour[], saisons: Saison | Saison[]): { etat: EtatSemis; depuis?: string; message: string } {
+/** Mois après le début de saison pendant lesquels on cherche encore le semis (comme le moteur du pipeline : début → début + 2). */
+const FENETRE_MOIS = 2;
+
+/**
+ * `cle` identifie la saison (année et mois de début) : l'app n'alerte qu'une fois par saison et par état.
+ * Après la fenêtre de semis, la saison est « en cours » : plus aucun conseil de semer.
+ */
+export function etatSemis(jours: Jour[], saisons: Saison | Saison[]): { etat: EtatSemis; depuis?: string; message: string; cle?: string } {
   const liste = Array.isArray(saisons) ? saisons : [saisons];
   const valides = jours.filter((j) => j.pluie !== null) as { date: string; pluie: number }[];
   const dernier = valides.at(-1);
@@ -31,7 +38,16 @@ export function etatSemis(jours: Jour[], saisons: Saison | Saison[]): { etat: Et
   const attendue = `Saison sèche : pluies attendues vers ${MOIS[prochainDebut(liste, mois) - 1]}.`;
   if (!dernier) return { etat: "seche", message: attendue };
   // Hors de toute saison des pluies (un mois d'avance toléré), un orage ne rouvre pas la fenêtre de semis.
-  if (!liste.some((s) => mois >= s.debut - 1 && mois <= s.fin)) return { etat: "seche", message: attendue };
+  const saison = liste.find((s) => mois >= s.debut - 1 && mois <= s.fin);
+  if (!saison) return { etat: "seche", message: attendue };
+  const cle = `${dernier.date.slice(0, 4)}-${saison.debut}`;
+  if (mois > saison.debut + FENETRE_MOIS) {
+    return {
+      etat: "en_saison",
+      cle,
+      message: "Saison des pluies en cours : la fenêtre de semis est passée. Pour un semis tardif, préférez une culture courte (niébé, arachide).",
+    };
+  }
 
   const cumul = (i: number) => valides.slice(Math.max(0, i - 2), i + 1).reduce((s, j) => s + j.pluie, 0);
   let ouverture = -1;
@@ -48,14 +64,14 @@ export function etatSemis(jours: Jour[], saisons: Saison | Saison[]): { etat: Et
       sec = valides[i].pluie < SEC_MM ? sec + 1 : 0;
       if (sec >= POCHE_JOURS) {
         const debut = valides[i - sec + 1].date;
-        return { etat: "poche_seche", depuis: debut, message: `Poche sèche depuis le ${dateLisible(debut)} : attendez la reprise des pluies avant de semer.` };
+        return { etat: "poche_seche", depuis: debut, cle, message: `Poche sèche depuis le ${dateLisible(debut)} : attendez la reprise des pluies avant de semer.` };
       }
     }
     const depuis = valides[ouverture].date;
-    return { etat: "fenetre_ouverte", depuis, message: `Pluies installées depuis le ${dateLisible(depuis)} : c'est le moment de semer.` };
+    return { etat: "fenetre_ouverte", depuis, cle, message: `Pluies installées depuis le ${dateLisible(depuis)} : c'est le moment de semer.` };
   }
   if (valides.slice(-RECENT_JOURS).some((j) => j.pluie >= SEC_MM)) {
-    return { etat: "premieres_pluies", message: "Premières pluies : attendez qu'elles s'installent avant de semer." };
+    return { etat: "premieres_pluies", cle, message: "Premières pluies : attendez qu'elles s'installent avant de semer." };
   }
   return { etat: "seche", message: attendue };
 }

@@ -54,6 +54,18 @@ describe("etatSemis", () => {
     expect(etatSemis(jours("2026-11-25", []), deux).message).toContain("mars");
   });
 
+  it("après la fenêtre de semis (août au Poro), un orage ne dit plus de semer : saison en cours", () => {
+    const e = etatSemis(jours("2026-08-20", [15, 12, 0, 2, 4]), SAISON);
+    expect(e.etat).toBe("en_saison");
+    expect(e.message).toMatch(/fenêtre de semis est passée/);
+  });
+
+  it("la fenêtre porte la clé de sa saison (année et mois de début) : une seule alerte par saison", () => {
+    expect(etatSemis(jours("2026-06-10", [12, 10, 4, 2, 0, 3, 6, 1, 0, 2]), SAISON).cle).toBe("2026-5");
+    const deux = [{ debut: 3, fin: 6 }, { debut: 9, fin: 10 }];
+    expect(etatSemis(jours("2026-09-20", [12, 10, 4, 2, 0, 3]), deux).cle).toBe("2026-9");
+  });
+
   it("les jours sans mesure sont ignorés", () => {
     const e = etatSemis(jours("2026-06-10", [12, null, 10, 4, 2, 0, 3, 6, 1, 0, 2]), SAISON);
     expect(e.etat).toBe("fenetre_ouverte");

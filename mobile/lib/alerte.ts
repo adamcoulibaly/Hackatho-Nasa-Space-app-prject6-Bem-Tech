@@ -1,13 +1,25 @@
 /** Alerte « semez maintenant » : quand notifier, et quoi dire (logique pure, testée hors de l'app). */
 
-export type EtatSemis = { etat: string; depuis?: string };
+export type EtatSemis = { etat: string; depuis?: string; cle?: string };
 
 const DECLENCHEURS = ["fenetre_ouverte", "poche_seche"];
+const MEMOIRE = 10;
 
-/** Vrai seulement au passage vers une fenêtre ouverte ou une poche sèche, jamais deux fois pour le même événement. */
-export function decider(precedent: EtatSemis | null, actuel: EtatSemis): boolean {
-  if (!DECLENCHEURS.includes(actuel.etat)) return false;
-  return !precedent || precedent.etat !== actuel.etat || precedent.depuis !== actuel.depuis;
+/** Identifiant d'un événement d'alerte : un état dans une saison (année et mois de début). */
+export const cleAlerte = (e: EtatSemis) => `${e.etat}|${e.cle}`;
+
+/**
+ * Vrai pour une fenêtre ouverte ou une poche sèche pas encore annoncée dans cette saison :
+ * au plus une alerte par état et par saison, même si plusieurs orages se succèdent.
+ */
+export function decider(dejaAnnonces: string[], actuel: EtatSemis): boolean {
+  if (!DECLENCHEURS.includes(actuel.etat) || !actuel.cle) return false;
+  return !dejaAnnonces.includes(cleAlerte(actuel));
+}
+
+/** Ajoute un événement annoncé en ne gardant que les plus récents. */
+export function memoriser(dejaAnnonces: string[], cle: string): string[] {
+  return [...dejaAnnonces.filter((c) => c !== cle), cle].slice(-MEMOIRE);
 }
 
 /** Nom lisible d'une région à partir de son identifiant (« san-pedro » → « San Pedro »). */

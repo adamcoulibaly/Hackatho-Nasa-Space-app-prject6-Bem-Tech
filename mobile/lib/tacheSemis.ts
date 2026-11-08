@@ -8,15 +8,15 @@ import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
 import * as TaskManager from "expo-task-manager";
 import { Platform } from "react-native";
-import { decider, texteAlerte, type EtatSemis } from "@/lib/alerte";
+import { cleAlerte, decider, memoriser, texteAlerte, type EtatSemis } from "@/lib/alerte";
 import { WEB_URL } from "@/lib/config";
 
 export const TACHE = "forosat-semis";
 const CLE = "forosat.alerte";
 const CANAL = "semis";
 
-export type Reglage = { active: boolean; region: string | null; culture: string | null; dernier: EtatSemis | null };
-const VIDE: Reglage = { active: false, region: null, culture: null, dernier: null };
+export type Reglage = { active: boolean; region: string | null; culture: string | null; annonces: string[] };
+const VIDE: Reglage = { active: false, region: null, culture: null, annonces: [] };
 
 export async function lireReglage(): Promise<Reglage> {
   try {
@@ -60,9 +60,9 @@ export async function verifier(forcer = false): Promise<boolean> {
     await Notifications.scheduleNotificationAsync({ content: { title: "ForoSat · test de l'alerte", body: corps }, trigger: null });
     return true;
   }
-  if (!decider(reglage.dernier, etat)) return false;
+  if (!decider(reglage.annonces, etat)) return false;
   await notifier(reglage.region, reglage.culture, etat.etat);
-  await ecrireReglage({ dernier: { etat: etat.etat, depuis: etat.depuis } });
+  await ecrireReglage({ annonces: memoriser(reglage.annonces, cleAlerte(etat)) });
   return true;
 }
 
