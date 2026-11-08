@@ -1,18 +1,21 @@
 import { z } from "zod";
 import type { ConfigIA } from "@/lib/ia/assistant";
 import { analyserPhoto, type AnalysePhoto } from "@/lib/ia/vision";
-import { comparer, type Comparaison } from "@/lib/satellite/comparer";
+import { comparer, POSITION_INCONNUE, type Comparaison } from "@/lib/satellite/comparer";
 
 export const TAILLE_MAX = 2_800_000;
 const ECHEC = "Analyse impossible, reprenez la photo de plus loin, en plein jour.";
 const CONSEIL_SOL_NU = "Sol nu en pleine saison : une culture de couverture (niébé, arachide) protège le sol.";
 
-const DemandePhoto = z.object({
-  image: z.string().regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/),
-  lat: z.number().min(-90).max(90),
-  lon: z.number().min(-180).max(180),
-  region: z.string().regex(/^[a-z-]{2,40}$/),
-});
+const DemandePhoto = z
+  .object({
+    image: z.string().regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/),
+    // Position de la parcelle (contour dessiné ou GPS) ; absente, la photo est analysée sans comparaison satellite.
+    lat: z.number().min(-90).max(90).optional(),
+    lon: z.number().min(-180).max(180).optional(),
+    region: z.string().regex(/^[a-z-]{2,40}$/),
+  })
+  .refine((d) => (d.lat === undefined) === (d.lon === undefined));
 
 export type ReponsePhoto =
   | {
@@ -41,11 +44,10 @@ export async function traiterPhoto(
   const d = DemandePhoto.safeParse(corps);
   if (!d.success) return { statut: 400, corps: { erreur: "Demande invalide." } };
   if (!deps.config.cle) return { statut: 503, corps: { erreur: "L'analyse de photo n'est pas encore configurée." } };
-  const lat = arrondir(d.data.lat);
-  const lon = arrondir(d.data.lon);
+  const position = d.data.lat !== undefined && d.data.lon !== undefined ? { lat: arrondir(d.data.lat), lon: arrondir(d.data.lon) } : null;
   const [analyse, sat] = await Promise.all([
     analyserPhoto(d.data.image, { config: deps.config, modele: deps.modele, fetch: deps.fetch }),
-    deps.ndvi(lat, lon).catch(() => null),
+    position ? deps.ndvi(position.lat, position.lon).catch(() => null) : Promise.resolve(null),
   ]);
   if (!analyse) return { statut: 422, corps: { erreur: ECHEC } };
   const normale = sat ? await deps.normale(d.data.region, sat.mois) : null;
@@ -55,7 +57,7 @@ export async function traiterPhoto(
     corps: {
       analyse,
       satellite: sat ? { ...sat, normale } : null,
-      comparaison: comparer(analyse, sat?.ndvi ?? null, normale, sat?.mois),
+      comparaison: position ? comparer(analyse, sat?.ndvi ?? null, normale, sat?.mois) : POSITION_INCONNUE,
       ...(conseil ? { conseil } : {}),
     },
   };

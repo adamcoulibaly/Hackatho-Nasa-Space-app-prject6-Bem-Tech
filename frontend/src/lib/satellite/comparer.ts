@@ -2,7 +2,13 @@ import type { AnalysePhoto } from "@/lib/ia/vision";
 
 const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 
-export type Comparaison = { verdict: "concordent" | "divergent" | "satellite_indisponible"; raisons: string[] };
+export type Comparaison = { verdict: "concordent" | "divergent" | "satellite_indisponible" | "position_inconnue"; raisons: string[] };
+
+/** Sans position de la parcelle, on ne compare pas au hasard (le chef-lieu est une ville). */
+export const POSITION_INCONNUE: Comparaison = {
+  verdict: "position_inconnue",
+  raisons: ["Dessinez votre parcelle sur la carte pour comparer la photo au satellite au bon endroit."],
+};
 
 /** Photo et satellite concordent-ils ? Règles écrites ; en cas de désaccord, les raisons possibles, sans trancher. */
 export function comparer(a: AnalysePhoto, ndvi: number | null, _normale: number | null, mois?: string): Comparaison {

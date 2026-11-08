@@ -97,4 +97,12 @@ describe("traiterPhoto (route /api/photo)", () => {
     const horsSaison = await traiterPhoto({ image: IMAGE, lat: 9.4, lon: -5.6, region: "poro" }, { ...deps(nu), enSaison: () => false });
     expect(horsSaison.corps).not.toHaveProperty("conseil");
   });
+
+  it("sans position de la parcelle : pas de comparaison au hasard, on demande de dessiner ou localiser le champ", async () => {
+    const ndvi = vi.fn(async () => ({ ndvi: 0.64, mois: "2026-09" }));
+    const r = await traiterPhoto({ image: IMAGE, region: "poro" }, deps(ok, ndvi));
+    expect(r.statut).toBe(200);
+    expect(ndvi).not.toHaveBeenCalled();
+    expect(r.corps).toMatchObject({ satellite: null, comparaison: { verdict: "position_inconnue" } });
+  });
 });

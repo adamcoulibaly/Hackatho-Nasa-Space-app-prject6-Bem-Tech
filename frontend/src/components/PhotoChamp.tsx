@@ -8,7 +8,7 @@ import { reduire } from "@/lib/photo/reduire";
 type Resultat = {
   analyse: { culture: string; couvertureSol: number; etat: "vigoureux" | "jaunissement" | "sec" | "sol_nu"; remarque: string };
   satellite: { ndvi: number; mois: string; normale: number | null } | null;
-  comparaison: { verdict: "concordent" | "divergent" | "satellite_indisponible"; raisons: string[] };
+  comparaison: { verdict: "concordent" | "divergent" | "satellite_indisponible" | "position_inconnue"; raisons: string[] };
   conseil?: string;
 };
 type Etat = { statut: "repos" } | { statut: "analyse" } | { statut: "erreur"; message: string } | { statut: "pret"; r: Resultat };
@@ -19,11 +19,16 @@ const VERDICT = {
   concordent: "Les deux regards concordent.",
   divergent: "Les deux regards divergent. Raisons possibles :",
   satellite_indisponible: "Image satellite indisponible : seule la photo est analysée.",
+  position_inconnue: "Position du champ inconnue : seule la photo est analysée.",
 } as const;
+const AIDE_POSITION = "Dessinez votre parcelle sur la carte pour que le satellite regarde votre champ.";
+const coord = (v: number, pos: string, neg: string) => `${Math.abs(v).toFixed(2).replace(".", ",")}° ${v >= 0 ? pos : neg}`;
 const BTN = "inline-flex h-[52px] items-center justify-center rounded-full bg-ink px-6 text-base font-bold text-paper";
 
 /** Photo du champ, confrontée à ce que voit le satellite au même endroit. */
-export function PhotoChamp({ region, lat, lon, reduireImage = reduire }: { region: string; lat: number; lon: number; reduireImage?: (f: Blob) => Promise<string> }) {
+/** `lat`/`lon` : position de la parcelle (contour ou GPS) ; sans elle, pas de comparaison satellite. */
+export function PhotoChamp({ region, lat, lon, reduireImage = reduire }: { region: string; lat?: number; lon?: number; reduireImage?: (f: Blob) => Promise<string> }) {
+  const position = lat !== undefined && lon !== undefined ? { lat, lon } : null;
   const [dansApp, setDansApp] = useState(false);
   const [etat, setEtat] = useState<Etat>({ statut: "repos" });
 
@@ -31,7 +36,7 @@ export function PhotoChamp({ region, lat, lon, reduireImage = reduire }: { regio
     async (image: string) => {
       setEtat({ statut: "analyse" });
       try {
-        const r = await fetch("/api/photo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image, lat, lon, region }) });
+        const r = await fetch("/api/photo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image, ...(position ?? {}), region }) });
         const json = await r.json();
         setEtat(r.ok ? { statut: "pret", r: json as Resultat } : { statut: "erreur", message: json?.erreur ?? "Analyse impossible pour le moment." });
       } catch {
@@ -57,6 +62,7 @@ export function PhotoChamp({ region, lat, lon, reduireImage = reduire }: { regio
       <p className="m-0 text-sm leading-normal text-muted">
         La photo est envoyée à un service d&apos;IA pour l&apos;analyse, puis oubliée : elle n&apos;est pas enregistrée. La position envoyée est arrondie à environ 1 km.
       </p>
+      {!position && <p className="m-0 rounded-2xl bg-paper p-3 text-sm">{AIDE_POSITION}</p>}
       {dansApp ? (
         <button type="button" className={`${BTN} self-start`} onClick={() => envoyerAuNatif({ type: "photo" })} disabled={etat.statut === "analyse"}>
           Photographier mon champ
@@ -86,13 +92,13 @@ export function PhotoChamp({ region, lat, lon, reduireImage = reduire }: { regio
       <div aria-live="polite" className="flex flex-col gap-3">
         {etat.statut === "analyse" && <p className="m-0 text-[15px] text-muted">Analyse de la photo et lecture du satellite…</p>}
         {etat.statut === "erreur" && <p className="m-0 rounded-2xl bg-[#FDE7CC] p-3.5 text-[15px] text-[#5C2E00]">{etat.message}</p>}
-        {etat.statut === "pret" && <Resultats r={etat.r} />}
+        {etat.statut === "pret" && <Resultats r={etat.r} position={position} />}
       </div>
     </section>
   );
 }
 
-function Resultats({ r }: { r: Resultat }) {
+function Resultats({ r, position }: { r: Resultat; position: { lat: number; lon: number } | null }) {
   const a = r.analyse;
   const s = r.satellite;
   const mois = s ? `${MOIS[Number(s.mois.slice(5, 7)) - 1]} ${s.mois.slice(0, 4)}` : "";
@@ -112,9 +118,10 @@ function Resultats({ r }: { r: Resultat }) {
               <strong className="font-display text-lg">{`Végétation ${s.ndvi.toFixed(2).replace(".", ",")}`}</strong>
               <span className="text-sm">{s.normale != null ? `Normale de ${MOIS[Number(s.mois.slice(5, 7)) - 1]} : ${s.normale.toFixed(2).replace(".", ",")}` : "Normale indisponible"}</span>
               <span className="text-sm text-[#9DB0A5]">{`NDVI MODIS Terra, ${mois} (NASA GIBS, pixel d'environ 1 km)`}</span>
+              {position && <span className="text-xs text-[#9DB0A5]">{`Point lu : ${coord(position.lat, "N", "S")} · ${coord(position.lon, "E", "O")}`}</span>}
             </>
           ) : (
-            <span className="text-sm">Image satellite indisponible pour ces derniers mois.</span>
+            <span className="text-sm">{position ? "Image satellite indisponible pour ces derniers mois." : AIDE_POSITION}</span>
           )}
         </div>
       </div>

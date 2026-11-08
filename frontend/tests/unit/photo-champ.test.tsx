@@ -66,4 +66,23 @@ describe("PhotoChamp", () => {
     await screen.findByText("Ce que voit la NASA");
     await waitFor(() => expect(f).toHaveBeenCalledTimes(1));
   });
+
+  it("sans position : la photo part sans coordonnées et l'écran explique comment comparer au satellite", async () => {
+    const f = vi.fn(async (_u: string, _i?: RequestInit) =>
+      new Response(JSON.stringify({ ...REPONSE, satellite: null, comparaison: { verdict: "position_inconnue", raisons: [] } })),
+    );
+    vi.stubGlobal("fetch", f);
+    render(<PhotoChamp region="poro" reduireImage={reduire} />);
+    expect(screen.getByText(/Dessinez votre parcelle sur la carte/)).toBeInTheDocument();
+    await userEvent.setup().upload(screen.getByLabelText("Photographier mon champ"), new File(["x"], "champ.jpg", { type: "image/jpeg" }));
+    await screen.findByText("Ce que voit votre téléphone");
+    expect(JSON.parse(f.mock.calls[0][1]!.body as string)).toEqual({ image: IMAGE, region: "poro" });
+  });
+
+  it("avec position : le point lu par le satellite est affiché", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify(REPONSE))));
+    render(<PhotoChamp region="poro" lat={9.458} lon={-5.63} reduireImage={reduire} />);
+    await userEvent.setup().upload(screen.getByLabelText("Photographier mon champ"), new File(["x"], "champ.jpg", { type: "image/jpeg" }));
+    expect(await screen.findByText(/Point lu : 9,46° N · 5,63° O/)).toBeInTheDocument();
+  });
 });
