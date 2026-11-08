@@ -12,6 +12,7 @@
   "dependencies": {
     "leaflet": "^1.9.4",
     "next": "^15.5.29",
+    "pngjs": "^7.0.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "zod": "^4.6.7"
@@ -23,6 +24,7 @@
     "@testing-library/user-event": "^14.6.8",
     "@types/leaflet": "^1.9.22",
     "@types/node": "^26.6.6",
+    "@types/pngjs": "^6.0.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.2.1",
