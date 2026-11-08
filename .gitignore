@@ -9,3 +9,7 @@ next-env.d.ts
 .env.local
 __pycache__/
 *.pyc
+
+# Séries brutes lourdes, retéléchargées par le pipeline
+data/raw/jours/
+data/raw/cmip6/

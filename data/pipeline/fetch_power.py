@@ -39,6 +39,15 @@ def telecharger_jours(lat: float | str, lon: float | str, debut: str, fin: str) 
         return r.read()
 
 
+def telecharger_serie(lat: float | str, lon: float | str, debut: str = "20050101", fin: str = "20251231") -> bytes:
+    """Série quotidienne longue (pluie, températures max. et min.) pour rejouer les saisons."""
+    params = {"parameters": "PRECTOTCORR,T2M_MAX,T2M_MIN", "community": "AG", "latitude": lat, "longitude": lon, "start": debut, "end": fin, "format": "JSON"}
+    url = "https://power.larc.nasa.gov/api/temporal/daily/point"
+    req = urllib.request.Request(f"{url}?{urllib.parse.urlencode(params)}", headers={"User-Agent": "forosat-hackathon"})
+    with urllib.request.urlopen(req, timeout=300) as r:
+        return r.read()
+
+
 def main(argv: list[str]) -> int:
     lat, lon, debut, fin = (argv + ["9.46", "-5.63", "2005", "2025"][len(argv):])[:4]
     corps = telecharger(lat, lon, debut, fin)

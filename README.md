@@ -82,7 +82,8 @@ python3 fetch_power.py        # télécharge NASA POWER (pluie, chaleur) de Korh
 python3 build_ndvi.py         # végétation NDVI MODIS mensuelle (NASA GIBS, sans compte) → data/raw/ndvi.json
 python3 build_grace.py        # eau stockée GRACE / GRACE-FO (NASA GIBS, sans compte) → data/raw/grace.json
 python3 build_regions.py      # climat réel des 33 régions et districts (data/regions/<id>.json), à relancer pour rafraîchir l'état du moment
-python3 -m unittest test_indicators test_climat_complet test_ndvi_gibs test_grace_gibs
+python3 build_saisons.py      # 20 saisons réelles rejouées par culture (NASA POWER journalier, FAO-56) → data/saisons/<id>.json
+python3 -m unittest test_indicators test_climat_complet test_ndvi_gibs test_grace_gibs test_saison test_build_saisons
 ```
 
 Pour **les 31 régions et 2 districts** (au chef-lieu de chacun) : pluie, chaleur et humidité du sol mensuelles 2005–2025 (NASA POWER), une ou deux saisons des pluies, alertes par règles et état du moment sur les 30 derniers jours publiés. La végétation vient du NDVI mensuel MODIS Terra, lu dans les tuiles NASA GIBS sur un anneau de 7 à 18 km autour du chef-lieu (la campagne, pas la ville). L'eau stockée vient de GRACE / GRACE-FO (mascons JPL, 2005–2022), lue elle aussi dans NASA GIBS : moyenne annuelle en cm d'eau, lacune 2017–2018 entre les deux missions.
