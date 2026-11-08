@@ -1,7 +1,7 @@
 import { act, render, renderHook, waitFor, fireEvent } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { ParcelleProvider, useParcelle } from "@/lib/parcelle/context";
-import { ongletDe, ouvrirDansApp } from "@/lib/modeApp";
+import { ecouterNatif, envoyerParcelle, ongletDe, ouvrirDansApp } from "@/lib/modeApp";
 import { ModeApp } from "@/components/ModeApp";
 
 const push = vi.fn();
@@ -121,5 +121,48 @@ describe("navigation entre onglets de l'app", () => {
     expect(push).toHaveBeenCalledWith("/rotations/C");
     act(() => duNatif({ type: "aller", chemin: "https://ailleurs.test/" }));
     expect(push).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("alerte de semis (pont vers l'app)", () => {
+  it("hors de l'app, l'interrupteur n'existe pas", async () => {
+    const { AlerteSemis } = await import("@/components/AlerteSemis");
+    window.history.pushState({}, "", "/tableau");
+    const { container } = render(<AlerteSemis />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("dans l'app : activer envoie la demande, un refus est expliqué", async () => {
+    const { AlerteSemis } = await import("@/components/AlerteSemis");
+    const postMessage = vi.fn();
+    (window as any).ReactNativeWebView = { postMessage };
+    window.history.pushState({}, "", "/tableau?app=1");
+    const { getByRole, findByText } = render(<AlerteSemis />);
+    fireEvent.click(getByRole("switch", { name: "M'alerter quand semer" }));
+    expect(JSON.parse(postMessage.mock.calls.at(-1)![0])).toEqual({ type: "alerte", action: "activer" });
+    act(() => duNatif({ type: "alerte", etat: "refus" }));
+    expect(await findByText(/Notifications refusées : activez-les dans les réglages du téléphone/)).toBeInTheDocument();
+    expect(getByRole("switch")).toHaveAttribute("aria-checked", "false");
+    act(() => duNatif({ type: "alerte", etat: "active" }));
+    expect(getByRole("switch")).toHaveAttribute("aria-checked", "true");
+    fireEvent.click(getByRole("button", { name: "Tester l'alerte" }));
+    expect(JSON.parse(postMessage.mock.calls.at(-1)![0])).toEqual({ type: "alerte", action: "tester" });
+  });
+
+  it("un message d'alerte mal formé est ignoré", () => {
+    const recu = vi.fn();
+    const arreter = ecouterNatif(recu);
+    duNatif({ type: "alerte", etat: "piratage" });
+    duNatif({ type: "alerte" });
+    expect(recu).not.toHaveBeenCalled();
+    arreter();
+  });
+
+  it("l'accueil donne à l'app la région et la culture à semer", () => {
+    const postMessage = vi.fn();
+    (window as any).ReactNativeWebView = { postMessage };
+    window.history.pushState({}, "", "/tableau?app=1");
+    expect(envoyerParcelle("poro", "Maïs")).toBe(true);
+    expect(JSON.parse(postMessage.mock.calls[0][0])).toEqual({ type: "parcelle", region: "poro", culture: "Maïs" });
   });
 });

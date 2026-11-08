@@ -8,12 +8,18 @@ export type Onglet = "tableau" | "climat" | "rotations" | "champ";
 export type MessageVersNatif =
   | { type: "position" }
   | { type: "partager"; url: string; texte: string }
-  | { type: "ouvrir"; onglet: Onglet; chemin: string };
+  | { type: "ouvrir"; onglet: Onglet; chemin: string }
+  | { type: "parcelle"; region: string; culture: string | null }
+  | { type: "alerte"; action: "activer" | "desactiver" | "tester" };
 export type MessageDuNatif =
   | { type: "position"; lat: number; lon: number }
   | { type: "position"; erreur: "refus" | "indisponible" }
   | { type: "aller"; chemin: string }
-  | { type: "sync" };
+  | { type: "sync" }
+  | { type: "alerte"; etat: EtatAlerte };
+
+export type EtatAlerte = "active" | "inactive" | "refus";
+const ETATS_ALERTE: EtatAlerte[] = ["active", "inactive", "refus"];
 
 /** Onglet natif qui porte une page du site ; null pour les pages qui s'ouvrent dans l'onglet courant (méthode, lexique…). */
 export function ongletDe(chemin: string): Onglet | null {
@@ -72,6 +78,10 @@ export function ecouterNatif(rappel: (m: MessageDuNatif) => void): () => void {
     try {
       const m = JSON.parse(data) as Partial<MessageDuNatif> & { chemin?: unknown };
       if (m.type === "sync") return rappel({ type: "sync" });
+      if (m.type === "alerte") {
+        const etat = (m as { etat?: unknown }).etat;
+        return ETATS_ALERTE.includes(etat as EtatAlerte) ? rappel({ type: "alerte", etat: etat as EtatAlerte }) : undefined;
+      }
       if (m.type === "aller") return estCheminInterne(m.chemin) ? rappel({ type: "aller", chemin: m.chemin }) : undefined;
       if (m.type !== "position") return;
       if ("erreur" in m && (m.erreur === "refus" || m.erreur === "indisponible")) rappel({ type: "position", erreur: m.erreur });
@@ -86,4 +96,9 @@ export function ecouterNatif(rappel: (m: MessageDuNatif) => void): () => void {
     window.removeEventListener("message", gerer);
     document.removeEventListener("message", gerer);
   };
+}
+
+/** Donne à l'app la région et la culture à semer (pour l'alerte de semis) ; false hors de l'app. */
+export function envoyerParcelle(region: string, culture: string | null): boolean {
+  return estModeApp() && envoyerAuNatif({ type: "parcelle", region, culture });
 }
