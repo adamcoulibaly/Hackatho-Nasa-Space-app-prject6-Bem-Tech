@@ -10,6 +10,7 @@ from datetime import date
 from typing import Optional
 
 from etat_du_moment import etat_du_moment
+from grace_gibs import ecarts_annuels
 from indicators import climatologie, mann_kendall, niveau, pluie_mm_mois, saisons_des_pluies
 
 MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
@@ -55,8 +56,8 @@ def alertes(pluie12: list, chaleur12: list, sol12: list, saisons: list[tuple[int
     return a
 
 
-def climat_complet(brut_mensuel: dict, brut_jours: Optional[dict], region: dict, aujourd_hui: date, ndvi: Optional[dict] = None) -> dict:
-    """ndvi : {"AAAAMM": valeur ou None} (MODIS via GIBS), facultatif."""
+def climat_complet(brut_mensuel: dict, brut_jours: Optional[dict], region: dict, aujourd_hui: date, ndvi: Optional[dict] = None, grace: Optional[dict] = None) -> dict:
+    """ndvi et grace : {"AAAAMM": valeur ou None} lus dans NASA GIBS, facultatifs."""
     pluie_jour = lire_serie(brut_mensuel, "PRECTOTCORR")
     pluie_mois = {k: (pluie_mm_mois(v, *k) if v != -999.0 else None) for k, v in pluie_jour.items()}
     pluie12 = [round(v) for v in climatologie(pluie_mois)]  # type: ignore[arg-type]
@@ -121,6 +122,12 @@ def climat_complet(brut_mensuel: dict, brut_jours: Optional[dict], region: dict,
             })
             c["indicateurs"].append({"label": "Végétation au plus bas", "valeur": f"{MOIS[i_bas].capitalize()} · {_virgule(ndvi12[i_bas])}", "source": f"NDVI MODIS · NASA GIBS ({n_mois} mois)"})
             c["meta"]["reel"].append("végétation")
+    if grace:
+        mesures = [k for k, v in grace.items() if v is not None]
+        if mesures:
+            fin = int(max(mesures)[:4])
+            c["grace"] = ecarts_annuels(grace, 2005, fin)
+            c["meta"]["reel"].append("eau stockée")
     if brut_jours:
         actuel = etat_du_moment(brut_jours, {"pluie": pluie12, "chaleur": chaleur12, "sol": sol12}, saisons, aujourd_hui)
         if actuel:

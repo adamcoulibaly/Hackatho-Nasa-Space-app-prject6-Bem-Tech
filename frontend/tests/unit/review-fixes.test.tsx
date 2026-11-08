@@ -87,12 +87,14 @@ describe("données réelles : meta et affichage", () => {
     const c = JSON.parse(fs.readFileSync(KORHOGO, "utf8"));
     expect(() => ClimatSchema.parse({ ...c, meta: { reel: ["pluie"] } })).toThrow();
   });
-  it("l'écran climat cite ses sources et dit ce qui arrive avec Earthdata", async () => {
+  it("l'écran climat cite toutes ses sources réelles et affiche l'eau stockée", async () => {
     localStorage.setItem("forosat.parcelle", JSON.stringify({ parcelle: DEFAULT_PARCELLE, saisie: true }));
     const { default: ClimatPage } = await import("@/app/climat/page");
     render(<ParcelleProvider>{await ClimatPage()}</ParcelleProvider>);
     expect(await screen.findByText(/NASA POWER/, { selector: "p *, p" })).toBeInTheDocument();
-    expect(screen.getByText(/L'eau stockée \(GRACE\) s'affichera/)).toBeInTheDocument();
+    expect(screen.getAllByText(/eau stockée/i).length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText("L'eau stockée dans la zone, sur 20 ans")).toBeInTheDocument();
+    expect(screen.queryByText(/s'affichera/)).not.toBeInTheDocument();
     expect(screen.queryByText(/valeurs d'exemple/i)).not.toBeInTheDocument();
   });
 });

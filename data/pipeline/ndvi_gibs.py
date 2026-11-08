@@ -19,13 +19,27 @@ URL = "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/{couche}/default/{date
 
 
 def charger_palette(xml: str) -> dict[tuple[int, int, int], Optional[float]]:
-    """Couleur RVB → NDVI (milieu de la plage), None pour les couleurs transparentes (pas de donnée)."""
+    """Couleur RVB → valeur (milieu de la plage ; borne finie pour une plage ouverte ±INF),
+    None pour les couleurs transparentes (pas de donnée). Sert au NDVI comme à GRACE."""
     palette: dict[tuple[int, int, int], Optional[float]] = {}
-    for m in re.finditer(r'<ColorMapEntry rgb="(\d+),(\d+),(\d+)" transparent="(true|false)"[^>]*?value="\[([-\d.]+),([-\d.]+)\)"', xml):
-        rgb = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
+    for tag in re.findall(r"<ColorMapEntry\b[^>]*>", xml):
+        rgb_m = re.search(r'rgb="(\d+),(\d+),(\d+)"', tag)
+        if not rgb_m:
+            continue
+        rgb = (int(rgb_m.group(1)), int(rgb_m.group(2)), int(rgb_m.group(3)))
         if rgb in palette:
             continue
-        palette[rgb] = None if m.group(4) == "true" else round((float(m.group(5)) + float(m.group(6))) / 2, 4)
+        val = re.search(r'\bvalue="\[([^,]+),([^)\]]+)[)\]]"', tag)
+        if 'transparent="true"' in tag or not val:
+            palette[rgb] = None
+            continue
+        lo, hi = val.group(1).strip(), val.group(2).strip()
+        if "INF" in lo:
+            palette[rgb] = float(hi)
+        elif "INF" in hi:
+            palette[rgb] = float(lo)
+        else:
+            palette[rgb] = round((float(lo) + float(hi)) / 2, 4)
     return palette
 
 

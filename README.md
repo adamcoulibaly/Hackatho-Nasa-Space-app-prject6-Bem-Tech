@@ -74,17 +74,18 @@ L'assistant reformule une rotation en langage simple et répond aux questions, �
 
 ## Pipeline de données NASA
 
-Dans `data/pipeline/` (Python 3 ; seul `build_ndvi.py` demande Pillow : `pip install pillow`) :
+Dans `data/pipeline/` (Python 3 ; `build_ndvi.py` et `build_grace.py` demandent Pillow : `pip install pillow`) :
 
 ```bash
 cd data/pipeline
 python3 fetch_power.py        # télécharge NASA POWER (pluie, chaleur) de Korhogo vers data/raw/
 python3 build_ndvi.py         # végétation NDVI MODIS mensuelle (NASA GIBS, sans compte) → data/raw/ndvi.json
+python3 build_grace.py        # eau stockée GRACE / GRACE-FO (NASA GIBS, sans compte) → data/raw/grace.json
 python3 build_regions.py      # climat réel des 33 régions et districts (data/regions/<id>.json), à relancer pour rafraîchir l'état du moment
-python3 -m unittest test_indicators test_climat_complet test_ndvi_gibs
+python3 -m unittest test_indicators test_climat_complet test_ndvi_gibs test_grace_gibs
 ```
 
-Pour **les 31 régions et 2 districts** (au chef-lieu de chacun) : pluie, chaleur et humidité du sol mensuelles 2005–2025 (NASA POWER), une ou deux saisons des pluies, alertes par règles et état du moment sur les 30 derniers jours publiés. La végétation vient du NDVI mensuel MODIS Terra, lu dans les tuiles NASA GIBS sur un anneau de 7 à 18 km autour du chef-lieu (la campagne, pas la ville). L'eau stockée (GRACE) s'ajoutera avec un compte NASA Earthdata ; d'ici là, ce bloc ne s'affiche pas.
+Pour **les 31 régions et 2 districts** (au chef-lieu de chacun) : pluie, chaleur et humidité du sol mensuelles 2005–2025 (NASA POWER), une ou deux saisons des pluies, alertes par règles et état du moment sur les 30 derniers jours publiés. La végétation vient du NDVI mensuel MODIS Terra, lu dans les tuiles NASA GIBS sur un anneau de 7 à 18 km autour du chef-lieu (la campagne, pas la ville). L'eau stockée vient de GRACE / GRACE-FO (mascons JPL, 2005–2022), lue elle aussi dans NASA GIBS : moyenne annuelle en cm d'eau, lacune 2017–2018 entre les deux missions.
 
 ## Règles d'équipe
 

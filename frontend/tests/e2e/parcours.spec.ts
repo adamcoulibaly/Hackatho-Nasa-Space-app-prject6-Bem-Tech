@@ -179,7 +179,7 @@ test("toutes les régions : le climat suit la région choisie", async ({ page })
   await expect(page).toHaveURL(/\/climat$/);
   await expect(page.getByText(/Étape 2 sur 3 · Gbêkê/i)).toBeVisible();
   await expect(page.getByText(/NASA POWER, Bouaké/)).toBeVisible();
-  await expect(page.getByText(/compte NASA Earthdata/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "L'eau stockée dans la zone, sur 20 ans" })).toBeVisible();
   await page.goto("/rotations");
   await expect(page.getByText(/Étape 3 sur 3 · Gbêkê/i)).toBeVisible();
 });

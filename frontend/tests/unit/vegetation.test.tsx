@@ -19,11 +19,11 @@ describe("végétation réelle (NDVI MODIS via NASA GIBS)", () => {
     expect(new Set(cases).size).toBeGreaterThanOrEqual(4);
     expect(container.textContent).toMatch(/Végétation, mois par mois/);
   });
-  it("la note de l'écran Climat n'annonce plus que l'eau stockée comme manquante", async () => {
+  it("la note de l'écran Climat n'annonce plus aucune donnée manquante", async () => {
     localStorage.setItem("forosat.parcelle", JSON.stringify({ parcelle: DEFAULT_PARCELLE, saisie: true }));
     render(<ParcelleProvider><ClimatVue initial={korhogo} /></ParcelleProvider>);
-    expect(await screen.findByText(/L'eau stockée \(GRACE\) s'affichera/)).toBeInTheDocument();
-    expect(screen.queryByText(/La végétation \(NDVI\) et l'eau stockée/)).not.toBeInTheDocument();
+    expect(await screen.findByText(/Données réelles/)).toBeInTheDocument();
+    expect(screen.queryByText(/s'affichera/)).not.toBeInTheDocument();
     localStorage.clear();
   });
 });

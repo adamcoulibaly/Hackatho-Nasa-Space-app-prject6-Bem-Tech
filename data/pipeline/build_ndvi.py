@@ -22,7 +22,11 @@ SORTIE = ICI.parent / "raw" / "ndvi.json"
 
 
 def lire_tuile(date: str, x: int, y: int) -> Optional[bytes]:
-    url = URL.format(couche=COUCHE, date=date, z=ZOOM, x=x, y=y)
+    return lire_tuile_url(URL.format(couche=COUCHE, date=date, z=ZOOM, x=x, y=y))
+
+
+def lire_tuile_url(url: str) -> Optional[bytes]:
+    """PNG de la tuile, None si elle n'existe pas (404) ou reste injoignable après 3 essais."""
     for essai in range(3):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "forosat-hackathon"}), timeout=60) as r:

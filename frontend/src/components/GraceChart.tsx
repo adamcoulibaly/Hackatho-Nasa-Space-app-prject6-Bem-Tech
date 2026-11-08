@@ -5,6 +5,9 @@ const HACHURE = "repeating-linear-gradient(45deg, #E3E8E2 0 3px, #C9D3CD 3px 6px
 
 export function GraceChart({ data }: { data: NonNullable<Climat["grace"]> }) {
   const cols = { gridTemplateColumns: `repeat(${data.length}, minmax(0, 1fr))` };
+  // La plus grande valeur absolue occupe 66 px de la demi-hauteur de 70 px (au plus 12 px par cm).
+  const maxAbs = Math.max(0, ...data.map((g) => Math.abs(g.ecart ?? 0)));
+  const echelle = maxAbs > 0 ? Math.min(12, 66 / maxAbs) : 12;
   return (
     <div className="flex flex-col gap-3.5">
       <div className="flex flex-wrap gap-3.5 text-[13px] text-muted">
@@ -17,9 +20,9 @@ export function GraceChart({ data }: { data: NonNullable<Climat["grace"]> }) {
           <div className="relative grid h-[140px] gap-1" style={cols}>
             <div aria-hidden="true" className="absolute inset-x-0 top-[70px] h-px bg-ink" />
             {data.map((g, i) => {
-              const b = graceBar(g);
+              const b = graceBar(g, echelle);
               return (
-                <div key={g.annee} data-annee={g.annee} data-gap={b.gap} className="flex h-[140px] flex-col" title={b.gap ? `${g.annee} : pas de mesure` : `${g.annee} : écart ${g.ecart}`}>
+                <div key={g.annee} data-annee={g.annee} data-gap={b.gap} className="flex h-[140px] flex-col" title={b.gap ? `${g.annee} : pas de mesure` : `${g.annee} : écart de ${g.ecart} cm d'eau`}>
                   {b.gap ? (
                     <div role="img" aria-label={`${g.annee} : Pas de mesure`} className="h-[140px] rounded" style={{ background: HACHURE }} />
                   ) : (

@@ -20,11 +20,11 @@ export function barHeight(value: number, max: number, px: number): number {
 
 const GRACE_PX_PER_UNIT = 12;
 
-export function graceBar(entry: { annee: number; ecart: number | null }): { up: number; down: number; gap: boolean } {
+export function graceBar(entry: { annee: number; ecart: number | null }, pxParUnite: number = GRACE_PX_PER_UNIT): { up: number; down: number; gap: boolean } {
   if (entry.ecart === null) return { up: 0, down: 0, gap: true };
   return {
-    up: entry.ecart > 0 ? entry.ecart * GRACE_PX_PER_UNIT : 0,
-    down: entry.ecart < 0 ? -entry.ecart * GRACE_PX_PER_UNIT : 0,
+    up: entry.ecart > 0 ? entry.ecart * pxParUnite : 0,
+    down: entry.ecart < 0 ? -entry.ecart * pxParUnite : 0,
     gap: false,
   };
 }

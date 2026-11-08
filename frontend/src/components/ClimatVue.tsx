@@ -96,7 +96,7 @@ export function ClimatVue({ initial }: { initial: Climat }) {
         <Card titre="L'eau stockée dans la zone, sur 20 ans">
           <GraceChart data={climat.grace} />
           <p className="m-0 text-[15px] leading-normal text-muted">
-            Écart à la moyenne de la réserve d'eau totale (GRACE puis GRACE-FO). Les colonnes hachurées marquent une <strong className="text-ink">lacune de données</strong> : la fin de GRACE en 2017 et le lancement de GRACE-FO en 2018. Mesure à grande échelle (plusieurs centaines de km) : elle décrit la région, pas la parcelle.
+            Écart annuel de la réserve d'eau totale, en centimètres d'eau, par rapport à la moyenne de référence de la mission (GRACE puis GRACE-FO, mascons JPL, via NASA GIBS). Les colonnes hachurées marquent une <strong className="text-ink">lacune de données</strong> : la fin de GRACE en 2017 et le lancement de GRACE-FO en 2018. Mesure à grande échelle (plusieurs centaines de km) : elle décrit la région, pas la parcelle.
           </p>
         </Card>
       )}

@@ -245,13 +245,88 @@
       "pluie",
       "chaleur",
       "humidité du sol",
-      "végétation"
+      "végétation",
+      "eau stockée"
     ],
     "region": "bagoue",
     "source": "NASA POWER, Boundiali (9,52 N · 6,48 O)",
     "periode": "2005–2025",
     "tendancePluie": "Pluie annuelle sans tendance nette sur la période (test de Mann-Kendall, z = 0.88, 21 années)."
   },
+  "grace": [
+    {
+      "annee": 2005,
+      "ecart": -0.0
+    },
+    {
+      "annee": 2006,
+      "ecart": 0.1
+    },
+    {
+      "annee": 2007,
+      "ecart": -1.9
+    },
+    {
+      "annee": 2008,
+      "ecart": 1.5
+    },
+    {
+      "annee": 2009,
+      "ecart": 0.3
+    },
+    {
+      "annee": 2010,
+      "ecart": 2.0
+    },
+    {
+      "annee": 2011,
+      "ecart": 1.5
+    },
+    {
+      "annee": 2012,
+      "ecart": 3.6
+    },
+    {
+      "annee": 2013,
+      "ecart": 3.8
+    },
+    {
+      "annee": 2014,
+      "ecart": 5.5
+    },
+    {
+      "annee": 2015,
+      "ecart": 0.9
+    },
+    {
+      "annee": 2016,
+      "ecart": -1.4
+    },
+    {
+      "annee": 2017,
+      "ecart": null
+    },
+    {
+      "annee": 2018,
+      "ecart": null
+    },
+    {
+      "annee": 2019,
+      "ecart": 7.3
+    },
+    {
+      "annee": 2020,
+      "ecart": 4.1
+    },
+    {
+      "annee": 2021,
+      "ecart": 1.9
+    },
+    {
+      "annee": 2022,
+      "ecart": -12.9
+    }
+  ],
   "actuel": {
     "saison": "Saison sèche",
     "titre": "Prochaines pluies vers",

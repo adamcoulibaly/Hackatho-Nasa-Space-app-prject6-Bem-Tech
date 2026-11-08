@@ -245,13 +245,88 @@
       "pluie",
       "chaleur",
       "humidité du sol",
-      "végétation"
+      "végétation",
+      "eau stockée"
     ],
     "region": "gbeke",
     "source": "NASA POWER, Bouaké (7,69 N · 5,03 O)",
     "periode": "2005–2025",
     "tendancePluie": "Pluie annuelle sans tendance nette sur la période (test de Mann-Kendall, z = 1.90, 21 années)."
   },
+  "grace": [
+    {
+      "annee": 2005,
+      "ecart": -1.1
+    },
+    {
+      "annee": 2006,
+      "ecart": -3.4
+    },
+    {
+      "annee": 2007,
+      "ecart": -3.5
+    },
+    {
+      "annee": 2008,
+      "ecart": 3.1
+    },
+    {
+      "annee": 2009,
+      "ecart": 4.6
+    },
+    {
+      "annee": 2010,
+      "ecart": 8.1
+    },
+    {
+      "annee": 2011,
+      "ecart": 10.1
+    },
+    {
+      "annee": 2012,
+      "ecart": 11.6
+    },
+    {
+      "annee": 2013,
+      "ecart": 9.4
+    },
+    {
+      "annee": 2014,
+      "ecart": 8.0
+    },
+    {
+      "annee": 2015,
+      "ecart": 1.1
+    },
+    {
+      "annee": 2016,
+      "ecart": -0.9
+    },
+    {
+      "annee": 2017,
+      "ecart": null
+    },
+    {
+      "annee": 2018,
+      "ecart": null
+    },
+    {
+      "annee": 2019,
+      "ecart": 8.6
+    },
+    {
+      "annee": 2020,
+      "ecart": 7.1
+    },
+    {
+      "annee": 2021,
+      "ecart": 6.4
+    },
+    {
+      "annee": 2022,
+      "ecart": -0.7
+    }
+  ],
   "actuel": {
     "saison": "Saison sèche",
     "titre": "Prochaines pluies vers",
