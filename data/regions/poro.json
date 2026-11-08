@@ -20,6 +20,11 @@
       "label": "Sol le plus sec",
       "valeur": "Février · 0,42",
       "source": "Humidité du sol (0 à 1) · NASA POWER (MERRA-2)"
+    },
+    {
+      "label": "Végétation au plus bas",
+      "valeur": "Février · 0,36",
+      "source": "NDVI MODIS · NASA GIBS (251 mois)"
     }
   ],
   "pluieMensuelle": [
@@ -101,6 +106,25 @@
         4,
         4,
         2,
+        1
+      ]
+    },
+    {
+      "label": "Végétation",
+      "source": "MODIS Terra (NASA GIBS)",
+      "palette": "veg",
+      "valeurs": [
+        0,
+        0,
+        0,
+        1,
+        2,
+        2,
+        3,
+        4,
+        4,
+        4,
+        3,
         1
       ]
     }
@@ -191,13 +215,37 @@
       ],
       "min": 0.37,
       "conseil": "Le sol est le plus humide en septembre et le plus sec en février : semez quand l'humidité remonte, au début de la saison des pluies."
+    },
+    {
+      "id": "veg",
+      "label": "Végét.",
+      "big": "Pic en septembre",
+      "source": "MODIS Terra (NASA GIBS)",
+      "legende": "Indice de végétation NDVI (0 à 1)",
+      "valeurs": [
+        0.39,
+        0.36,
+        0.39,
+        0.44,
+        0.51,
+        0.55,
+        0.58,
+        0.65,
+        0.69,
+        0.67,
+        0.57,
+        0.47
+      ],
+      "min": 0.31,
+      "conseil": "La végétation est la plus faible en février : c'est là que le sol nu s'abîme le plus. Une culture de couverture le protège."
     }
   ],
   "meta": {
     "reel": [
       "pluie",
       "chaleur",
-      "humidité du sol"
+      "humidité du sol",
+      "végétation"
     ],
     "region": "poro",
     "source": "NASA POWER, Korhogo (9,46 N · 5,63 O)",

@@ -4,7 +4,7 @@ Les écrans lisent `data/regions/<id>.json`, `data/pilot/korhogo/*.json` et `kno
 
 | Fichier | Contenu | Producteur |
 |---|---|---|
-| `data/regions/<id>.json` | Climat réel d'une région (NASA POWER) : 4 indicateurs, pluie mensuelle (mm), saisons des pluies, matrice (pluie, chaleur, humidité du sol ; niveaux 0 à 4), alertes, `onglets` (pluie, chaleur, sol), `actuel` (30 derniers jours) et `meta` (sources, période, tendance). `grace` et l'onglet `veg` arrivent avec Earthdata | Pipeline (membre 1) |
+| `data/regions/<id>.json` | Climat réel d'une région (NASA POWER) : 4 indicateurs, pluie mensuelle (mm), saisons des pluies, matrice (pluie, chaleur, humidité du sol ; niveaux 0 à 4), alertes, `onglets` (pluie, chaleur, sol), `actuel` (30 derniers jours) et `meta` (sources, période, tendance). onglet `veg` et ligne « Végétation » : NDVI MODIS via NASA GIBS ; `grace` arrive avec Earthdata | Pipeline (membre 1) |
 | `knowledge/cultures.json` | 8 fiches cultures : famille, cycle, besoin en eau, légumineuse, notes 1 à 5 (sécheresse, chaleur, couverture, fourrage, travail du sol, revenu, marché), sources ; revenu et marché sont des hypothèses | Agronomie (membre 2) |
 | `couches.json` | Couches satellite de la carte, servies en tuiles par NASA GIBS sans clé : nom de couche GIBS, format, zoom natif, jour de l'année affiché, première année disponible, opacité | Membre 1 |
 | `sources.json` | 5 étapes de méthode, 8 sources NASA, 4 approches IA comparées, liste « là où l'humain décide » | Membre 5 (contenu) |

@@ -20,6 +20,11 @@
       "label": "Sol le plus sec",
       "valeur": "Janvier · 0,39",
       "source": "Humidité du sol (0 à 1) · NASA POWER (MERRA-2)"
+    },
+    {
+      "label": "Végétation au plus bas",
+      "valeur": "Février · 0,35",
+      "source": "NDVI MODIS · NASA GIBS (251 mois)"
     }
   ],
   "pluieMensuelle": [
@@ -101,6 +106,25 @@
         4,
         3,
         2,
+        1
+      ]
+    },
+    {
+      "label": "Végétation",
+      "source": "MODIS Terra (NASA GIBS)",
+      "palette": "veg",
+      "valeurs": [
+        0,
+        0,
+        0,
+        1,
+        2,
+        3,
+        3,
+        3,
+        4,
+        4,
+        3,
         1
       ]
     }
@@ -191,13 +215,37 @@
       ],
       "min": 0.34,
       "conseil": "Le sol est le plus humide en septembre et le plus sec en janvier : semez quand l'humidité remonte, au début de la saison des pluies."
+    },
+    {
+      "id": "veg",
+      "label": "Végét.",
+      "big": "Pic en septembre",
+      "source": "MODIS Terra (NASA GIBS)",
+      "legende": "Indice de végétation NDVI (0 à 1)",
+      "valeurs": [
+        0.38,
+        0.35,
+        0.39,
+        0.45,
+        0.54,
+        0.58,
+        0.6,
+        0.64,
+        0.69,
+        0.67,
+        0.59,
+        0.47
+      ],
+      "min": 0.3,
+      "conseil": "La végétation est la plus faible en février : c'est là que le sol nu s'abîme le plus. Une culture de couverture le protège."
     }
   ],
   "meta": {
     "reel": [
       "pluie",
       "chaleur",
-      "humidité du sol"
+      "humidité du sol",
+      "végétation"
     ],
     "region": "tchologo",
     "source": "NASA POWER, Ferkessédougou (9,59 N · 5,20 O)",

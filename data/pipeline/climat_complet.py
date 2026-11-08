@@ -55,7 +55,8 @@ def alertes(pluie12: list, chaleur12: list, sol12: list, saisons: list[tuple[int
     return a
 
 
-def climat_complet(brut_mensuel: dict, brut_jours: Optional[dict], region: dict, aujourd_hui: date) -> dict:
+def climat_complet(brut_mensuel: dict, brut_jours: Optional[dict], region: dict, aujourd_hui: date, ndvi: Optional[dict] = None) -> dict:
+    """ndvi : {"AAAAMM": valeur ou None} (MODIS via GIBS), facultatif."""
     pluie_jour = lire_serie(brut_mensuel, "PRECTOTCORR")
     pluie_mois = {k: (pluie_mm_mois(v, *k) if v != -999.0 else None) for k, v in pluie_jour.items()}
     pluie12 = [round(v) for v in climatologie(pluie_mois)]  # type: ignore[arg-type]
@@ -105,6 +106,21 @@ def climat_complet(brut_mensuel: dict, brut_jours: Optional[dict], region: dict,
             "tendancePluie": f"Pluie annuelle {phrase} sur la période (test de Mann-Kendall, z = {tendance['z']:.2f}, {len(totaux)} années).",
         },
     }
+    if ndvi:
+        serie = {(int(k[:4]), int(k[4:])): v for k, v in ndvi.items()}
+        clim = climatologie(serie)
+        if all(v is not None for v in clim):
+            ndvi12 = [round(v, 2) for v in clim]  # type: ignore[arg-type]
+            i_bas, i_haut = ndvi12.index(min(ndvi12)), ndvi12.index(max(ndvi12))
+            n_mois = sum(1 for v in serie.values() if v is not None)
+            c["matrice"].append({"label": "Végétation", "source": "MODIS Terra (NASA GIBS)", "palette": "veg", "valeurs": [niveau(v, min(ndvi12), max(ndvi12)) for v in ndvi12]})
+            c["onglets"].append({
+                "id": "veg", "label": "Végét.", "big": f"Pic en {MOIS[i_haut]}", "source": "MODIS Terra (NASA GIBS)",
+                "legende": "Indice de végétation NDVI (0 à 1)", "valeurs": ndvi12, "min": max(0.0, round(min(ndvi12) - 0.05, 2)),
+                "conseil": f"La végétation est la plus faible en {MOIS[i_bas]} : c'est là que le sol nu s'abîme le plus. Une culture de couverture le protège.",
+            })
+            c["indicateurs"].append({"label": "Végétation au plus bas", "valeur": f"{MOIS[i_bas].capitalize()} · {_virgule(ndvi12[i_bas])}", "source": f"NDVI MODIS · NASA GIBS ({n_mois} mois)"})
+            c["meta"]["reel"].append("végétation")
     if brut_jours:
         actuel = etat_du_moment(brut_jours, {"pluie": pluie12, "chaleur": chaleur12, "sol": sol12}, saisons, aujourd_hui)
         if actuel:

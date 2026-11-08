@@ -20,6 +20,11 @@
       "label": "Sol le plus sec",
       "valeur": "Février · 0,42",
       "source": "Humidité du sol (0 à 1) · NASA POWER (MERRA-2)"
+    },
+    {
+      "label": "Végétation au plus bas",
+      "valeur": "Février · 0,44",
+      "source": "NDVI MODIS · NASA GIBS (251 mois)"
     }
   ],
   "pluieMensuelle": [
@@ -102,6 +107,25 @@
         4,
         3,
         1
+      ]
+    },
+    {
+      "label": "Végétation",
+      "source": "MODIS Terra (NASA GIBS)",
+      "palette": "veg",
+      "valeurs": [
+        0,
+        0,
+        2,
+        3,
+        4,
+        4,
+        2,
+        1,
+        3,
+        4,
+        4,
+        2
       ]
     }
   ],
@@ -191,13 +215,37 @@
       ],
       "min": 0.37,
       "conseil": "Le sol est le plus humide en octobre et le plus sec en février : semez quand l'humidité remonte, au début de la saison des pluies."
+    },
+    {
+      "id": "veg",
+      "label": "Végét.",
+      "big": "Pic en octobre",
+      "source": "MODIS Terra (NASA GIBS)",
+      "legende": "Indice de végétation NDVI (0 à 1)",
+      "valeurs": [
+        0.46,
+        0.44,
+        0.55,
+        0.66,
+        0.7,
+        0.7,
+        0.55,
+        0.52,
+        0.66,
+        0.72,
+        0.69,
+        0.58
+      ],
+      "min": 0.39,
+      "conseil": "La végétation est la plus faible en février : c'est là que le sol nu s'abîme le plus. Une culture de couverture le protège."
     }
   ],
   "meta": {
     "reel": [
       "pluie",
       "chaleur",
-      "humidité du sol"
+      "humidité du sol",
+      "végétation"
     ],
     "region": "gbeke",
     "source": "NASA POWER, Bouaké (7,69 N · 5,03 O)",

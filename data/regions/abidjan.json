@@ -20,6 +20,11 @@
       "label": "Sol le plus sec",
       "valeur": "Février · 0,42",
       "source": "Humidité du sol (0 à 1) · NASA POWER (MERRA-2)"
+    },
+    {
+      "label": "Végétation au plus bas",
+      "valeur": "Août · 0,35",
+      "source": "NDVI MODIS · NASA GIBS (251 mois)"
     }
   ],
   "pluieMensuelle": [
@@ -106,6 +111,25 @@
         2,
         2,
         2
+      ]
+    },
+    {
+      "label": "Végétation",
+      "source": "MODIS Terra (NASA GIBS)",
+      "palette": "veg",
+      "valeurs": [
+        2,
+        2,
+        3,
+        4,
+        4,
+        3,
+        2,
+        0,
+        1,
+        2,
+        4,
+        3
       ]
     }
   ],
@@ -195,13 +219,37 @@
       ],
       "min": 0.37,
       "conseil": "Le sol est le plus humide en juin et le plus sec en février : semez quand l'humidité remonte, au début de la saison des pluies."
+    },
+    {
+      "id": "veg",
+      "label": "Végét.",
+      "big": "Pic en mai",
+      "source": "MODIS Terra (NASA GIBS)",
+      "legende": "Indice de végétation NDVI (0 à 1)",
+      "valeurs": [
+        0.42,
+        0.43,
+        0.47,
+        0.51,
+        0.53,
+        0.5,
+        0.44,
+        0.35,
+        0.38,
+        0.44,
+        0.51,
+        0.48
+      ],
+      "min": 0.3,
+      "conseil": "La végétation est la plus faible en août : c'est là que le sol nu s'abîme le plus. Une culture de couverture le protège."
     }
   ],
   "meta": {
     "reel": [
       "pluie",
       "chaleur",
-      "humidité du sol"
+      "humidité du sol",
+      "végétation"
     ],
     "region": "abidjan",
     "source": "NASA POWER, Abidjan (5,32 N · 4,02 O)",

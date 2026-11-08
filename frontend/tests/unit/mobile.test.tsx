@@ -14,8 +14,8 @@ const climat = ClimatSchema.parse(load("climat"));
 const rotations = calculer();
 
 describe("contrat : onglets et état actuel", () => {
-  it("3 onglets réels de 12 valeurs et un état du moment", () => {
-    expect(climat.onglets.map((o) => o.id)).toEqual(["pluie", "chaleur", "sol"]);
+  it("4 onglets réels de 12 valeurs et un état du moment", () => {
+    expect(climat.onglets.map((o) => o.id)).toEqual(["pluie", "chaleur", "sol", "veg"]);
     for (const o of climat.onglets) expect(o.valeurs).toHaveLength(12);
     expect(climat.actuel!.tuiles).toHaveLength(3);
   });
@@ -74,6 +74,6 @@ describe("Tableau", () => {
     expect(screen.getAllByTestId("tuile")).toHaveLength(3);
     expect(screen.getByRole("link", { name: /Rotation conseillée/ })).toHaveAttribute("href", "/rotations");
     expect(screen.getByText(rotations[1].sequence.join(" → "))).toBeInTheDocument();
-    expect(screen.queryAllByTestId("ndvi-mois")).toHaveLength(0); // végétation pas encore branchée
+    expect(screen.getAllByTestId("ndvi-mois")).toHaveLength(12); // végétation MODIS
   });
 });

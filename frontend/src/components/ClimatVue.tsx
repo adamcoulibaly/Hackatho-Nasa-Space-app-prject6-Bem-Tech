@@ -67,9 +67,12 @@ export function ClimatVue({ initial }: { initial: Climat }) {
         <p role="note" className="m-0 rounded-2xl bg-[#D7F0E2] px-4 py-3 text-[15px] leading-normal text-[#00502B]">
           <strong>Données réelles :</strong> {climat.meta.reel.join(" et ")} ({climat.meta.source}, {climat.meta.periode}).
           {climat.meta.tendancePluie ? ` ${climat.meta.tendancePluie}` : ""}{" "}
-          {climat.grace && climat.onglets.some((o) => o.id === "veg")
-            ? ""
-            : "La végétation (NDVI) et l'eau stockée (GRACE) s'afficheront dès que le compte NASA Earthdata sera branché."}
+          {(() => {
+            const veg = climat.onglets.some((o) => o.id === "veg");
+            if (climat.grace && veg) return "";
+            if (!veg && !climat.grace) return "La végétation (NDVI) et l'eau stockée (GRACE) s'afficheront dès que leurs données seront branchées.";
+            return !climat.grace ? "L'eau stockée (GRACE) s'affichera dès que le compte NASA Earthdata sera branché." : "La végétation (NDVI) s'affichera dès que ses données seront branchées.";
+          })()}
         </p>
       )}
       <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-3.5">

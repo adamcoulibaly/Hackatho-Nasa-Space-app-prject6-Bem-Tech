@@ -20,6 +20,11 @@
       "label": "Sol le plus sec",
       "valeur": "Janvier · 0,54",
       "source": "Humidité du sol (0 à 1) · NASA POWER (MERRA-2)"
+    },
+    {
+      "label": "Végétation au plus bas",
+      "valeur": "Août · 0,62",
+      "source": "NDVI MODIS · NASA GIBS (251 mois)"
     }
   ],
   "pluieMensuelle": [
@@ -106,6 +111,25 @@
         3,
         3,
         1
+      ]
+    },
+    {
+      "label": "Végétation",
+      "source": "MODIS Terra (NASA GIBS)",
+      "palette": "veg",
+      "valeurs": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        4,
+        2,
+        0,
+        2,
+        3,
+        4,
+        2
       ]
     }
   ],
@@ -195,13 +219,37 @@
       ],
       "min": 0.49,
       "conseil": "Le sol est le plus humide en juin et le plus sec en janvier : semez quand l'humidité remonte, au début de la saison des pluies."
+    },
+    {
+      "id": "veg",
+      "label": "Végét.",
+      "big": "Pic en mai",
+      "source": "MODIS Terra (NASA GIBS)",
+      "legende": "Indice de végétation NDVI (0 à 1)",
+      "valeurs": [
+        0.64,
+        0.65,
+        0.71,
+        0.75,
+        0.78,
+        0.77,
+        0.72,
+        0.62,
+        0.68,
+        0.75,
+        0.78,
+        0.71
+      ],
+      "min": 0.57,
+      "conseil": "La végétation est la plus faible en août : c'est là que le sol nu s'abîme le plus. Une culture de couverture le protège."
     }
   ],
   "meta": {
     "reel": [
       "pluie",
       "chaleur",
-      "humidité du sol"
+      "humidité du sol",
+      "végétation"
     ],
     "region": "loh-djiboua",
     "source": "NASA POWER, Divo (5,84 N · 5,35 O)",

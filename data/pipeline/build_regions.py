@@ -1,6 +1,7 @@
 """Climat complet et réel (NASA POWER) des 33 régions et districts, au chef-lieu de chacun.
 
-Télécharge les séries mensuelles (2005–2025) et les 45 derniers jours, puis écrit data/regions/<id>.json.
+Télécharge les séries mensuelles (2005–2025) et les 45 derniers jours, ajoute le NDVI MODIS de data/raw/ndvi.json
+(build_ndvi.py) s'il existe, puis écrit data/regions/<id>.json.
 Usage : python3 build_regions.py [--rafraichir]   (--rafraichir retélécharge aussi les séries mensuelles)
 """
 from __future__ import annotations
@@ -18,6 +19,7 @@ ICI = Path(__file__).resolve().parent
 REGIONS = ICI.parent.parent / "frontend" / "src" / "lib" / "regions.json"
 RAW = ICI.parent / "raw" / "power"
 SORTIE = ICI.parent / "regions"
+NDVI = ICI.parent / "raw" / "ndvi.json"  # produit par build_ndvi.py (facultatif)
 
 
 def main(argv: list[str]) -> int:
@@ -25,6 +27,7 @@ def main(argv: list[str]) -> int:
     aujourd_hui = date.today()
     debut_j, fin_j = (aujourd_hui - timedelta(days=45)).strftime("%Y%m%d"), (aujourd_hui - timedelta(days=1)).strftime("%Y%m%d")
     regions = json.loads(REGIONS.read_text(encoding="utf-8"))
+    ndvi = json.loads(NDVI.read_text(encoding="utf-8")) if NDVI.exists() else {}
     RAW.mkdir(parents=True, exist_ok=True)
     SORTIE.mkdir(parents=True, exist_ok=True)
     for r in regions:
@@ -34,7 +37,7 @@ def main(argv: list[str]) -> int:
             time.sleep(1)
         jours = json.loads(telecharger_jours(r["lat"], r["lon"], debut_j, fin_j))
         time.sleep(1)
-        c = climat_complet(json.loads(mensuel_f.read_text(encoding="utf-8")), jours, r, aujourd_hui)
+        c = climat_complet(json.loads(mensuel_f.read_text(encoding="utf-8")), jours, r, aujourd_hui, ndvi=ndvi.get(r["id"]))
         (SORTIE / f"{r['id']}.json").write_text(json.dumps(c, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         etat = c.get("actuel", {}).get("texte", "pas d'état du moment")
         print(f"{r['chefLieu']:<16} {c['indicateurs'][1]['valeur']:>9}  {c['indicateurs'][0]['valeur']:<22} {etat}")

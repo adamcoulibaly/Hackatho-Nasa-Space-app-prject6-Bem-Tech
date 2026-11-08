@@ -16,11 +16,12 @@ function Frise({ climat, moisCourant }: { climat: Climat; moisCourant: number })
   if (!serie) return null;
   const min = Math.min(...serie.valeurs);
   const max = Math.max(...serie.valeurs);
-  const niv = (v: number) => (veg ? Math.round(v) : Math.round(((v - min) / (max - min || 1)) * 4));
+  // Graduation de 0 à 4 entre le mois le plus bas et le plus haut de la région.
+  const niv = (v: number) => Math.round(((v - min) / (max - min || 1)) * 4);
   const pal = veg ? NDVI : SOL;
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-xs text-[#9DB0A5]">{veg ? "Végétation, mois par mois" : "Humidité du sol, mois par mois (normale)"}</span>
+      <span className="text-xs text-[#9DB0A5]">{veg ? "Végétation, mois par mois (NDVI MODIS)" : "Humidité du sol, mois par mois (normale)"}</span>
       <div className="grid grid-cols-12 gap-[3px]" role="img" aria-label={`${serie.legende} : ${serie.valeurs.join(", ")}`}>
         {serie.valeurs.map((v, i) => (
           <div key={i} data-testid={veg ? "ndvi-mois" : "sol-mois"} className="flex flex-col items-center gap-1">

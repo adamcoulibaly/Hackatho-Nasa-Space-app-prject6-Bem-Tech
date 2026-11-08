@@ -8,16 +8,16 @@ const REGIONS = path.resolve(__dirname, "../../../data/regions");
 const load = (n: string) => JSON.parse(fs.readFileSync(path.join(DIR, `${n}.json`), "utf8"));
 
 describe("contrat de données — Korhogo", () => {
-  it("climat de Korhogo : entièrement réel, sans GRACE ni végétation tant qu'Earthdata n'est pas branché", () => {
+  it("climat de Korhogo : entièrement réel (avec la végétation MODIS), sans GRACE tant qu'Earthdata n'est pas branché", () => {
     const c = ClimatSchema.parse(JSON.parse(fs.readFileSync(path.join(REGIONS, "poro.json"), "utf8")));
     expect(c.pluieMensuelle).toHaveLength(12);
     expect(c.saisonPluies.debut).toBeLessThanOrEqual(c.saisonPluies.fin);
     expect(c.grace).toBeUndefined();
-    expect(c.onglets.map((o) => o.id)).toEqual(["pluie", "chaleur", "sol"]);
-    expect(c.matrice.map((m) => m.label)).toEqual(["Pluie", "Chaleur", "Humidité du sol"]);
-    expect(c.indicateurs).toHaveLength(4);
+    expect(c.onglets.map((o) => o.id)).toEqual(["pluie", "chaleur", "sol", "veg"]);
+    expect(c.matrice.map((m) => m.label)).toEqual(["Pluie", "Chaleur", "Humidité du sol", "Végétation"]);
+    expect(c.indicateurs).toHaveLength(5);
     expect(c.alertes.length).toBeGreaterThanOrEqual(1);
-    expect(c.meta?.reel).toEqual(["pluie", "chaleur", "humidité du sol"]);
+    expect(c.meta?.reel).toEqual(["pluie", "chaleur", "humidité du sol", "végétation"]);
   });
 
   it("couches, sources et lexique", () => {

@@ -20,6 +20,11 @@
       "label": "Sol le plus sec",
       "valeur": "Février · 0,47",
       "source": "Humidité du sol (0 à 1) · NASA POWER (MERRA-2)"
+    },
+    {
+      "label": "Végétation au plus bas",
+      "valeur": "Janvier · 0,65",
+      "source": "NDVI MODIS · NASA GIBS (251 mois)"
     }
   ],
   "pluieMensuelle": [
@@ -101,6 +106,25 @@
         4,
         4,
         3,
+        2
+      ]
+    },
+    {
+      "label": "Végétation",
+      "source": "MODIS Terra (NASA GIBS)",
+      "palette": "veg",
+      "valeurs": [
+        0,
+        0,
+        1,
+        3,
+        3,
+        3,
+        0,
+        0,
+        4,
+        4,
+        4,
         2
       ]
     }
@@ -186,13 +210,37 @@
       ],
       "min": 0.42,
       "conseil": "Le sol est le plus humide en octobre et le plus sec en février : semez quand l'humidité remonte, au début de la saison des pluies."
+    },
+    {
+      "id": "veg",
+      "label": "Végét.",
+      "big": "Pic en octobre",
+      "source": "MODIS Terra (NASA GIBS)",
+      "legende": "Indice de végétation NDVI (0 à 1)",
+      "valeurs": [
+        0.65,
+        0.65,
+        0.7,
+        0.76,
+        0.78,
+        0.75,
+        0.66,
+        0.65,
+        0.79,
+        0.8,
+        0.79,
+        0.73
+      ],
+      "min": 0.6,
+      "conseil": "La végétation est la plus faible en janvier : c'est là que le sol nu s'abîme le plus. Une culture de couverture le protège."
     }
   ],
   "meta": {
     "reel": [
       "pluie",
       "chaleur",
-      "humidité du sol"
+      "humidité du sol",
+      "végétation"
     ],
     "region": "tonkpi",
     "source": "NASA POWER, Man (7,41 N · 7,55 O)",

@@ -20,6 +20,11 @@
       "label": "Sol le plus sec",
       "valeur": "Janvier · 0,44",
       "source": "Humidité du sol (0 à 1) · NASA POWER (MERRA-2)"
+    },
+    {
+      "label": "Végétation au plus bas",
+      "valeur": "Août · 0,57",
+      "source": "NDVI MODIS · NASA GIBS (251 mois)"
     }
   ],
   "pluieMensuelle": [
@@ -102,6 +107,25 @@
         4,
         3,
         1
+      ]
+    },
+    {
+      "label": "Végétation",
+      "source": "MODIS Terra (NASA GIBS)",
+      "palette": "veg",
+      "valeurs": [
+        1,
+        0,
+        2,
+        3,
+        4,
+        3,
+        0,
+        0,
+        3,
+        4,
+        4,
+        2
       ]
     }
   ],
@@ -186,13 +210,37 @@
       ],
       "min": 0.39,
       "conseil": "Le sol est le plus humide en juin et le plus sec en janvier : semez quand l'humidité remonte, au début de la saison des pluies."
+    },
+    {
+      "id": "veg",
+      "label": "Végét.",
+      "big": "Pic en mai",
+      "source": "MODIS Terra (NASA GIBS)",
+      "legende": "Indice de végétation NDVI (0 à 1)",
+      "valeurs": [
+        0.61,
+        0.59,
+        0.68,
+        0.74,
+        0.77,
+        0.73,
+        0.59,
+        0.57,
+        0.73,
+        0.76,
+        0.77,
+        0.69
+      ],
+      "min": 0.52,
+      "conseil": "La végétation est la plus faible en août : c'est là que le sol nu s'abîme le plus. Une culture de couverture le protège."
     }
   ],
   "meta": {
     "reel": [
       "pluie",
       "chaleur",
-      "humidité du sol"
+      "humidité du sol",
+      "végétation"
     ],
     "region": "haut-sassandra",
     "source": "NASA POWER, Daloa (6,89 N · 6,45 O)",

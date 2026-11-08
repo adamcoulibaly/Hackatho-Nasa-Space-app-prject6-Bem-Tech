@@ -92,7 +92,7 @@ describe("données réelles : meta et affichage", () => {
     const { default: ClimatPage } = await import("@/app/climat/page");
     render(<ParcelleProvider>{await ClimatPage()}</ParcelleProvider>);
     expect(await screen.findByText(/NASA POWER/, { selector: "p *, p" })).toBeInTheDocument();
-    expect(screen.getByText(/végétation \(NDVI\) et l'eau stockée \(GRACE\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/L'eau stockée \(GRACE\) s'affichera/)).toBeInTheDocument();
     expect(screen.queryByText(/valeurs d'exemple/i)).not.toBeInTheDocument();
   });
 });
