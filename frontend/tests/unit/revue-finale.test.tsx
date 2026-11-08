@@ -42,13 +42,15 @@ describe("2 et 3 : climat d'une autre région", () => {
   });
   it("après une erreur, « Réessayer » relance le chargement", async () => {
     const gbeke = lireClimat("gbeke");
-    const f = vi.fn().mockResolvedValueOnce(new Response("{}", { status: 500 })).mockResolvedValueOnce(new Response(JSON.stringify(gbeke), { status: 200 }));
+    const climat = vi.fn().mockResolvedValueOnce(new Response("{}", { status: 500 })).mockResolvedValueOnce(new Response(JSON.stringify(gbeke), { status: 200 }));
+    // Les saisons (rejeu) ont leur propre appel : indisponibles ici, les rotations se calculent sans.
+    const f = vi.fn((url: string) => (url.startsWith("/api/climat/") ? climat() : Promise.resolve(new Response("{}", { status: 500 }))));
     vi.stubGlobal("fetch", f);
     localStorage.setItem("forosat.parcelle", JSON.stringify({ parcelle: { ...DEFAULT_PARCELLE, region: "gbeke" }, saisie: true }));
     render(<ParcelleProvider><RotationsVue initial={korhogo} cultures={CULTURES_FICHES} /></ParcelleProvider>);
     await userEvent.setup().click(await screen.findByRole("button", { name: "Réessayer" }));
     await waitFor(() => expect(screen.getAllByRole("article")).toHaveLength(3));
-    expect(f).toHaveBeenCalledTimes(2);
+    expect(climat).toHaveBeenCalledTimes(2);
     localStorage.clear();
   });
 });

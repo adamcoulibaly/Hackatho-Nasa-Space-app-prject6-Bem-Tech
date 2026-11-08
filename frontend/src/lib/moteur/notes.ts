@@ -1,4 +1,4 @@
-import type { CritereId, Culture } from "@/lib/contract";
+import type { CritereId, Culture, Rejeu } from "@/lib/contract";
 import type { Parcelle } from "@/lib/parcelle/validate";
 import type { ClimatResume } from "./climat";
 
@@ -46,26 +46,35 @@ function eauBrute(c: Culture, cl: ClimatResume, eau: Parcelle["eau"]): number {
 }
 
 /** Notes affichées : arrondies de 1 à 5. */
-export function notesRotation(seq: Culture[], cl: ClimatResume, eau: Parcelle["eau"]): Notes {
-  const b = notesBrutes(seq, cl, eau);
+export function notesRotation(seq: Culture[], cl: ClimatResume, eau: Parcelle["eau"], rejeu?: Rejeu): Notes {
+  const b = notesBrutes(seq, cl, eau, rejeu);
   return Object.fromEntries(Object.entries(b).map(([k, v]) => [k, borne(v)])) as Notes;
 }
 
-/** Notes non arrondies (0 à 5) : le classement les utilise pour ne pas perdre les écarts entre régions. */
-export function notesBrutes(seq: Culture[], cl: ClimatResume, eau: Parcelle["eau"]): Record<CritereId, number> {
+/**
+ * Notes non arrondies (0 à 5) : le classement les utilise pour ne pas perdre les écarts entre régions.
+ * Avec un rejeu des saisons réelles, la sécheresse est la moyenne de la note des fiches et de 1 + 4 × part des bonnes saisons.
+ */
+export function notesBrutes(seq: Culture[], cl: ClimatResume, eau: Parcelle["eau"], rejeu?: Rejeu): Record<CritereId, number> {
   const manque = eau === "pluie" && seq.some((c) => c.eauMm[0] > cl.pluieSaisonMm);
   const legumineuses = seq.filter((c) => c.legumineuse).length;
   const alternance = seq.length > 1 && seq.every((c, i) => i === 0 || c.famille !== seq[i - 1].famille);
   const lim = (n: number) => Math.max(0, Math.min(5, n));
   return {
     eau: lim(moyenne(seq.map((c) => eauBrute(c, cl, eau)))),
-    secheresse: lim(moyenne(seq.map((c) => c.secheresse)) - (manque ? 1 : 0)),
+    secheresse: lim(secheresseFiches(seq, manque, rejeu)),
     fertilite: lim(2 + Math.min(2, legumineuses) + (alternance ? 1 : 0)),
     erosion: moyenne(seq.map((c) => c.couverture)),
     fourrage: moyenne(seq.map((c) => c.fourrage)),
     revenu: moyenne(seq.map((c) => c.revenu)),
     marche: moyenne(seq.map((c) => c.marche)),
   };
+}
+
+function secheresseFiches(seq: Culture[], manque: boolean, rejeu?: Rejeu): number {
+  const fiches = moyenne(seq.map((c) => c.secheresse)) - (manque ? 1 : 0);
+  if (!rejeu || rejeu.total === 0) return fiches;
+  return (fiches + 1 + (4 * rejeu.bonnes) / rejeu.total) / 2;
 }
 
 /** Moyenne des notes, chaque critère choisi en priorité pesant 3, les autres 1. */

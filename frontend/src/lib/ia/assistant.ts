@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CRITERES, CRITERE_LABELS, type Climat, type Culture, type Rotation } from "@/lib/contract";
+import { CRITERES, CRITERE_LABELS, type Climat, type Culture, type Rotation, type Saisons } from "@/lib/contract";
 import { lireLienFiche } from "@/lib/moteur/fiche-lien";
 import { calculerRotations } from "@/lib/moteur/rotations";
 import { scoreWord } from "@/lib/format";
@@ -102,8 +102,8 @@ export async function repondre(
 }
 
 /** Rotation recalculée par le moteur à partir des paramètres de la demande, ou null si la parcelle est invalide. */
-export function rotationDepuisDemande(d: Pick<Demande, "id" | "params">, ctx: { climat: Climat; cultures: Culture[] }): Rotation | null {
+export function rotationDepuisDemande(d: Pick<Demande, "id" | "params">, ctx: { climat: Climat; cultures: Culture[]; saisons?: Saisons | null }): Rotation | null {
   const parcelle = lireLienFiche(new URLSearchParams(d.params));
   if (!parcelle) return null;
-  return calculerRotations(parcelle, ctx.climat, ctx.cultures)?.find((r) => r.id === d.id) ?? null;
+  return calculerRotations(parcelle, ctx.climat, ctx.cultures, ctx.saisons)?.find((r) => r.id === d.id) ?? null;
 }

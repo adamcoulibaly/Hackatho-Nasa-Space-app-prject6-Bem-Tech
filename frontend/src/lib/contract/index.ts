@@ -78,6 +78,40 @@ export const ClimatSchema = z.object({
 export type Climat = z.infer<typeof ClimatSchema>;
 
 /* ---------- rotations ---------- */
+/** Verdict d'une saison réelle pour une culture (data/saisons/<region>.json, moteur FAO-56 du pipeline). */
+export const VerdictSaisonSchema = z.object({
+  annee: z.number().int(),
+  verdict: z.enum(["bonne", "difficile", "perdue"]),
+  semis: z.string().nullable(),
+  ratio: z.number().nullable(),
+  cause: z.string(),
+});
+export type VerdictSaison = z.infer<typeof VerdictSaisonSchema>;
+
+export const SaisonsSchema = z.object({
+  meta: z.object({
+    region: z.string(),
+    source: z.string(),
+    periode: z.string(),
+    saison: z.object({ debut: mois, fin: mois }),
+    reserveMm: z.number().positive(),
+  }),
+  cultures: z.record(z.string(), z.array(VerdictSaisonSchema)),
+});
+export type Saisons = z.infer<typeof SaisonsSchema>;
+
+const SaisonRejoueeSchema = VerdictSaisonSchema.extend({ culture: z.string() });
+/** Rotation rejouée sur les saisons réelles : la culture de l'année N de la rotation, chaque saison. */
+export const RejeuSchema = z.object({
+  saisons: z.array(SaisonRejoueeSchema),
+  bonnes: z.number().int(),
+  difficiles: z.number().int(),
+  perdues: z.number().int(),
+  total: z.number().int(),
+  pire: SaisonRejoueeSchema.nullable(),
+});
+export type Rejeu = z.infer<typeof RejeuSchema>;
+
 export const RotationSchema = z.object({
   id: z.enum(["A", "B", "C"]),
   tag: z.string(),
@@ -98,6 +132,7 @@ export const RotationSchema = z.object({
   calendrier: z
     .array(z.object({ annee: z.number().int().min(1).max(3), culture: z.string(), type: z.enum(["culture", "couverture", "sol_nu"]), debutMois: mois, finMois: mois }))
     .min(1),
+  rejeu: RejeuSchema.optional(),
 });
 export type Rotation = z.infer<typeof RotationSchema>;
 

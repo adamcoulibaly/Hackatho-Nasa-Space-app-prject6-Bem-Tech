@@ -1,4 +1,4 @@
-import { CRITERE_LABELS, CRITERES, type Climat, type Culture, type Rotation } from "@/lib/contract";
+import { CRITERE_LABELS, CRITERES, type Climat, type Culture, type Rejeu, type Rotation } from "@/lib/contract";
 import type { Parcelle } from "@/lib/parcelle/validate";
 import type { ClimatResume } from "./climat";
 import { moisHorsSaison } from "./notes";
@@ -37,14 +37,17 @@ export function risques(seq: Culture[], cl: ClimatResume, p: Parcelle): string[]
   return [...new Set(r)];
 }
 
-export function lacune(climat: Climat): string {
+export function lacune(climat: Climat, opts: { sansRejeu?: boolean } = {}): string {
   const l = ["prix et demande au marché local non intégrés (revenu et marché estimés)", "pas de mesure du sol de la parcelle"];
   if (!climat.onglets.some((o) => o.id === "veg")) l.push("végétation (NDVI) pas encore branchée");
+  if (opts.sansRejeu) l.push("rejeu des saisons indisponible");
   return l.join(" ; ");
 }
 
-export function confiance(cl: ClimatResume): Rotation["confiance"] {
-  const facteurs = { accordSources: 3, finesse: 1, historique: cl.annees >= 20 ? 5 : cl.annees >= 10 ? 4 : 2, verification: 1 } as const;
+/** Le facteur « historique » compte les saisons réellement rejouées quand le rejeu existe, sinon les années de la série climatique. */
+export function confiance(cl: ClimatResume, rejeu?: Rejeu): Rotation["confiance"] {
+  const annees = rejeu ? rejeu.total : cl.annees;
+  const facteurs = { accordSources: 3, finesse: 1, historique: annees >= 18 ? 5 : annees >= 10 ? 4 : 2, verification: 1 } as const;
   const m = (facteurs.accordSources + facteurs.finesse + facteurs.historique + facteurs.verification) / 4;
   return { niveau: m >= 3.5 ? "élevée" : m >= 2.5 ? "moyenne" : "faible", facteurs };
 }
@@ -68,7 +71,10 @@ function note(scores: Rotation["scores"], recommandee: boolean): string {
   return `Points forts : ${liste(forts)}.${recommandee ? " Meilleur score pour vos priorités." : ""}`;
 }
 
-export function construireRotation(ch: Choix, ctx: { climat: Climat; cl: ClimatResume; p: Parcelle; scoreActuelle: number }): Rotation & { score: number } {
+export function construireRotation(
+  ch: Choix,
+  ctx: { climat: Climat; cl: ClimatResume; p: Parcelle; scoreActuelle: number; rejeu?: Rejeu; sansRejeu?: boolean },
+): Rotation & { score: number } {
   const { climat, cl, p } = ctx;
   const recommandee = ch.id === "B" && ch.score > ctx.scoreActuelle;
   const s = cl.saison;
@@ -86,8 +92,9 @@ export function construireRotation(ch: Choix, ctx: { climat: Climat; cl: ClimatR
       { source: "Fiches cultures", texte: "Besoins en eau et durée des cycles : FAO ECOCROP, valeurs à valider par l'agronome." },
     ],
     risques: risques(ch.cultures, cl, p),
-    lacune: lacune(climat),
-    confiance: confiance(cl),
+    lacune: lacune(climat, { sansRejeu: ctx.sansRejeu }),
+    confiance: confiance(cl, ctx.rejeu),
     calendrier: calendrier(ch.cultures, cl),
+    ...(ctx.rejeu ? { rejeu: ctx.rejeu } : {}),
   };
 }
