@@ -42,7 +42,7 @@ export function RainSimulator({ rotations, courante }: { rotations: Rotation[]; 
         ))}
       </div>
       <p className="m-0 text-[15px] leading-normal text-muted">
-        Dans ce scénario, <strong className="text-ink">{verdict}</strong>. Simulation simple (valeurs d'exemple) : chaque tranche de 15 % de pluie en moins, ou de 2 °C en plus, retire un niveau.
+        Dans ce scénario, <strong className="text-ink">{verdict}</strong>. Règle de simulation simple : chaque tranche de 15 % de pluie en moins, ou de 2 °C en plus, retire un niveau.
       </p>
     </div>
   );

@@ -42,7 +42,7 @@ export function construireMessages(rotation: Rotation, climat: Climat, question?
     `Lacune : ${rotation.lacune}`,
     `Confiance : ${rotation.confiance.niveau}.`,
     `Climat de la zone : ${climat.indicateurs.map((i) => `${i.label} ${i.valeur}`).join(" ; ")}.`,
-    climat.meta ? `Données réelles : ${climat.meta.reel.join(", ")} (${climat.meta.source}, ${climat.meta.periode}). Le reste est en valeurs d'exemple.` : "Toutes les valeurs sont des exemples.",
+    climat.meta ? `Sources : ${climat.meta.reel.join(", ")} (${climat.meta.source}, ${climat.meta.periode}). Végétation et eau stockée : pas encore disponibles.` : "Source du climat inconnue.",
   ].join("\n");
   const demande = question?.trim() ? `Question de l'agriculteur : ${question.trim()}` : "Explique simplement cette rotation à un agriculteur : ce qu'il sème, quand, pourquoi, et à quoi faire attention.";
   return [

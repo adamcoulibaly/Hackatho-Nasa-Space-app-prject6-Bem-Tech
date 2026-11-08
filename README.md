@@ -2,14 +2,17 @@
 
 ForoSat aide un agriculteur ivoirien, ou son conseiller, à choisir sa prochaine rotation de cultures : la rotation actuelle est comparée à deux alternatives sur 7 critères, avec le pourquoi, les lacunes et un niveau de confiance, à partir de 20 ans de données satellites NASA. Zone pilote : Korhogo.
 
-> Les chiffres affichés sont des **valeurs d'exemple** tirées des maquettes. Le pipeline NASA et le moteur de score réels viennent après.
+> Aucune donnée de démonstration : le climat vient de NASA POWER pour les 33 régions, les rotations sont calculées par un moteur de règles à partir des fiches cultures (`knowledge/cultures.json`, valeurs sourcées à valider par l'agronome).
 
 ## Structure
 
 | Dossier | Contenu | Responsable |
 |---|---|---|
 | `frontend/` | Application Next.js (web et mobile, une seule base de code) | Interface |
-| `data/pilot/korhogo/` | JSON lus par l'interface (le contrat de données) | Données, agronomie |
+| `data/regions/` | Climat réel de chaque région (généré par le pipeline) | Données |
+| `data/pilot/korhogo/` | Couches de carte, sources et lexique | Données, contenu |
+| `knowledge/cultures.json` | Fiches des 8 cultures utilisées par le moteur | Agronomie |
+| `frontend/src/lib/moteur/` | Moteur de score des rotations (règles écrites, testées) | Modèle |
 | `backend/` | Futur moteur FastAPI (README du contrat attendu) | Modèle et IA |
 | `knowledge/` | Fiches cultures (README de ce qui est attendu) | Agronomie |
 | `docs/` | Cadrage, spec, plan, `contrat-donnees.md` | Tous |
@@ -36,12 +39,12 @@ npx playwright test --trace off
 
 ## Brancher les vraies données
 
-L'interface ne lit les données que par `frontend/src/lib/data`. Pour remplacer les valeurs d'exemple, produire les mêmes fichiers dans `data/pilot/korhogo/` : la validation (zod) indique exactement ce qui manque. Le détail champ par champ est dans [`docs/contrat-donnees.md`](docs/contrat-donnees.md).
+L'interface ne lit les données que par `frontend/src/lib/data`. Pour ajouter une source, produire les mêmes fichiers : la validation (zod) indique exactement ce qui manque. Le détail champ par champ est dans [`docs/contrat-donnees.md`](docs/contrat-donnees.md).
 
 - Un autre dossier de données : variable d'environnement `FOROSAT_DATA_DIR`.
 - Quand l'API FastAPI existera, seule la couche `src/lib/data` change ; les écrans restent identiques.
 
-Commandes à lancer depuis `frontend/` : l'application cherche les données dans `../data/pilot/korhogo`.
+Commandes à lancer depuis `frontend/` : l'application cherche les données dans `../data` et `../knowledge`.
 
 ## Carte
 
@@ -64,12 +67,11 @@ Dans `data/pipeline/` (Python 3, sans dépendance à installer) :
 ```bash
 cd data/pipeline
 python3 fetch_power.py        # télécharge NASA POWER (pluie, chaleur) de Korhogo vers data/raw/
-python3 build_climat.py       # met à jour data/pilot/korhogo/climat.json avec les vraies valeurs
-python3 build_regions.py      # climat réel des 33 régions et districts (data/regions/<id>.json)
-python3 -m unittest test_indicators test_climat_region
+python3 build_regions.py      # climat réel des 33 régions et districts (data/regions/<id>.json), à relancer pour rafraîchir l'état du moment
+python3 -m unittest test_indicators test_climat_complet
 ```
 
-Aujourd'hui seuls la **pluie** et la **chaleur** sont réelles (NASA POWER), pour **les 31 régions et 2 districts** (au chef-lieu de chacun ; une ou deux saisons des pluies détectées). Les rotations restent l'exemple calculé pour Korhogo, et l'écran le dit hors de la zone pilote. Sol, végétation, eau stockée et alertes restent des valeurs d'exemple ; l'écran Climat l'indique. Prochaines sources : GPM, SMAP, MODIS/Landsat, SRTM, puis ECOSTRESS et GRACE (compte NASA Earthdata nécessaire).
+Pour **les 31 régions et 2 districts** (au chef-lieu de chacun) : pluie, chaleur et humidité du sol mensuelles 2005–2025 (NASA POWER), une ou deux saisons des pluies, alertes par règles et état du moment sur les 30 derniers jours publiés. La végétation (NDVI MODIS) et l'eau stockée (GRACE) s'ajouteront avec un compte NASA Earthdata ; d'ici là, ces blocs ne s'affichent pas.
 
 ## Règles d'équipe
 

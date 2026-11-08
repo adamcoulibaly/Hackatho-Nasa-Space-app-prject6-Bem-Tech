@@ -52,7 +52,7 @@ export const ClimatSchema = z.object({
       }),
     )
     .min(1),
-  /** Provenance : ce qui vient de données réelles (le reste est en valeurs d'exemple). */
+  /** Provenance : les données réelles, leur source et leur période. */
   meta: z
     .object({
       reel: z.array(z.string()),
@@ -60,8 +60,6 @@ export const ClimatSchema = z.object({
       periode: z.string(),
       tendancePluie: z.string().optional(),
       region: z.string().optional(),
-      /** Ville d'où viennent les indicateurs encore en valeurs d'exemple. */
-      exempleDe: z.string().optional(),
     })
     .optional(),
   /** État du moment, pour le tableau de bord. */
