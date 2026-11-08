@@ -47,7 +47,9 @@
         {
           "locationWhenInUsePermission": "ForoSat utilise votre position pour centrer la carte sur votre champ."
         }
-      ]
+      ],
+      "expo-background-task",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true

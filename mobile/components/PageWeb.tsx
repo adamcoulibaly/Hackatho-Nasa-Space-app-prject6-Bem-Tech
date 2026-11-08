@@ -1,15 +1,19 @@
 import * as Location from "expo-location";
+import * as Notifications from "expo-notifications";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState, type ComponentType, type ReactElement, type Ref } from "react";
 import { ActivityIndicator, BackHandler, Linking, Pressable, Share, StyleSheet, Text, View } from "react-native";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 import { COULEURS, WEB_URL, estPageForoSat, urlPage } from "@/lib/config";
 import { demanderChemin, estCheminInterne, estOnglet, inscrirePage, prendreCheminEnAttente, type Onglet } from "@/lib/onglets";
+import { activer, desactiver, ecrireReglage, lireReglage, verifier } from "@/lib/tacheSemis";
 
 type Message =
   | { type: "position" }
   | { type: "partager"; url: string; texte: string }
-  | { type: "ouvrir"; onglet: unknown; chemin: unknown };
+  | { type: "ouvrir"; onglet: unknown; chemin: unknown }
+  | { type: "parcelle"; region: unknown; culture: unknown }
+  | { type: "alerte"; action: unknown };
 
 /**
  * Propriétés de WebView utilisées ici. Les types fournis par react-native-webview 14.0.1 se réduisent à `never`
@@ -91,6 +95,20 @@ export function PageWeb({ onglet, chemin }: { onglet: Onglet; chemin: string }) 
         }
       } else if (m.type === "partager") {
         await Share.share({ message: `${m.texte}\n${m.url}` }).catch(() => {});
+      } else if (m.type === "parcelle" && typeof m.region === "string" && /^[a-z-]{2,40}$/.test(m.region)) {
+        await ecrireReglage({ region: m.region, culture: typeof m.culture === "string" ? m.culture.slice(0, 40) : null });
+        const r = await lireReglage();
+        repondre({ type: "alerte", etat: r.active ? "active" : "inactive" });
+      } else if (m.type === "alerte") {
+        if (m.action === "activer") repondre({ type: "alerte", etat: (await activer().catch(() => false)) ? "active" : "refus" });
+        else if (m.action === "desactiver") {
+          await desactiver().catch(() => undefined);
+          repondre({ type: "alerte", etat: "inactive" });
+        } else if (m.action === "tester") {
+          const { status } = await Notifications.requestPermissionsAsync();
+          if (status !== "granted") repondre({ type: "alerte", etat: "refus" });
+          else await verifier(true).catch(() => false);
+        }
       } else if (m.type === "ouvrir" && estOnglet(m.onglet) && estCheminInterne(m.chemin)) {
         if (m.onglet === onglet) return repondre({ type: "aller", chemin: m.chemin });
         demanderChemin(m.onglet, m.chemin);
