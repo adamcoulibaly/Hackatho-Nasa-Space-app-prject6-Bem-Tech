@@ -29,9 +29,9 @@ export function ClimatTabs({ onglets }: { onglets: Climat["onglets"] }) {
         ))}
       </div>
       <div key={o.id} className="fade-in flex flex-col gap-3 rounded-[26px] bg-white p-[18px]">
-        <div className="flex items-baseline justify-between gap-2">
-          <span className="font-display text-[28px] font-bold tracking-[-0.04em]">{o.big}</span>
-          <span className="rounded-full bg-[#E7ECE6] px-[9px] py-1 text-xs font-bold">{o.source}</span>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
+          <span className="font-display text-[26px] font-bold leading-tight tracking-[-0.04em] sm:text-[28px]">{o.big}</span>
+          <span className="whitespace-nowrap rounded-full bg-[#E7ECE6] px-[9px] py-1 text-xs font-bold">{o.source}</span>
         </div>
         <span className="text-sm text-muted">{o.legende}</span>
         <div className="grid h-[150px] grid-cols-12 items-end gap-1" role="img" aria-label={`${o.legende} : ${o.valeurs.join(", ")}`}>

@@ -15,9 +15,9 @@ export function GraceChart({ data }: { data: NonNullable<Climat["grace"]> }) {
         <span className="flex items-center gap-1.5"><span className="h-3.5 w-3.5 rounded bg-orange" />Moins que la normale</span>
         <span className="flex items-center gap-1.5"><span className="h-3.5 w-3.5 rounded" style={{ background: HACHURE }} />Pas de mesure</span>
       </div>
-      <div className="overflow-x-auto">
-        <div className="flex min-w-[640px] flex-col gap-1.5">
-          <div className="relative grid h-[140px] gap-1" style={cols}>
+      <div className="min-w-0">
+        <div className="flex flex-col gap-1.5">
+          <div className="relative grid h-[140px] gap-0.5 sm:gap-1" style={cols}>
             <div aria-hidden="true" className="absolute inset-x-0 top-[70px] h-px bg-ink" />
             {data.map((g, i) => {
               const b = graceBar(g, echelle);
@@ -35,8 +35,8 @@ export function GraceChart({ data }: { data: NonNullable<Climat["grace"]> }) {
               );
             })}
           </div>
-          <div className="grid gap-1 text-xs text-muted" style={cols}>
-            {data.map((g, i) => <span key={g.annee}>{i % 5 === 0 ? g.annee : ""}</span>)}
+          <div className="grid gap-0.5 text-[11px] text-muted sm:gap-1 sm:text-xs" style={cols}>
+            {data.map((g, i) => <span key={g.annee} className="overflow-visible whitespace-nowrap">{i % 5 === 0 ? g.annee : ""}</span>)}
           </div>
         </div>
       </div>

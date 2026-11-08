@@ -6,7 +6,7 @@ export function RotationCard({ rotation, dark = false }: { rotation: Rotation; d
   const r = rotation;
   const muted = dark ? "text-[#C9D4CD]" : "text-muted";
   return (
-    <article className={`lift flex flex-col gap-5 rounded-[28px] p-[26px] ${dark ? "bg-ink text-paper" : "bg-white text-ink"}`}>
+    <article className={`lift flex min-w-0 flex-col gap-5 rounded-[28px] p-5 sm:p-[26px] ${dark ? "bg-ink text-paper" : "bg-white text-ink"}`}>
       <div className="flex items-center justify-between gap-2">
         <span className={`font-display text-[40px] font-extrabold leading-none tracking-[-0.05em] ${r.recommandee ? "text-orange" : dark ? "text-paper" : "text-muted"}`}>{r.id}</span>
         <span className={`rounded-full px-3 py-1.5 text-[13px] font-bold ${r.recommandee ? "bg-orange text-ink" : "bg-[#E7ECE6] text-ink"}`}>
@@ -21,7 +21,7 @@ export function RotationCard({ rotation, dark = false }: { rotation: Rotation; d
           </span>
         ))}
       </div>
-      <ul className="m-0 grid grid-cols-2 gap-x-4 gap-y-3 p-0">
+      <ul className="m-0 grid grid-cols-1 gap-x-4 gap-y-3 p-0 min-[400px]:grid-cols-2">
         {CRITERES.map((k) => <ScoreBar key={k} label={CRITERE_LABELS[k]} level={r.scores[k]} dark={dark} />)}
       </ul>
       <p className={`m-0 text-[15px] leading-normal ${muted}`}>{r.note}</p>
@@ -31,7 +31,7 @@ export function RotationCard({ rotation, dark = false }: { rotation: Rotation; d
         <Link
           href={`/rotations/${r.id}`}
           aria-label={`Voir le détail de la rotation ${r.id}`}
-          className={`inline-flex h-[46px] items-center rounded-full px-[18px] text-[15px] font-bold no-underline ${dark ? "bg-orange text-ink hover:text-ink" : "bg-ink text-paper hover:text-paper"}`}
+          className={`inline-flex h-[46px] shrink-0 items-center whitespace-nowrap rounded-full px-[18px] text-[15px] font-bold no-underline ${dark ? "bg-orange text-ink hover:text-ink" : "bg-ink text-paper hover:text-paper"}`}
         >
           Voir le détail
         </Link>

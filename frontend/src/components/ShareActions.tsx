@@ -18,11 +18,11 @@ export function ShareActions({ rotation, lien }: { rotation: Rotation; lien: str
         }}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex h-14 flex-1 items-center justify-center rounded-full bg-green-dark px-5 text-base font-bold text-white no-underline hover:text-white"
+        className="inline-flex h-14 min-w-[200px] flex-1 items-center justify-center whitespace-nowrap rounded-full bg-green-dark px-5 text-base font-bold text-white no-underline hover:text-white"
       >
         Envoyer sur WhatsApp
       </a>
-      <button type="button" onClick={() => window.print()} className="h-14 flex-1 rounded-full bg-ink px-5 text-base font-bold text-paper">
+      <button type="button" onClick={() => window.print()} className="no-app h-14 min-w-[200px] flex-1 whitespace-nowrap rounded-full bg-ink px-5 text-base font-bold text-paper">
         Imprimer / PDF
       </button>
     </div>

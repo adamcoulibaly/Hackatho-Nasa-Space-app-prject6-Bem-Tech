@@ -41,11 +41,11 @@ export function Tableau({ climat, reco }: { climat: Climat; reco: Rotation }) {
   return (
     <div data-stagger className="flex flex-col gap-3.5">
       <div className="flex items-center justify-between gap-3">
-        <div className="flex flex-col gap-0.5">
-          <span className="text-sm text-muted">{climat.meta?.source ?? "NASA POWER"}</span>
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <span className="text-[13px] leading-snug text-muted">{climat.meta?.source ?? "NASA POWER"}</span>
           <h1 className="m-0 font-display text-[22px] font-bold tracking-[-0.04em]">Votre champ</h1>
         </div>
-        <Link href="/parcelle" aria-label="Changer de parcelle" className="inline-flex h-11 items-center rounded-full border border-line bg-white px-3.5 text-sm font-semibold text-ink no-underline hover:text-ink">Modifier ma parcelle</Link>
+        <Link href="/parcelle" aria-label="Changer de parcelle" className="inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full border border-line bg-white px-3.5 text-sm font-semibold text-ink no-underline hover:text-ink">Modifier</Link>
       </div>
 
       <section className="flex flex-col gap-3.5 rounded-[28px] bg-ink p-5 text-paper">
@@ -65,7 +65,7 @@ export function Tableau({ climat, reco }: { climat: Climat; reco: Rotation }) {
       {a && (
       <div data-stagger className="grid grid-cols-2 gap-2.5">
         {a.tuiles.map((t) => (
-          <div key={t.label} data-testid="tuile" className="lift flex flex-col gap-2 rounded-[22px] bg-white p-3.5">
+          <div key={t.label} data-testid="tuile" className="lift flex flex-col gap-2 rounded-[22px] bg-white p-3.5 [&:last-child:nth-child(odd)]:col-span-2">
             <div className="flex items-center justify-between">
               <span className="text-[13px] text-muted">{t.label}</span>
               <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full" style={{ background: POINT[t.niveau] }} />
@@ -80,7 +80,7 @@ export function Tableau({ climat, reco }: { climat: Climat; reco: Rotation }) {
       {a && a.extras.length > 0 && (
         <div className="grid grid-cols-2 gap-2.5">
           {a.extras.map((e) => (
-            <div key={e.label} className="flex flex-col gap-0.5 rounded-2xl bg-white px-3.5 py-2.5">
+            <div key={e.label} className="flex flex-col gap-0.5 rounded-2xl bg-white px-3.5 py-2.5 [&:last-child:nth-child(odd)]:col-span-2">
               <span className="text-xs text-muted">{e.label}</span>
               <span className={`text-[15px] font-bold ${e.accent ? "text-orange-dark" : ""}`}>{e.valeur}</span>
             </div>

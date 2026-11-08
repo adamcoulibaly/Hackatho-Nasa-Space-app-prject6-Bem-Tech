@@ -223,3 +223,18 @@ test("mode app : l'en-tête et la barre du bas du site disparaissent pour toute 
   await expect(page.locator("header")).toBeHidden();
   await expect(page.getByRole("navigation", { name: "Navigation" })).toBeHidden();
 });
+
+test("mode app sur petit téléphone (360 px) : aucune page plus large que l'écran", async ({ browser }) => {
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 760 }, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  await page.goto("/parcelle?app=1");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await expect(page).toHaveURL(/\/climat/);
+  for (const route of [...ROUTES, "/fiche/B?r=poro&s=2&c=Ma%C3%AFs,Coton&p=0,1&e=pluie&m=traction"]) {
+    await page.goto(route);
+    await page.waitForLoadState("networkidle");
+    const largeur = await page.evaluate(() => ({ page: document.documentElement.scrollWidth, ecran: window.innerWidth }));
+    expect(largeur, route).toEqual({ page: 360, ecran: 360 });
+  }
+  await ctx.close();
+});
