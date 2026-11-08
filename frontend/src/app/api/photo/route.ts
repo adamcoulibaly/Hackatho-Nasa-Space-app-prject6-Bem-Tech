@@ -4,14 +4,13 @@ import { MODELE_VISION_PAR_DEFAUT } from "@/lib/ia/vision";
 import { traiterPhoto } from "@/lib/photo/traiter";
 import { ndviParcelle } from "@/lib/satellite/ndvi";
 import { getClimatRegion } from "@/lib/data";
+import { adresse, limiteur, memeOrigine } from "@/lib/limite";
+import { lireTuile } from "@/lib/satellite/tuile";
 
 export const dynamic = "force-dynamic";
 
-async function lireTuile(url: string): Promise<Buffer | null> {
-  const r = await fetch(url, { headers: { "User-Agent": "forosat" }, next: { revalidate: 86400 } } as RequestInit);
-  if (!r.ok) return null;
-  return Buffer.from(await r.arrayBuffer());
-}
+// 10 analyses par adresse et par 10 minutes (par instance) : protège le quota gratuit du modèle de vision.
+const autoriser = limiteur({ max: 10, fenetreMs: 10 * 60_000 });
 
 /** Normale du NDVI pour ce mois dans la région (onglet « veg » du climat, NDVI MODIS mensuel). */
 async function normale(region: string, mois: string): Promise<number | null> {
@@ -36,6 +35,8 @@ async function enSaison(region: string): Promise<boolean> {
 
 /** Photo du champ : analyse par un modèle de vision et comparaison au NDVI NASA. Rien n'est enregistré ni journalisé de l'image. */
 export async function POST(req: Request) {
+  if (!memeOrigine(req)) return NextResponse.json({ erreur: "Origine non autorisée." }, { status: 403 });
+  if (!autoriser(adresse(req))) return NextResponse.json({ erreur: "Trop d'analyses d'affilée : réessayez dans quelques minutes." }, { status: 429 });
   let corps: unknown;
   try {
     corps = await req.json();
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
     config: configDepuisEnv(process.env),
     modele: process.env.LLM_VISION_MODEL || MODELE_VISION_PAR_DEFAUT,
     fetch,
-    ndvi: (lat, lon) => ndviParcelle(lat, lon, new Date(), lireTuile),
+    ndvi: (lat, lon) => ndviParcelle(lat, lon, new Date(), (url) => lireTuile(url)),
     normale,
     enSaison,
   });

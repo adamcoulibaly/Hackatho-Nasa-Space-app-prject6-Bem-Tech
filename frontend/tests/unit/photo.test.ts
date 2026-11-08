@@ -106,3 +106,31 @@ describe("traiterPhoto (route /api/photo)", () => {
     expect(r.corps).toMatchObject({ satellite: null, comparaison: { verdict: "position_inconnue" } });
   });
 });
+
+describe("protection de /api/photo", () => {
+  it("refuse une requête d'une autre origine (403)", async () => {
+    const { POST } = await import("@/app/api/photo/route");
+    const r = await POST(new Request("https://forosat.test/api/photo", { method: "POST", headers: { Origin: "https://pirate.test", Host: "forosat.test" }, body: "{}" }));
+    expect(r.status).toBe(403);
+  });
+
+  it("limite le nombre d'analyses par adresse (429 au-delà)", async () => {
+    const { limiteur } = await import("@/lib/limite");
+    const l = limiteur({ max: 3, fenetreMs: 60_000 });
+    const t = 1_000_000;
+    expect([l("1.2.3.4", t), l("1.2.3.4", t + 1), l("1.2.3.4", t + 2), l("1.2.3.4", t + 3)]).toEqual([true, true, true, false]);
+    expect(l("5.6.7.8", t + 3)).toBe(true);
+    expect(l("1.2.3.4", t + 60_001)).toBe(true);
+  });
+});
+
+describe("tuiles GIBS", () => {
+  it("chaque tuile a un délai maximal : un serveur qui ne répond pas ne bloque pas l'analyse", async () => {
+    const { lireTuile } = await import("@/lib/satellite/tuile");
+    const f = vi.fn(async (_u: string, init?: RequestInit) => {
+      expect(init?.signal).toBeInstanceOf(AbortSignal);
+      throw new DOMException("délai dépassé", "TimeoutError");
+    });
+    expect(await lireTuile("https://gibs.test/t.png", f as unknown as typeof fetch)).toBeNull();
+  });
+});
