@@ -57,6 +57,14 @@
           "photosPermission": false,
           "microphonePermission": false
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraProguardRules": "# WorkManager/Room (expo-background-task, expo-notifications) : constructeurs créés par réflexion au démarrage.\n# Sans eux, R8 les supprime et l'app plante au lancement (expo/expo#52173).\n-keep class * extends androidx.room.RoomDatabase { <init>(); }\n-keep class * extends androidx.work.InputMerger { <init>(); }\n"
+          }
+        }
       ]
     ],
     "experiments": {
