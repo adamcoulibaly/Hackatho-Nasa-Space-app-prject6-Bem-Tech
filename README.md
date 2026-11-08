@@ -58,6 +58,24 @@ EXPO_PUBLIC_WEB_URL=https://<votre-site>.vercel.app npx expo start
 
 Build Android (APK installable) avec le compte Expo : `npx eas-cli@latest build --platform android --profile preview` (variable `EXPO_PUBLIC_WEB_URL` à définir dans le projet EAS).
 
+## Fonctions phares
+
+- **Rejeu de 20 saisons réelles.** Chaque rotation est rejouée sur les saisons 2005–2025 de sa région (NASA POWER, jour par jour) :
+  - date de semis selon la règle de début des pluies de Sivakumar ;
+  - bilan d'eau FAO-56 (Hargreaves, coefficients culturaux par stade, réservoir de 100 mm affiché comme hypothèse) ;
+  - verdict bonne / difficile / perdue, avec la cause de chaque saison ratée.
+- **Votre champ vers 2050.** Le même moteur tourne sur les projections NASA NEX-GDDP-CMIP6 :
+  - 3 modèles (IPSL-CM6A-LR, MRI-ESM2-0, GFDL-ESM4) et 2 scénarios (SSP2-4.5, SSP5-8.5) ;
+  - l'évolution de chaque modèle (2041–2060 face à 1995–2014) est appliquée aux saisons réellement mesurées ;
+  - la fourchette des modèles est affichée, et leur désaccord est dit tel quel.
+- **Alerte « semez maintenant ».**
+  - `/api/semis/<région>` lit la pluie NASA POWER des 30 derniers jours et donne l'état : saison sèche, premières pluies, fenêtre de semis ouverte ou poche sèche.
+  - L'accueil l'affiche en direct.
+  - L'app Android vérifie en tâche de fond (environ 2 fois par jour) et notifie au passage vers « fenêtre ouverte » ou « poche sèche ».
+- **Photo et satellite.**
+  - Une photo du champ est analysée par un modèle de vision gratuit (`LLM_VISION_MODEL`, Nemotron VL par défaut), puis confrontée au NDVI MODIS du dernier mois publié au même endroit (NASA GIBS).
+  - La photo n'est pas enregistrée, et la position est arrondie à environ 1 km.
+
 ## Carte
 
 Leaflet, sans clé d'API :
@@ -74,7 +92,7 @@ L'assistant reformule une rotation en langage simple et répond aux questions, �
 
 ## Pipeline de données NASA
 
-Dans `data/pipeline/` (Python 3 ; `build_ndvi.py` et `build_grace.py` demandent Pillow : `pip install pillow`) :
+Dans `data/pipeline/` (Python 3 ; `build_ndvi.py` et `build_grace.py` demandent Pillow, `build_projections.py` demande scipy : `pip install pillow scipy`) :
 
 ```bash
 cd data/pipeline
@@ -83,7 +101,8 @@ python3 build_ndvi.py         # végétation NDVI MODIS mensuelle (NASA GIBS, sa
 python3 build_grace.py        # eau stockée GRACE / GRACE-FO (NASA GIBS, sans compte) → data/raw/grace.json
 python3 build_regions.py      # climat réel des 33 régions et districts (data/regions/<id>.json), à relancer pour rafraîchir l'état du moment
 python3 build_saisons.py      # 20 saisons réelles rejouées par culture (NASA POWER journalier, FAO-56) → data/saisons/<id>.json
-python3 -m unittest test_indicators test_climat_complet test_ndvi_gibs test_grace_gibs test_saison test_build_saisons
+python3 build_projections.py  # projections 2050 (NEX-GDDP-CMIP6, ~540 téléchargements, demande scipy) → data/projections/<id>.json
+python3 -m unittest test_indicators test_climat_complet test_ndvi_gibs test_grace_gibs test_saison test_build_saisons test_cmip6
 ```
 
 Pour **les 31 régions et 2 districts** (au chef-lieu de chacun) : pluie, chaleur et humidité du sol mensuelles 2005–2025 (NASA POWER), une ou deux saisons des pluies, alertes par règles et état du moment sur les 30 derniers jours publiés. La végétation vient du NDVI mensuel MODIS Terra, lu dans les tuiles NASA GIBS sur un anneau de 7 à 18 km autour du chef-lieu (la campagne, pas la ville). L'eau stockée vient de GRACE / GRACE-FO (mascons JPL, 2005–2022), lue elle aussi dans NASA GIBS : moyenne annuelle en cm d'eau, lacune 2017–2018 entre les deux missions.

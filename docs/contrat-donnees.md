@@ -6,12 +6,19 @@ Les écrans lisent `data/regions/<id>.json`, `data/pilot/korhogo/*.json` et `kno
 |---|---|---|
 | `data/regions/<id>.json` | Climat réel d'une région (NASA POWER) : 4 indicateurs, pluie mensuelle (mm), saisons des pluies, matrice (pluie, chaleur, humidité du sol ; niveaux 0 à 4), alertes, `onglets` (pluie, chaleur, sol), `actuel` (30 derniers jours) et `meta` (sources, période, tendance). onglet `veg` et ligne « Végétation » : NDVI MODIS via NASA GIBS ; `grace` : eau stockée GRACE / GRACE-FO via NASA GIBS (moyenne annuelle en cm, `null` = lacune) | Pipeline (membre 1) |
 | `knowledge/cultures.json` | 8 fiches cultures : famille, cycle, besoin en eau, légumineuse, notes 1 à 5 (sécheresse, chaleur, couverture, fourrage, travail du sol, revenu, marché), sources ; revenu et marché sont des hypothèses | Agronomie (membre 2) |
+| `data/saisons/<id>.json` | Verdict de chaque saison réelle 2005–2025 par culture : `annee`, `verdict` (bonne, difficile, perdue), `semis` (date ou `null`), `ratio` (eau reçue / demandée), `cause` ; `meta.saison` et `meta.reserveMm` (hypothèse). Une saison non jugeable (données manquantes, cycle hors série) est absente, jamais comptée perdue | `build_saisons.py` (moteur `saison.py`) |
+| `data/projections/<id>.json` | Part des bonnes saisons par culture, scénario (`ssp245`, `ssp585`) et modèle : `reference` (1995–2014) et `futur` (2041–2060), NEX-GDDP-CMIP6 | `build_projections.py` |
 | `couches.json` | Couches satellite de la carte, servies en tuiles par NASA GIBS sans clé : nom de couche GIBS, format, zoom natif, jour de l'année affiché, première année disponible, opacité | Membre 1 |
 | `sources.json` | 5 étapes de méthode, 8 sources NASA, 4 approches IA comparées, liste « là où l'humain décide » | Membre 5 (contenu) |
 | `lexique.json` | 14 termes : définition simple et pourquoi c'est utile | Membre 5 |
 
 ## Régions
 `frontend/src/lib/regions.json` liste les 31 régions et 2 districts autonomes (chef-lieu géocodé sur OpenStreetMap). `data/regions/<id>.json` donne le climat de chacune, au même format que `climat.json`, avec `saisons` (une ou deux saisons des pluies) et `meta.region`. L'interface les sert en JSON statique sur `/api/climat/<id>`.
+
+## Routes de données
+- `/api/climat/<id>`, `/api/saisons/<id>`, `/api/projections/<id>` : JSON statiques ; 404 si le fichier manque (la page masque alors la section et le signale comme lacune).
+- `/api/semis/<id>` : état de semis du jour (`etat`, `depuis`, `message`, `dateDonnees`), NASA POWER des 30 derniers jours, cache de 6 h ; 503 si NASA POWER ne répond pas.
+- `/api/photo` (POST `{ image, lat, lon, region }`) : `analyse` (culture, couverture du sol, état, remarque), `satellite` (NDVI, mois, normale), `comparaison` (concordent, divergent, satellite_indisponible) et `conseil` éventuel ; 413, 400, 422 ou 503 sinon.
 
 ## Provenance
 Chaque climat porte `meta` : `reel` (grandeurs mesurées), `source`, `periode`, `tendancePluie`, `region`. L'écran Climat les cite. Les rotations ne sont plus un fichier : le moteur (`frontend/src/lib/moteur/`) les calcule pour chaque parcelle.
