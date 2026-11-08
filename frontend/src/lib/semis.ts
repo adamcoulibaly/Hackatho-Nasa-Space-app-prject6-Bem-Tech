@@ -12,7 +12,7 @@ export type ReponseSemis =
 /** État de semis d'une région : pluie journalière NASA POWER des 30 derniers jours, au chef-lieu. */
 export async function etatSemisRegion(
   region: string,
-  deps: { fetch: typeof fetch; aujourdhui: Date; climat: { saisonPluies: { debut: number; fin: number } } },
+  deps: { fetch: typeof fetch; aujourdhui: Date; climat: { saisonPluies: { debut: number; fin: number }; saisons?: { debut: number; fin: number }[] } },
 ): Promise<ReponseSemis> {
   const r = regionParId(region);
   if (!r) return { statut: 404, corps: { erreur: `Région « ${region} » inconnue.` } };
@@ -35,5 +35,5 @@ export async function etatSemisRegion(
   const publies = jours.filter((j) => j.pluie !== null);
   if (publies.length === 0) return { statut: 503, corps: PANNE };
   const dateDonnees = publies.at(-1)!.date;
-  return { statut: 200, corps: { ...etatSemis(jours.filter((j) => j.date <= dateDonnees), deps.climat.saisonPluies), dateDonnees } };
+  return { statut: 200, corps: { ...etatSemis(jours.filter((j) => j.date <= dateDonnees), deps.climat.saisons ?? deps.climat.saisonPluies), dateDonnees } };
 }

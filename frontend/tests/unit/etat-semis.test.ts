@@ -46,6 +46,14 @@ describe("etatSemis", () => {
     expect(e.message).toContain("mars");
   });
 
+  it("deux saisons (sud) : la petite saison de septembre–octobre compte aussi", () => {
+    const deux = [{ debut: 3, fin: 6 }, { debut: 9, fin: 10 }];
+    expect(etatSemis(jours("2026-09-20", [12, 10, 4, 2, 0, 3]), deux).etat).toBe("fenetre_ouverte");
+    // Entre les deux saisons, les pluies attendues sont celles de la prochaine saison.
+    expect(etatSemis(jours("2026-07-25", []), deux).message).toContain("septembre");
+    expect(etatSemis(jours("2026-11-25", []), deux).message).toContain("mars");
+  });
+
   it("les jours sans mesure sont ignorés", () => {
     const e = etatSemis(jours("2026-06-10", [12, null, 10, 4, 2, 0, 3, 6, 1, 0, 2]), SAISON);
     expect(e.etat).toBe("fenetre_ouverte");
@@ -54,6 +62,13 @@ describe("etatSemis", () => {
 
 describe("etatSemisRegion", () => {
   const climat = { saisonPluies: SAISON };
+
+  it("utilise toutes les saisons de la région quand elles existent", async () => {
+    const valeurs = Object.fromEntries(jours("2026-09-20", [12, 10, 4, 2, 0, 3]).map((j) => [j.date.replaceAll("-", ""), j.pluie]));
+    const f = vi.fn(async (_url: string) => new Response(JSON.stringify({ properties: { parameter: { PRECTOTCORR: valeurs } } })));
+    const r = await etatSemisRegion("abidjan", { fetch: f as typeof fetch, aujourdhui: new Date("2026-09-21T08:00:00Z"), climat: { saisonPluies: { debut: 3, fin: 6 }, saisons: [{ debut: 3, fin: 6 }, { debut: 9, fin: 10 }] } });
+    expect(r.corps).toMatchObject({ etat: "fenetre_ouverte" });
+  });
 
   it("lit NASA POWER (pluie journalière) et donne l'état et la date des données", async () => {
     const valeurs = Object.fromEntries(jours("2026-06-10", [12, 10, 4, 2, 0, 3, 6, 1, 0, 2]).map((j) => [j.date.replaceAll("-", ""), j.pluie]));

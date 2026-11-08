@@ -14,14 +14,24 @@ const dateLisible = (iso: string) => {
   return `${j === 1 ? "1er" : j} ${MOIS[m - 1]}`;
 };
 
-export function etatSemis(jours: Jour[], saison: { debut: number; fin: number }): { etat: EtatSemis; depuis?: string; message: string } {
+type Saison = { debut: number; fin: number };
+
+/** Mois de début de la prochaine saison après le mois donné (le sud en a deux). */
+function prochainDebut(saisons: Saison[], mois: number): number {
+  const debuts = saisons.map((s) => s.debut).sort((a, b) => a - b);
+  return debuts.find((d) => d > mois) ?? debuts[0];
+}
+
+/** `saisons` : toutes les saisons des pluies de la région (une au nord, deux au sud). */
+export function etatSemis(jours: Jour[], saisons: Saison | Saison[]): { etat: EtatSemis; depuis?: string; message: string } {
+  const liste = Array.isArray(saisons) ? saisons : [saisons];
   const valides = jours.filter((j) => j.pluie !== null) as { date: string; pluie: number }[];
-  const attendue = `Saison sèche : pluies attendues vers ${MOIS[saison.debut - 1]}.`;
   const dernier = valides.at(-1);
+  const mois = dernier ? Number(dernier.date.slice(5, 7)) : 0;
+  const attendue = `Saison sèche : pluies attendues vers ${MOIS[prochainDebut(liste, mois) - 1]}.`;
   if (!dernier) return { etat: "seche", message: attendue };
-  // Hors de la saison principale (un mois d'avance toléré), un orage ne rouvre pas la fenêtre de semis.
-  const mois = Number(dernier.date.slice(5, 7));
-  if (mois < saison.debut - 1 || mois > saison.fin) return { etat: "seche", message: attendue };
+  // Hors de toute saison des pluies (un mois d'avance toléré), un orage ne rouvre pas la fenêtre de semis.
+  if (!liste.some((s) => mois >= s.debut - 1 && mois <= s.fin)) return { etat: "seche", message: attendue };
 
   const cumul = (i: number) => valides.slice(Math.max(0, i - 2), i + 1).reduce((s, j) => s + j.pluie, 0);
   let ouverture = -1;
