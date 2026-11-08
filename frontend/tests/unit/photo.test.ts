@@ -62,7 +62,7 @@ describe("comparer", () => {
 
 describe("traiterPhoto (route /api/photo)", () => {
   const deps = (f: typeof fetch, ndvi = vi.fn(async () => ({ ndvi: 0.64, mois: "2026-09" }))) => ({
-    config: CONFIG, modele: "vision:free", fetch: f, ndvi, normale: () => 0.58,
+    config: CONFIG, modele: "vision:free", fetch: f, ndvi, normale: () => 0.58, enSaison: () => true,
   });
   const ok = (async () => reponseModele(JSON.stringify(ANALYSE))) as typeof fetch;
 
@@ -88,5 +88,13 @@ describe("traiterPhoto (route /api/photo)", () => {
     expect(r.statut).toBe(200);
     expect(r.corps).toMatchObject({ analyse: ANALYSE, satellite: { ndvi: 0.64, mois: "2026-09", normale: 0.58 }, comparaison: { verdict: "concordent" } });
     expect(ndvi).toHaveBeenCalledWith(9.46, -5.63);
+  });
+
+  it("sol nu en pleine saison : conseil de couverture", async () => {
+    const nu = (async () => reponseModele(JSON.stringify({ culture: "aucune", couvertureSol: 5, etat: "sol_nu", remarque: "Sol nu." }))) as typeof fetch;
+    const r = await traiterPhoto({ image: IMAGE, lat: 9.4, lon: -5.6, region: "poro" }, deps(nu));
+    expect(r.corps).toMatchObject({ conseil: "Sol nu en pleine saison : une culture de couverture (niébé, arachide) protège le sol." });
+    const horsSaison = await traiterPhoto({ image: IMAGE, lat: 9.4, lon: -5.6, region: "poro" }, { ...deps(nu), enSaison: () => false });
+    expect(horsSaison.corps).not.toHaveProperty("conseil");
   });
 });

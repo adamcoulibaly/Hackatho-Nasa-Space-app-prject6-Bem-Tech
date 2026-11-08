@@ -10,13 +10,16 @@ export type MessageVersNatif =
   | { type: "partager"; url: string; texte: string }
   | { type: "ouvrir"; onglet: Onglet; chemin: string }
   | { type: "parcelle"; region: string; culture: string | null }
-  | { type: "alerte"; action: "activer" | "desactiver" | "tester" };
+  | { type: "alerte"; action: "activer" | "desactiver" | "tester" }
+  | { type: "photo" };
 export type MessageDuNatif =
   | { type: "position"; lat: number; lon: number }
   | { type: "position"; erreur: "refus" | "indisponible" }
   | { type: "aller"; chemin: string }
   | { type: "sync" }
-  | { type: "alerte"; etat: EtatAlerte };
+  | { type: "alerte"; etat: EtatAlerte }
+  | { type: "photo"; image: string }
+  | { type: "photo"; erreur: "refus" | "annule" };
 
 export type EtatAlerte = "active" | "inactive" | "refus";
 const ETATS_ALERTE: EtatAlerte[] = ["active", "inactive", "refus"];
@@ -78,6 +81,12 @@ export function ecouterNatif(rappel: (m: MessageDuNatif) => void): () => void {
     try {
       const m = JSON.parse(data) as Partial<MessageDuNatif> & { chemin?: unknown };
       if (m.type === "sync") return rappel({ type: "sync" });
+      if (m.type === "photo") {
+        const { image, erreur } = m as { image?: unknown; erreur?: unknown };
+        if (typeof image === "string" && image.startsWith("data:image/") && image.length <= 4_000_000) return rappel({ type: "photo", image });
+        if (erreur === "refus" || erreur === "annule") return rappel({ type: "photo", erreur });
+        return;
+      }
       if (m.type === "alerte") {
         const etat = (m as { etat?: unknown }).etat;
         return ETATS_ALERTE.includes(etat as EtatAlerte) ? rappel({ type: "alerte", etat: etat as EtatAlerte }) : undefined;

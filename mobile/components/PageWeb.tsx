@@ -7,13 +7,15 @@ import { WebView, type WebViewMessageEvent } from "react-native-webview";
 import { COULEURS, WEB_URL, estPageForoSat, urlPage } from "@/lib/config";
 import { demanderChemin, estCheminInterne, estOnglet, inscrirePage, prendreCheminEnAttente, type Onglet } from "@/lib/onglets";
 import { activer, desactiver, ecrireReglage, lireReglage, verifier } from "@/lib/tacheSemis";
+import { prendrePhoto } from "@/lib/photo";
 
 type Message =
   | { type: "position" }
   | { type: "partager"; url: string; texte: string }
   | { type: "ouvrir"; onglet: unknown; chemin: unknown }
   | { type: "parcelle"; region: unknown; culture: unknown }
-  | { type: "alerte"; action: unknown };
+  | { type: "alerte"; action: unknown }
+  | { type: "photo" };
 
 /**
  * Propriétés de WebView utilisées ici. Les types fournis par react-native-webview 14.0.1 se réduisent à `never`
@@ -109,6 +111,8 @@ export function PageWeb({ onglet, chemin }: { onglet: Onglet; chemin: string }) 
           if (status !== "granted") repondre({ type: "alerte", etat: "refus" });
           else await verifier(true).catch(() => false);
         }
+      } else if (m.type === "photo") {
+        repondre(await prendrePhoto().catch(() => ({ type: "photo" as const, erreur: "annule" as const })));
       } else if (m.type === "ouvrir" && estOnglet(m.onglet) && estCheminInterne(m.chemin)) {
         if (m.onglet === onglet) return repondre({ type: "aller", chemin: m.chemin });
         demanderChemin(m.onglet, m.chemin);

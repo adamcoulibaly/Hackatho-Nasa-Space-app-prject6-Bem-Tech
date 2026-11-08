@@ -275,3 +275,24 @@ test("semis : l'accueil affiche l'état de semis du jour", async ({ page }) => {
   await expect(page.getByText("Fenêtre de semis ouverte")).toBeVisible();
   await expect(page.getByText(/Pluies installées depuis le 2 juin/)).toBeVisible();
 });
+
+test("photo : la photo du champ est réduite, envoyée, et confrontée à la vue NASA", async ({ page }) => {
+  let recu: { image: string; lat: number; lon: number; region: string } | null = null;
+  await page.route("**/api/photo", async (route) => {
+    recu = route.request().postDataJSON();
+    await route.fulfill({
+      json: {
+        analyse: { culture: "Maïs", couvertureSol: 70, etat: "vigoureux", remarque: "Maïs haut et vert." },
+        satellite: { ndvi: 0.64, mois: "2026-09", normale: 0.58 },
+        comparaison: { verdict: "concordent", raisons: [] },
+      },
+    });
+  });
+  await page.goto("/parcelle");
+  await page.getByLabel("Photographier mon champ").setInputFiles("tests/fixtures/gibs_ndvi_tuile.png");
+  await expect(page.getByText("Ce que voit votre téléphone")).toBeVisible();
+  await expect(page.getByText("Ce que voit la NASA")).toBeVisible();
+  await expect(page.getByText("Les deux regards concordent.")).toBeVisible();
+  expect(recu!.image.startsWith("data:image/jpeg;base64,")).toBe(true);
+  expect(recu!.region).toBe("poro");
+});

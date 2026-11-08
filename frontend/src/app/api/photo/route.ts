@@ -23,6 +23,17 @@ async function normale(region: string, mois: string): Promise<number | null> {
   }
 }
 
+/** Vrai pendant la saison des pluies principale de la région (mois de début à mois de fin). */
+async function enSaison(region: string): Promise<boolean> {
+  try {
+    const { debut, fin } = (await getClimatRegion(region)).saisonPluies;
+    const m = new Date().getMonth() + 1;
+    return debut <= fin ? m >= debut && m <= fin : m >= debut || m <= fin;
+  } catch {
+    return false;
+  }
+}
+
 /** Photo du champ : analyse par un modèle de vision et comparaison au NDVI NASA. Rien n'est enregistré ni journalisé de l'image. */
 export async function POST(req: Request) {
   let corps: unknown;
@@ -37,6 +48,7 @@ export async function POST(req: Request) {
     fetch,
     ndvi: (lat, lon) => ndviParcelle(lat, lon, new Date(), lireTuile),
     normale,
+    enSaison,
   });
   return NextResponse.json(r.corps, { status: r.statut });
 }
