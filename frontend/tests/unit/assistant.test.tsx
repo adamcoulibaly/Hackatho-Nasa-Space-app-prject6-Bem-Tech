@@ -22,11 +22,11 @@ describe("configuration", () => {
     const c = configDepuisEnv({});
     expect(c.cle).toBeUndefined();
     expect(c.baseUrl).toBe("https://openrouter.ai/api/v1");
-    expect(c.modele).toMatch(/:free$/);
+    expect(c.modeles).toEqual(["nvidia/nemotron-3.5-lightning:free", "nvidia/nemotron-3.5-super-vl:free"]);
   });
   it("un autre fournisseur compatible OpenAI se règle par l'environnement", () => {
-    const c = configDepuisEnv({ LLM_API_KEY: "k", LLM_BASE_URL: "https://api.groq.com/openai/v1/", LLM_MODEL: "m" });
-    expect(c).toEqual({ cle: "k", baseUrl: "https://api.groq.com/openai/v1", modele: "m" });
+    const c = configDepuisEnv({ LLM_API_KEY: "k", LLM_BASE_URL: "https://api.groq.com/openai/v1/", LLM_MODEL: "m1, m2" });
+    expect(c).toEqual({ cle: "k", baseUrl: "https://api.groq.com/openai/v1", modeles: ["m1", "m2"] });
   });
 });
 
@@ -68,15 +68,27 @@ describe("repondre", () => {
       appels.push({ url, init });
       return reponseOpenAI("  Semez l'arachide en mai.  ");
     };
-    const r = await repondre({ id: "B", params: PARAMS }, { ...ctx, config: { cle: "sk-test", baseUrl: "https://ex.test/v1", modele: "m:free" }, fetch: fauxFetch as typeof fetch });
+    const r = await repondre({ id: "B", params: PARAMS }, { ...ctx, config: { cle: "sk-test", baseUrl: "https://ex.test/v1", modeles: ["m:free"] }, fetch: fauxFetch as typeof fetch });
     expect(r).toEqual({ ok: true, texte: "Semez l'arachide en mai." });
     expect(appels[0].url).toBe("https://ex.test/v1/chat/completions");
     expect((appels[0].init.headers as Record<string, string>).Authorization).toBe("Bearer sk-test");
     expect(JSON.parse(appels[0].init.body as string).model).toBe("m:free");
   });
 
+  it("si le premier modèle est saturé, le modèle de secours répond", async () => {
+    const modeles: string[] = [];
+    const f = (async (_u: string, init: RequestInit) => {
+      const m = JSON.parse(init.body as string).model;
+      modeles.push(m);
+      return m === "a" ? new Response("{}", { status: 429 }) : reponseOpenAI("Réponse du secours.");
+    }) as typeof fetch;
+    const r = await repondre({ id: "B", params: PARAMS }, { ...ctx, config: { cle: "k", baseUrl: "https://ex.test/v1", modeles: ["a", "b"] }, fetch: f });
+    expect(r).toEqual({ ok: true, texte: "Réponse du secours." });
+    expect(modeles).toEqual(["a", "b"]);
+  });
+
   it("quota dépassé : message clair (502)", async () => {
-    const r = await repondre({ id: "B", params: PARAMS }, { ...ctx, config: { cle: "k", baseUrl: "https://ex.test/v1", modele: "m" }, fetch: (async () => new Response("{}", { status: 429 })) as typeof fetch });
+    const r = await repondre({ id: "B", params: PARAMS }, { ...ctx, config: { cle: "k", baseUrl: "https://ex.test/v1", modeles: ["m"] }, fetch: (async () => new Response("{}", { status: 429 })) as typeof fetch });
     expect(r).toEqual({ ok: false, statut: 502, erreur: "L'assistant IA est saturé pour le moment. Réessayez dans une minute." });
   });
 
@@ -86,7 +98,7 @@ describe("repondre", () => {
     }) as typeof fetch;
     const vide = (async () => reponseOpenAI("   ")) as typeof fetch;
     for (const f of [panne, vide]) {
-      const r = await repondre({ id: "B", params: PARAMS }, { ...ctx, config: { cle: "k", baseUrl: "https://ex.test/v1", modele: "m" }, fetch: f });
+      const r = await repondre({ id: "B", params: PARAMS }, { ...ctx, config: { cle: "k", baseUrl: "https://ex.test/v1", modeles: ["m"] }, fetch: f });
       expect(r).toEqual({ ok: false, statut: 502, erreur: "L'assistant IA ne répond pas pour le moment." });
     }
   });

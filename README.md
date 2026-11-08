@@ -70,7 +70,7 @@ Les images Esri sont soumises aux conditions d'utilisation d'Esri (attribution a
 
 ## Assistant IA
 
-L'assistant reformule une rotation en langage simple et répond aux questions, à partir des seules données ForoSat ; le score reste calculé par les règles. Il appelle un fournisseur compatible OpenAI côté serveur (`/api/ia`), la clé ne part jamais dans le navigateur. Réglages dans `frontend/.env.example` : `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL` (OpenRouter et un modèle gratuit par défaut). En production, les ajouter dans Vercel, Settings > Environment Variables.
+L'assistant reformule une rotation en langage simple et répond aux questions, à partir des seules données ForoSat ; le score reste calculé par les règles. Il appelle un fournisseur compatible OpenAI côté serveur (`/api/ia`), la clé ne part jamais dans le navigateur. Réglages dans `frontend/.env.example` : `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL` (OpenRouter par défaut, avec NVIDIA Nemotron 3.5 Lightning puis Nemotron 3.5 Super en secours, gratuits ; `LLM_MODEL` accepte une liste séparée par des virgules, essayée dans l'ordre). En production, les ajouter dans Vercel, Settings > Environment Variables.
 
 ## Pipeline de données NASA
 

@@ -5,15 +5,18 @@ import { calculerRotations } from "@/lib/moteur/rotations";
 import { scoreWord } from "@/lib/format";
 
 /** Fournisseur compatible OpenAI (OpenRouter par défaut, Groq, etc.). La clé reste côté serveur. */
-export type ConfigIA = { cle?: string; baseUrl: string; modele: string };
+/** Modèles essayés dans l'ordre : le suivant prend le relais si le précédent est saturé ou en erreur. */
+export type ConfigIA = { cle?: string; baseUrl: string; modeles: string[] };
 
-export const MODELE_PAR_DEFAUT = "google/gemma-4-31b-it:free";
+/** Nemotron 3.5 Lightning (NVIDIA, rapide, peu sollicité), puis Nemotron 3.5 Super en secours. Gratuits sur OpenRouter. */
+export const MODELES_PAR_DEFAUT = ["nvidia/nemotron-3.5-lightning:free", "nvidia/nemotron-3.5-super-vl:free"];
 
 export function configDepuisEnv(env: Record<string, string | undefined>): ConfigIA {
+  const liste = (env.LLM_MODEL ?? "").split(",").map((m) => m.trim()).filter(Boolean);
   return {
     cle: env.LLM_API_KEY || undefined,
     baseUrl: (env.LLM_BASE_URL || "https://openrouter.ai/api/v1").replace(/\/+$/, ""),
-    modele: env.LLM_MODEL || MODELE_PAR_DEFAUT,
+    modeles: liste.length ? liste : MODELES_PAR_DEFAUT,
   };
 }
 
@@ -69,31 +72,29 @@ export async function repondre(
 ): Promise<Reponse> {
   const { config } = deps;
   if (!config.cle) return { ok: false, statut: 503, erreur: NON_CONFIGURE };
-  try {
-    const r = await deps.fetch(`${config.baseUrl}/chat/completions`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${config.cle}`,
-        "Content-Type": "application/json",
-        "X-Title": "ForoSat",
-      },
-      body: JSON.stringify({
-        model: config.modele,
-        messages: construireMessages(deps.rotation, deps.climat, demande.question),
-        temperature: 0.3,
-        max_tokens: 400,
-      }),
-      signal: AbortSignal.timeout(25_000),
-    });
-    if (r.status === 429) return { ok: false, statut: 502, erreur: SATURE };
-    if (!r.ok) return { ok: false, statut: 502, erreur: INDISPONIBLE };
-    const json = (await r.json()) as { choices?: { message?: { content?: string } }[] };
-    const texte = json.choices?.[0]?.message?.content?.trim();
-    if (!texte) return { ok: false, statut: 502, erreur: INDISPONIBLE };
-    return { ok: true, texte };
-  } catch {
-    return { ok: false, statut: 502, erreur: INDISPONIBLE };
+  const messages = construireMessages(deps.rotation, deps.climat, demande.question);
+  let sature = false;
+  for (const modele of config.modeles) {
+    try {
+      const r = await deps.fetch(`${config.baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${config.cle}`, "Content-Type": "application/json", "X-Title": "ForoSat" },
+        body: JSON.stringify({ model: modele, messages, temperature: 0.3, max_tokens: 400 }),
+        signal: AbortSignal.timeout(25_000),
+      });
+      if (r.status === 429) {
+        sature = true;
+        continue;
+      }
+      if (!r.ok) continue;
+      const json = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+      const texte = json.choices?.[0]?.message?.content?.trim();
+      if (texte) return { ok: true, texte };
+    } catch {
+      /* modèle suivant */
+    }
   }
+  return { ok: false, statut: 502, erreur: sature ? SATURE : INDISPONIBLE };
 }
 
 /** Rotation recalculée par le moteur à partir des paramètres de la demande, ou null si la parcelle est invalide. */
