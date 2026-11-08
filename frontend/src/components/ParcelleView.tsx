@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import type { Couche } from "@/lib/contract";
+import { ouvrirDansApp } from "@/lib/modeApp";
 import { useParcelle } from "@/lib/parcelle/context";
 import { CarteParcelle } from "./CarteParcelle";
 import { ParcelleForm } from "./ParcelleForm";
@@ -15,7 +16,8 @@ export function ParcelleView({ couches }: { couches: Couche[] }) {
       <ParcelleForm
         onSubmit={() => {
           marquerSaisie();
-          router.push("/climat");
+          // Dans l'app mobile, le climat s'ouvre dans son onglet.
+          if (!ouvrirDansApp("/climat")) router.push("/climat");
         }}
       />
     </div>

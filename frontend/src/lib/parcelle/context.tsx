@@ -52,6 +52,19 @@ export function ParcelleProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setState(read());
     setPret(true);
+    // Un autre onglet (navigateur ou app mobile) a pu changer la parcelle : on la relit.
+    const relire = (e: Event) => {
+      if (e instanceof StorageEvent && e.key !== null && e.key !== KEY) return;
+      if (e.type === "visibilitychange" && document.visibilityState !== "visible") return;
+      setState(read());
+    };
+    const evenements = ["storage", "focus", "forosat:sync"] as const;
+    for (const ev of evenements) window.addEventListener(ev, relire);
+    document.addEventListener("visibilitychange", relire);
+    return () => {
+      for (const ev of evenements) window.removeEventListener(ev, relire);
+      document.removeEventListener("visibilitychange", relire);
+    };
   }, []);
 
   const setParcelle = useCallback((p: Partial<Parcelle>) => {

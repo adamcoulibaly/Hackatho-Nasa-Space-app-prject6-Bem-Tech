@@ -2,8 +2,45 @@
 
 const CLE = "forosat.app";
 
-export type MessageVersNatif = { type: "position" } | { type: "partager"; url: string; texte: string };
-export type MessageDuNatif = { type: "position"; lat: number; lon: number } | { type: "position"; erreur: "refus" | "indisponible" };
+/** Onglets natifs de l'app mobile. */
+export type Onglet = "tableau" | "climat" | "rotations" | "champ";
+
+export type MessageVersNatif =
+  | { type: "position" }
+  | { type: "partager"; url: string; texte: string }
+  | { type: "ouvrir"; onglet: Onglet; chemin: string };
+export type MessageDuNatif =
+  | { type: "position"; lat: number; lon: number }
+  | { type: "position"; erreur: "refus" | "indisponible" }
+  | { type: "aller"; chemin: string }
+  | { type: "sync" };
+
+/** Onglet natif qui porte une page du site ; null pour les pages qui s'ouvrent dans l'onglet courant (méthode, lexique…). */
+export function ongletDe(chemin: string): Onglet | null {
+  const p = chemin.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
+  if (p === "/" || p === "/tableau") return "tableau";
+  if (p === "/parcelle") return "champ";
+  if (p === "/climat") return "climat";
+  if (p === "/rotations" || p.startsWith("/rotations/") || p.startsWith("/fiche/")) return "rotations";
+  return null;
+}
+
+/** Chemin interne du site (commence par un seul « / ») : seuls ceux-là circulent entre l'app et la page. */
+export function estCheminInterne(chemin: unknown): chemin is string {
+  return typeof chemin === "string" && chemin.startsWith("/") && !chemin.startsWith("//");
+}
+
+/**
+ * Dans l'app, une page d'un autre onglet s'ouvre dans cet onglet (la barre native reste juste) :
+ * renvoie true si l'app s'en charge, false si la page doit naviguer elle-même.
+ */
+export function ouvrirDansApp(chemin: string): boolean {
+  if (!estModeApp()) return false;
+  const cible = ongletDe(chemin);
+  if (!cible || cible === ongletDe(window.location.pathname)) return false;
+  const p = chemin.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
+  return envoyerAuNatif({ type: "ouvrir", onglet: cible, chemin: p === "/" ? "/tableau" : chemin });
+}
 
 type Pont = { postMessage: (m: string) => void };
 
@@ -33,7 +70,9 @@ export function ecouterNatif(rappel: (m: MessageDuNatif) => void): () => void {
     const data = (e as MessageEvent).data;
     if (typeof data !== "string") return;
     try {
-      const m = JSON.parse(data) as Partial<MessageDuNatif>;
+      const m = JSON.parse(data) as Partial<MessageDuNatif> & { chemin?: unknown };
+      if (m.type === "sync") return rappel({ type: "sync" });
+      if (m.type === "aller") return estCheminInterne(m.chemin) ? rappel({ type: "aller", chemin: m.chemin }) : undefined;
       if (m.type !== "position") return;
       if ("erreur" in m && (m.erreur === "refus" || m.erreur === "indisponible")) rappel({ type: "position", erreur: m.erreur });
       else if ("lat" in m && Number.isFinite(m.lat) && Number.isFinite(m.lon)) rappel(m as MessageDuNatif);

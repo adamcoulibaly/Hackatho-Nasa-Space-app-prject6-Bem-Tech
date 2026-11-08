@@ -5,7 +5,7 @@ import { COULEURS } from "@/lib/config";
 export default function Ecran() {
   return (
     <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: COULEURS.encre }}>
-      <PageWeb chemin="/rotations" />
+      <PageWeb onglet="rotations" chemin="/rotations" />
     </SafeAreaView>
   );
 }

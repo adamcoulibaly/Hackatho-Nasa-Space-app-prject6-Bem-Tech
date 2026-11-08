@@ -257,6 +257,7 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
   useEffect(
     () =>
       ecouterNatif((m) => {
+        if (m.type !== "position") return;
         if ("erreur" in m) return setMessage("Position refusée ou indisponible. Cherchez votre village à la place.");
         carte.current?.flyTo([m.lat, m.lon], 17, { duration: 0.3 });
         setMessage("Carte centrée sur votre position. Vous pouvez dessiner votre champ.");

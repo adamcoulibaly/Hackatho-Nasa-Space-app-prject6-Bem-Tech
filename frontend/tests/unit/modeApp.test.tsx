@@ -2,6 +2,8 @@ import { render } from "@testing-library/react";
 import { estModeApp, envoyerAuNatif, ecouterNatif } from "@/lib/modeApp";
 import { ModeApp } from "@/components/ModeApp";
 
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+
 describe("mode app", () => {
   afterEach(() => {
     sessionStorage.clear();
