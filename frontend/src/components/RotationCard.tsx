@@ -25,6 +25,9 @@ export function RotationCard({ rotation, dark = false }: { rotation: Rotation; d
         {CRITERES.map((k) => <ScoreBar key={k} label={CRITERE_LABELS[k]} level={r.scores[k]} dark={dark} />)}
       </ul>
       <p className={`m-0 text-[15px] leading-normal ${muted}`}>{r.note}</p>
+      {r.rejeu && r.rejeu.total > 0 && (
+        <p className="m-0 text-[15px] font-semibold">{`${r.rejeu.total} saisons réelles rejouées : ${r.rejeu.bonnes} bonnes`}</p>
+      )}
       <p className={`m-0 flex-grow text-sm leading-normal ${muted}`}><strong className={dark ? "text-paper" : "text-ink"}>Lacune :</strong> {r.lacune}</p>
       <div className={`flex items-center justify-between gap-2.5 border-t pt-4 ${dark ? "border-[#1F3328]" : "border-[#E3E8E2]"}`}>
         <span className={`text-sm ${muted}`}>Confiance : <strong className={dark ? "text-paper" : "text-ink"}>{r.confiance.niveau}</strong></span>

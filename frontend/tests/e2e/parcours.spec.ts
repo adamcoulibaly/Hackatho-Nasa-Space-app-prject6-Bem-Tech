@@ -238,3 +238,16 @@ test("mode app sur petit téléphone (360 px) : aucune page plus large que l'éc
   }
   await ctx.close();
 });
+
+test("rejeu : la rotation est rejouée sur les saisons réelles, chaque saison s'ouvre au toucher", async ({ page }) => {
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.goto("/rotations");
+  await expect(page.getByText(/saisons réelles rejouées : \d+ bonnes/).first()).toBeVisible();
+  await page.goto("/rotations/B");
+  await expect(page.getByRole("heading", { name: /^Rejouée sur \d+ saisons réelles$/ })).toBeVisible();
+  const pastille = page.getByRole("button", { name: /^2015 : saison / });
+  await pastille.click();
+  await expect(pastille).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText(/^2015 · /)).toBeVisible();
+});

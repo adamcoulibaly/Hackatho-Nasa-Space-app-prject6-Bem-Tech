@@ -6,6 +6,7 @@ import { useParcelle } from "@/lib/parcelle/context";
 import { useRotations } from "@/lib/useRotations";
 import { lienFiche } from "@/lib/moteur/fiche-lien";
 import { CalendrierTrois } from "./CalendrierTrois";
+import { FriseRejeu } from "./FriseRejeu";
 import { ConfianceBreakdown } from "./ConfianceBreakdown";
 import { RainSimulator } from "./RainSimulator";
 import { AssistantIA } from "./AssistantIA";
@@ -47,6 +48,10 @@ export function RotationDetail({ id, initial, cultures }: { id: "A" | "B" | "C";
       </ol>
 
       <Section titre="Le calendrier sur 3 ans"><CalendrierTrois calendrier={rotation.calendrier} /></Section>
+
+      {rotation.rejeu && rotation.rejeu.total > 0 && (
+        <Section titre={`Rejouée sur ${rotation.rejeu.total} saisons réelles`}><FriseRejeu rejeu={rotation.rejeu} /></Section>
+      )}
 
       <div data-stagger className="grid gap-[22px] lg:grid-cols-2">
         <Section titre="Pourquoi cette rotation">
