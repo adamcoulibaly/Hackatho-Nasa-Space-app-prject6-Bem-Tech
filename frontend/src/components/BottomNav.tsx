@@ -12,7 +12,7 @@ const TABS: { id: BottomTab; label: string; href: string; icon: string }[] = [
 /** Barre de navigation du bas, visible seulement sur téléphone. */
 export function BottomNav({ current }: { current?: BottomTab }) {
   return (
-    <nav aria-label="Navigation" className="no-print fixed inset-x-4 bottom-4 z-[1100] grid h-[66px] grid-cols-4 gap-1 rounded-full bg-ink p-1.5 md:hidden">
+    <nav aria-label="Navigation" className="no-app no-print fixed inset-x-4 bottom-4 z-[1100] grid h-[66px] grid-cols-4 gap-1 rounded-full bg-ink p-1.5 md:hidden">
       {TABS.map((t) => {
         const on = t.id === current;
         return (

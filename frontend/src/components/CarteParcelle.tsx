@@ -7,6 +7,7 @@ import type { Couche } from "@/lib/contract";
 import { anneeDisponible, gibsTileUrl, lireNominatimListe, nominatimUrl, surfaceHa, type Lieu } from "@/lib/carte";
 import { regionLaPlusProche, regionParId } from "@/lib/regions";
 import { useParcelle } from "@/lib/parcelle/context";
+import { ecouterNatif, envoyerAuNatif } from "@/lib/modeApp";
 
 type Point = [number, number];
 type Fond = "satellite" | "plan";
@@ -252,7 +253,18 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
     setResultats([]);
     setMessage(lieu.nom);
   };
+  // Position renvoyée par l'app mobile (GPS natif).
+  useEffect(
+    () =>
+      ecouterNatif((m) => {
+        carte.current?.flyTo([m.lat, m.lon], 17, { duration: 0.3 });
+        setMessage("Carte centrée sur votre position. Vous pouvez dessiner votre champ.");
+      }),
+    [],
+  );
+
   const maPosition = () => {
+    if (envoyerAuNatif({ type: "position" })) return setMessage("Recherche de votre position…");
     if (!("geolocation" in navigator)) return setMessage("Ce navigateur ne donne pas la position.");
     setMessage("Recherche de votre position…");
     navigator.geolocation.getCurrentPosition(

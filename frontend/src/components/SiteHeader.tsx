@@ -14,7 +14,7 @@ const STEPS: { id: Step; label: string; href: string }[] = [
 /** `bottomNav` : la barre du bas remplace la navigation du haut sur téléphone. */
 export function SiteHeader({ current, badge, bottomNav = false }: { current?: Step; badge?: string; bottomNav?: boolean }) {
   return (
-    <header className="bg-ink text-paper no-print">
+    <header className="no-app bg-ink text-paper no-print">
       <div className="mx-auto flex max-w-[1360px] flex-wrap items-center gap-x-7 gap-y-3 px-6 py-3">
         <Link href="/" aria-label="ForoSat — accueil" className="flex items-center gap-2.5 no-underline text-paper hover:text-paper">
           <Logo />

@@ -87,6 +87,9 @@ a:active, button:active { opacity: 0.8; }
   cursor: grab;
 }
 
+/* Dans l'app mobile, l'app fournit son propre en-tête et ses onglets. */
+.mode-app .no-app { display: none !important; }
+
 @media print {
   .no-print { display: none !important; }
   body { background: #fff; }

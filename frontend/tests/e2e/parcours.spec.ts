@@ -214,3 +214,12 @@ test("un lien de fiche incomplet est signalé", async ({ page }) => {
   await page.goto("/fiche/B?r=poro");
   await expect(page.getByRole("heading", { name: "Lien incomplet" })).toBeVisible();
 });
+
+test("mode app : l'en-tête et la barre du bas du site disparaissent pour toute la session", async ({ page }) => {
+  await page.goto("/parcelle?app=1");
+  await expect(page.locator("html")).toHaveClass(/mode-app/);
+  await expect(page.locator("header")).toBeHidden();
+  await page.goto("/lexique");
+  await expect(page.locator("header")).toBeHidden();
+  await expect(page.getByRole("navigation", { name: "Navigation" })).toBeHidden();
+});
