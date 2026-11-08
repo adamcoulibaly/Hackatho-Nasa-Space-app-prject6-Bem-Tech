@@ -46,6 +46,18 @@ L'interface ne lit les données que par `frontend/src/lib/data`. Pour ajouter un
 
 Commandes à lancer depuis `frontend/` : l'application cherche les données dans `../data` et `../knowledge`.
 
+## App mobile (Expo)
+
+`mobile/` : app Expo (SDK 58, Expo Router) avec un écran d'entrée natif (rôle, langue), 4 onglets (Accueil, Climat, Rotations, Champ) qui affichent les pages du site en mode app (`?app=1`), le GPS et le partage natifs, et un écran « Pas de connexion ».
+
+```bash
+cd mobile
+npm ci
+EXPO_PUBLIC_WEB_URL=https://<votre-site>.vercel.app npx expo start
+```
+
+Build Android (APK installable) avec le compte Expo : `npx eas-cli@latest build --platform android --profile preview` (variable `EXPO_PUBLIC_WEB_URL` à définir dans le projet EAS).
+
 ## Carte
 
 Leaflet, sans clé d'API :
