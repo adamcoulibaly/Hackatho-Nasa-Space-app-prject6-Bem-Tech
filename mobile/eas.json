@@ -9,11 +9,15 @@
       "android": {
         "buildType": "apk"
       },
-      "env": {}
+      "env": {
+        "EXPO_PUBLIC_WEB_URL": "https://hackatho-nasa-space-app-prject6-bem.vercel.app"
+      }
     },
     "production": {
       "autoIncrement": true,
-      "env": {}
+      "env": {
+        "EXPO_PUBLIC_WEB_URL": "https://hackatho-nasa-space-app-prject6-bem.vercel.app"
+      }
     }
   },
   "submit": {
