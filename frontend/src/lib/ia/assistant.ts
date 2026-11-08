@@ -79,19 +79,23 @@ export async function repondre(
       const r = await deps.fetch(`${config.baseUrl}/chat/completions`, {
         method: "POST",
         headers: { Authorization: `Bearer ${config.cle}`, "Content-Type": "application/json", "X-Title": "ForoSat" },
-        body: JSON.stringify({ model: modele, messages, temperature: 0.3, max_tokens: 400 }),
+        // Les modèles qui raisonnent (Nemotron 3.5…) consomment des jetons avant de répondre :
+        // raisonnement court, non renvoyé, et une marge suffisante pour la réponse.
+        body: JSON.stringify({ model: modele, messages, temperature: 0.3, max_tokens: 1500, reasoning: { effort: "low", exclude: true } }),
         signal: AbortSignal.timeout(25_000),
       });
-      if (r.status === 429) {
-        sature = true;
+      if (!r.ok) {
+        if (r.status === 429) sature = true;
+        const extrait = (await r.text().catch(() => "")).slice(0, 300);
+        console.warn(`[ia] ${modele} : HTTP ${r.status} ${extrait}`);
         continue;
       }
-      if (!r.ok) continue;
-      const json = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+      const json = (await r.json()) as { choices?: { message?: { content?: string }; finish_reason?: string }[] };
       const texte = json.choices?.[0]?.message?.content?.trim();
       if (texte) return { ok: true, texte };
-    } catch {
-      /* modèle suivant */
+      console.warn(`[ia] ${modele} : réponse vide (fin : ${json.choices?.[0]?.finish_reason ?? "inconnue"})`);
+    } catch (e) {
+      console.warn(`[ia] ${modele} : ${e instanceof Error ? e.message : "erreur"}`);
     }
   }
   return { ok: false, statut: 502, erreur: sature ? SATURE : INDISPONIBLE };

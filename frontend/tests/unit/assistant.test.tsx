@@ -75,6 +75,29 @@ describe("repondre", () => {
     expect(JSON.parse(appels[0].init.body as string).model).toBe("m:free");
   });
 
+  it("modèles qui raisonnent : raisonnement court et assez de jetons pour la réponse", async () => {
+    let corps: Record<string, unknown> = {};
+    const f = (async (_u: string, init: RequestInit) => {
+      corps = JSON.parse(init.body as string);
+      return reponseOpenAI("Ok.");
+    }) as typeof fetch;
+    await repondre({ id: "B", params: PARAMS }, { ...ctx, config: { cle: "k", baseUrl: "https://ex.test/v1", modeles: ["m"] }, fetch: f });
+    expect(corps.reasoning).toEqual({ effort: "low", exclude: true });
+    expect(corps.max_tokens).toBeGreaterThanOrEqual(1500);
+  });
+
+  it("chaque échec du fournisseur est journalisé côté serveur, sans la clé", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const f = (async () => new Response('{"error":{"message":"No endpoints found"}}', { status: 404 })) as typeof fetch;
+    await repondre({ id: "B", params: PARAMS }, { ...ctx, config: { cle: "sk-secret", baseUrl: "https://ex.test/v1", modeles: ["m"] }, fetch: f });
+    const journal = warn.mock.calls.map((c) => c.join(" ")).join("\n");
+    expect(journal).toContain("m");
+    expect(journal).toContain("404");
+    expect(journal).toContain("No endpoints found");
+    expect(journal).not.toContain("sk-secret");
+    warn.mockRestore();
+  });
+
   it("si le premier modèle est saturé, le modèle de secours répond", async () => {
     const modeles: string[] = [];
     const f = (async (_u: string, init: RequestInit) => {
