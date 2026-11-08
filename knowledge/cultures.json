@@ -24,7 +24,21 @@
       "revenu",
       "marche"
     ],
-    "aValider": true
+    "aValider": true,
+    "stades": {
+      "jours": [
+        20,
+        35,
+        40,
+        30
+      ],
+      "kc": [
+        0.3,
+        1.2,
+        0.6
+      ],
+      "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    }
   },
   {
     "nom": "Coton",
@@ -51,7 +65,21 @@
       "revenu",
       "marche"
     ],
-    "aValider": true
+    "aValider": true,
+    "stades": {
+      "jours": [
+        30,
+        50,
+        60,
+        55
+      ],
+      "kc": [
+        0.35,
+        1.15,
+        0.6
+      ],
+      "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    }
   },
   {
     "nom": "Igname",
@@ -78,7 +106,21 @@
       "revenu",
       "marche"
     ],
-    "aValider": true
+    "aValider": true,
+    "stades": {
+      "jours": [
+        20,
+        30,
+        60,
+        40
+      ],
+      "kc": [
+        0.5,
+        1.1,
+        0.65
+      ],
+      "source": "Approximation (absente de FAO-56) — à valider par l'agronome"
+    }
   },
   {
     "nom": "Manioc",
@@ -105,7 +147,21 @@
       "revenu",
       "marche"
     ],
-    "aValider": true
+    "aValider": true,
+    "stades": {
+      "jours": [
+        20,
+        40,
+        90,
+        60
+      ],
+      "kc": [
+        0.3,
+        0.8,
+        0.3
+      ],
+      "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    }
   },
   {
     "nom": "Arachide",
@@ -132,7 +188,21 @@
       "revenu",
       "marche"
     ],
-    "aValider": true
+    "aValider": true,
+    "stades": {
+      "jours": [
+        25,
+        35,
+        45,
+        25
+      ],
+      "kc": [
+        0.4,
+        1.15,
+        0.6
+      ],
+      "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    }
   },
   {
     "nom": "Riz",
@@ -160,7 +230,21 @@
       "revenu",
       "marche"
     ],
-    "aValider": true
+    "aValider": true,
+    "stades": {
+      "jours": [
+        30,
+        30,
+        60,
+        30
+      ],
+      "kc": [
+        1.05,
+        1.2,
+        0.9
+      ],
+      "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    }
   },
   {
     "nom": "Sorgho",
@@ -187,7 +271,21 @@
       "revenu",
       "marche"
     ],
-    "aValider": true
+    "aValider": true,
+    "stades": {
+      "jours": [
+        20,
+        35,
+        40,
+        30
+      ],
+      "kc": [
+        0.3,
+        1.0,
+        0.55
+      ],
+      "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    }
   },
   {
     "nom": "Niébé",
@@ -214,6 +312,20 @@
       "revenu",
       "marche"
     ],
-    "aValider": true
+    "aValider": true,
+    "stades": {
+      "jours": [
+        20,
+        30,
+        30,
+        20
+      ],
+      "kc": [
+        0.4,
+        1.05,
+        0.6
+      ],
+      "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    }
   }
 ]

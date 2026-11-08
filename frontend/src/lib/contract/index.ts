@@ -162,6 +162,12 @@ export const CultureSchema = z.object({
   /** Champs qui ne sont que des hypothèses. */
   hypotheses: z.array(z.enum(["revenu", "marche"])),
   aValider: z.literal(true),
+  /** Stades FAO-56 : durées de référence (initial, développement, mi-saison, fin) en jours, ramenées à cycleJours au calcul, et Kc (initial, mi-saison, fin). */
+  stades: z.object({
+    jours: z.tuple([z.number().int().positive(), z.number().int().positive(), z.number().int().positive(), z.number().int().positive()]),
+    kc: z.tuple([z.number().positive(), z.number().positive(), z.number().positive()]),
+    source: z.string(),
+  }),
 });
 export type Culture = z.infer<typeof CultureSchema>;
 export const CulturesSchema = z.array(CultureSchema).length(8);

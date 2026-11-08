@@ -16,7 +16,7 @@ Donner au jury ce qu'aucun outil existant ne fait (AgroSat CI suit la végétati
 ## Bloc 1 — Moteur de saison et rejeu 20 saisons
 **Données.** `data/pipeline/fetch_power.py` télécharge en une requête par région la série **journalière 2005-01-01 → 2025-12-31** (PRECTOTCORR, T2M_MAX, T2M_MIN) de NASA POWER pour les 33 régions. Un nouveau script `build_saisons.py` en tire `data/saisons/<region>.json` : `{ meta, jours: { debut: "2005-01-01", pluie: number[], tmax: number[], tmin: number[] } }` (valeurs arrondies au dixième, `null` si manquante), lu par la couche `lib/data` comme le climat.
 
-**Moteur** (`frontend/src/lib/moteur/saison/`, TypeScript pur) :
+**Moteur** (`data/pipeline/saison.py`, Python ; décidé à la planification : un seul moteur, verdicts précalculés par culture, année et région dans `data/saisons/<region>.json`, assemblés par le site selon la rotation) :
 - `semis.ts` — date de semis (règle de Sivakumar) : premier jour, à partir du début de la saison des pluies de la région, où le cumul sur 3 jours atteint 20 mm sans période de 7 jours secs (< 1 mm/j) dans les 20 jours suivants. Aucun semis trouvé dans la fenêtre de la saison → « pas de semis possible » (saison perdue).
 - `bilan.ts` — bilan d'eau journalier :
   - ET0 de Hargreaves (Tmax, Tmin, rayonnement extraterrestre calculé à partir de la latitude et du jour) ;
@@ -42,7 +42,7 @@ Donner au jury ce qu'aucun outil existant ne fait (AgroSat CI suit la végétati
 - extraction de la maille de 25 km de chaque chef-lieu, unités converties (kg m⁻² s⁻¹ → mm/j, K → °C) ;
 - les séries journalières par région restent dans `data/raw/` (ignoré par git si trop lourd) ; le dépôt garde le résultat.
 
-**Calcul (dans le pipeline, pour les 8 cultures et par région).** Le moteur de saison est porté en Python (`data/pipeline/saison.py`), avec des cas de test identiques à ceux du TypeScript pour garantir les mêmes résultats. Pour chaque modèle, scénario et culture : part des bonnes saisons sur la référence, puis vers 2050, et l'écart entre les deux. Résultat dans `data/projections/<region>.json` : `{ meta, cultures: { [culture]: { [scenario]: { [modele]: ecart } } } }`.
+**Calcul (dans le pipeline, pour les 8 cultures et par région).** Le même moteur Python (`data/pipeline/saison.py`) tourne sur les séries simulées. Pour chaque modèle, scénario et culture : part des bonnes saisons sur la référence, puis vers 2050, et l'écart entre les deux. Résultat dans `data/projections/<region>.json` : `{ meta, cultures: { [culture]: { [scenario]: { [modele]: ecart } } } }`.
 
 **Côté site.** Pour une rotation : on prend sa part réelle de bonnes saisons (bloc 1) et on y applique l'écart moyen des cultures de la rotation, modèle par modèle → une fourchette (min–max sur les 3 modèles) par scénario. Si les modèles donnent des écarts de signes opposés supérieurs à 5 points, la phrase dit « les modèles ne s'accordent pas » au lieu de trancher.
 
@@ -56,7 +56,7 @@ Sur la page des rotations, un badge « tient en 2050 » marque la rotation dont 
 
 ## Bloc 3 — Alerte « semez maintenant »
 **Site.**
-- `frontend/src/lib/moteur/saison/etat.ts` donne l'état du moment à partir des 20 derniers jours de pluie, avec la règle de semis du bloc 1. Les états possibles :
+- `frontend/src/lib/moteur/etat-semis.ts` (seule partie du moteur de saison en TypeScript, car elle lit les pluies du jour) donne l'état du moment à partir des 20 derniers jours de pluie, avec la règle de semis du bloc 1. Les états possibles :
   - `seche` : avant la saison ;
   - `premieres_pluies` : pluie tombée, règle pas encore remplie ;
   - `fenetre_ouverte` : avec la date d'ouverture ;
@@ -99,7 +99,7 @@ Voix en dioula ou baoulé (modèles ouverts encore trop faibles), notifications 
 
 ## Tests
 - **Moteur (Vitest) :** semis (sec, idéal, faux départ suivi d'une poche sèche), ET0 de Hargreaves sur une valeur de référence FAO-56, bilan d'eau, verdicts, rejeu d'une rotation, écart 2050 et désaccord des modèles, états du moment.
-- **Pipeline (Python) :** lecture d'un extrait NetCDF du dépôt, conversions d'unités, mêmes cas de semis et de bilan que le TypeScript (résultats identiques).
+- **Pipeline (Python) :** moteur de saison (semis, ET0, bilan, verdicts, données manquantes, cycle hors série), lecture d'un extrait NetCDF du dépôt, conversions d'unités.
 - **Routes :** `/api/semis` (POWER en panne) et `/api/photo` (image trop lourde, JSON du modèle invalide, tuile GIBS du dépôt).
 - **e2e :**
   - frise du rejeu visible et pastille cliquable ;

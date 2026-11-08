@@ -23,6 +23,14 @@ describe("fiches cultures", () => {
       expect(x.eauMm[0]).toBeLessThan(x.eauMm[1]);
     }
   });
+  it("chaque fiche porte ses stades FAO-56 (4 durées, 3 coefficients), à valider", () => {
+    for (const x of CulturesSchema.parse(brut)) {
+      expect(x.stades.jours).toHaveLength(4);
+      expect(x.stades.kc).toHaveLength(3);
+      expect(x.stades.source).toMatch(/à valider par l'agronome/);
+    }
+    expect(CulturesSchema.parse(brut).find((x) => x.nom === "Maïs")!.stades).toMatchObject({ jours: [20, 35, 40, 30], kc: [0.3, 1.2, 0.6] });
+  });
   it("rejette une note hors de 1 à 5", () => {
     expect(() => CultureSchema.parse({ ...brut[0], secheresse: 6 })).toThrow();
   });
