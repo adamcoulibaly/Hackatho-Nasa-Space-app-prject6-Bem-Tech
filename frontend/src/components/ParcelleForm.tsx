@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useParcelle } from "@/lib/parcelle/context";
-import { CULTURES, MAX_CULTURES, PRIORITES, validateParcelle, type Eau, type Materiel } from "@/lib/parcelle/validate";
+import { AUTRE_MAX, CULTURES, MAX_CULTURES, PRIORITES, validateParcelle, type Eau, type Materiel } from "@/lib/parcelle/validate";
 import { libelleRegion, regionsParDistrict } from "@/lib/regions";
 
 const FIELD = "h-12 rounded-[14px] border border-line bg-white px-3 text-[15px] text-ink";
@@ -28,6 +28,8 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parcelle.surface]);
 
+  const autreCulture = parcelle.autreCulture !== undefined;
+  const nbCultures = parcelle.cultures.length + (autreCulture ? 1 : 0);
   const toggle = (liste: string[], valeur: string) =>
     liste.includes(valeur) ? liste.filter((v) => v !== valeur) : [...liste, valeur];
 
@@ -79,7 +81,7 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
                 type="button"
                 aria-pressed={on}
                 onClick={() => {
-                  if (!on && parcelle.cultures.length >= MAX_CULTURES) return setTropDeCultures(true);
+                  if (!on && nbCultures >= MAX_CULTURES) return setTropDeCultures(true);
                   setTropDeCultures(false);
                   setParcelle({ cultures: toggle(parcelle.cultures, c) });
                 }}
@@ -89,7 +91,26 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
               </button>
             );
           })}
+          <button
+            type="button"
+            aria-pressed={autreCulture}
+            onClick={() => {
+              if (!autreCulture && nbCultures >= MAX_CULTURES) return setTropDeCultures(true);
+              setTropDeCultures(false);
+              setParcelle({ autreCulture: autreCulture ? undefined : "" });
+            }}
+            className={`h-11 rounded-full border px-4 text-[15px] font-semibold ${autreCulture ? "border-ink bg-ink text-paper" : "border-dashed border-line bg-white text-ink"}`}
+          >
+            Autre culture
+          </button>
         </div>
+        {autreCulture && (
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="autre-culture" className="text-sm font-semibold">Quelle autre culture ?</label>
+            <input id="autre-culture" className={FIELD} maxLength={AUTRE_MAX} value={parcelle.autreCulture ?? ""} onChange={(e) => setParcelle({ autreCulture: e.target.value })} placeholder="ex. anacarde, cacao, soja" />
+            <span className="text-[13px] text-muted">Gardée dans votre parcelle, mais pas encore évaluée : ForoSat n&apos;a des fiches que pour les 8 cultures ci-dessus.</span>
+          </div>
+        )}
         {tropDeCultures && <p role="status" className="m-0 text-sm text-[#5C2E00]">3 cultures au plus : retirez-en une pour en choisir une autre.</p>}
       </fieldset>
 
@@ -122,6 +143,22 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
             {p}
           </label>
         ))}
+        <label className="flex min-h-[44px] items-center gap-3 text-[15px]">
+          <input
+            type="checkbox"
+            checked={parcelle.autreObjectif !== undefined}
+            onChange={() => setParcelle({ autreObjectif: parcelle.autreObjectif !== undefined ? undefined : "" })}
+            className="h-5 w-5 accent-green-dark"
+          />
+          Autre objectif
+        </label>
+        {parcelle.autreObjectif !== undefined && (
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="autre-objectif" className="text-sm font-semibold">Quel autre objectif ?</label>
+            <input id="autre-objectif" className={FIELD} maxLength={AUTRE_MAX} value={parcelle.autreObjectif} onChange={(e) => setParcelle({ autreObjectif: e.target.value })} placeholder="ex. planter des arbres" />
+            <span className="text-[13px] text-muted">Noté pour votre conseiller ; il ne change pas encore le score.</span>
+          </div>
+        )}
       </fieldset>
 
       <div className="flex flex-col gap-1.5">

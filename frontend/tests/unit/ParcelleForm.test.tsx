@@ -44,3 +44,45 @@ describe("ParcelleForm", () => {
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("ParcelleForm : catégorie « Autre »", () => {
+  beforeEach(() => localStorage.clear());
+
+  it("une autre culture se saisit, compte dans les 3 cultures, et est gardée", async () => {
+    const { user, onSubmit } = setup();
+    await user.click(screen.getByRole("button", { name: "Autre culture" }));
+    await user.type(screen.getByLabelText("Quelle autre culture ?"), "Anacarde");
+    await user.click(screen.getByRole("button", { name: "Arachide" }));
+    expect(screen.getByText(/3 cultures au plus/)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Analyser ma parcelle" }));
+    expect(onSubmit).toHaveBeenCalled();
+    expect(JSON.parse(localStorage.getItem("forosat.parcelle")!).parcelle.autreCulture).toBe("Anacarde");
+  });
+
+  it("« Autre culture » cochée sans nom : l'envoi est bloqué", async () => {
+    const { user, onSubmit } = setup();
+    await user.click(screen.getByRole("button", { name: "Autre culture" }));
+    await user.click(screen.getByRole("button", { name: "Analyser ma parcelle" }));
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(screen.getByRole("alert")).toHaveTextContent("Précisez l'autre culture.");
+  });
+
+  it("un autre objectif se saisit et est gardé", async () => {
+    const { user } = setup();
+    await user.click(screen.getByRole("checkbox", { name: "Autre objectif" }));
+    await user.type(screen.getByLabelText("Quel autre objectif ?"), "Planter des arbres");
+    await user.click(screen.getByRole("button", { name: "Analyser ma parcelle" }));
+    expect(JSON.parse(localStorage.getItem("forosat.parcelle")!).parcelle.autreObjectif).toBe("Planter des arbres");
+  });
+});
+
+describe("moteur : culture sans fiche", () => {
+  it("la rotation signale la culture non évaluée dans ses lacunes", async () => {
+    const { getClimatRegion, getCultures } = await import("@/lib/data");
+    const { calculerRotations } = await import("@/lib/moteur/rotations");
+    const { DEFAULT_PARCELLE } = await import("@/lib/parcelle/validate");
+    const [climat, cultures] = await Promise.all([getClimatRegion("poro"), getCultures()]);
+    const r = calculerRotations({ ...DEFAULT_PARCELLE, autreCulture: "Anacarde" }, climat, cultures)!;
+    expect(r[0].lacune).toContain("culture « Anacarde » non évaluée (pas encore de fiche culture)");
+  });
+});

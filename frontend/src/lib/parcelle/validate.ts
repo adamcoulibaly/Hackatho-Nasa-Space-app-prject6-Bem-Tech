@@ -15,7 +15,14 @@ export type Parcelle = {
   /** Contour dessiné sur la carte, en [latitude, longitude]. Reste sur l'appareil. */
   contour?: [number, number][];
   centre?: [number, number];
+  /** Culture hors des 8 fiches (« Autre ») : gardée et affichée, non évaluée. Undefined = non cochée. */
+  autreCulture?: string;
+  /** Objectif hors liste (« Autre ») : gardé et affiché, sans poids dans le score. */
+  autreObjectif?: string;
 };
+
+/** Longueur maximale d'une saisie « Autre ». */
+export const AUTRE_MAX = 40;
 
 export const CULTURES = ["Maïs", "Coton", "Igname", "Manioc", "Arachide", "Riz", "Sorgho", "Niébé"] as const;
 
@@ -45,8 +52,10 @@ export function validateParcelle(p: Parcelle): { ok: boolean; erreurs: string[] 
   const erreurs: string[] = [];
   if (!Number.isFinite(p.surface) || p.surface <= 0) erreurs.push("La surface doit être supérieure à 0.");
   if (p.cultures.length === 0) erreurs.push("Choisissez au moins une culture.");
-  if (p.cultures.length > MAX_CULTURES) erreurs.push("Choisissez 3 cultures au plus.");
-  if (p.priorites.length === 0) erreurs.push("Choisissez au moins une priorité.");
+  if (p.cultures.length + (p.autreCulture !== undefined ? 1 : 0) > MAX_CULTURES) erreurs.push("Choisissez 3 cultures au plus.");
+  if (p.autreCulture !== undefined && !p.autreCulture.trim()) erreurs.push("Précisez l'autre culture.");
+  if (p.priorites.length === 0 && !p.autreObjectif?.trim()) erreurs.push("Choisissez au moins une priorité.");
+  if (p.autreObjectif !== undefined && !p.autreObjectif.trim()) erreurs.push("Précisez l'autre objectif.");
   return { ok: erreurs.length === 0, erreurs };
 }
 
@@ -60,4 +69,6 @@ export const ParcelleSchema = z.object({
   materiel: z.enum(["daba", "traction", "tracteur"]),
   contour: z.array(z.tuple([z.number(), z.number()])).optional(),
   centre: z.tuple([z.number(), z.number()]).optional(),
+  autreCulture: z.string().max(AUTRE_MAX).optional(),
+  autreObjectif: z.string().max(AUTRE_MAX).optional(),
 });

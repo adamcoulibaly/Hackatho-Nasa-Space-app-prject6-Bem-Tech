@@ -37,11 +37,12 @@ export function risques(seq: Culture[], cl: ClimatResume, p: Parcelle): string[]
   return [...new Set(r)];
 }
 
-export function lacune(climat: Climat, opts: { sansRejeu?: boolean; sansProjections?: boolean } = {}): string {
+export function lacune(climat: Climat, opts: { sansRejeu?: boolean; sansProjections?: boolean; autreCulture?: string } = {}): string {
   const l = ["prix et demande au marché local non intégrés (revenu et marché estimés)", "pas de mesure du sol de la parcelle"];
   if (!climat.onglets.some((o) => o.id === "veg")) l.push("végétation (NDVI) pas encore branchée");
   if (opts.sansRejeu) l.push("rejeu des saisons indisponible");
   if (opts.sansProjections) l.push("projections 2050 indisponibles");
+  if (opts.autreCulture?.trim()) l.push(`culture « ${opts.autreCulture.trim()} » non évaluée (pas encore de fiche culture)`);
   return l.join(" ; ");
 }
 
@@ -93,7 +94,7 @@ export function construireRotation(
       { source: "Fiches cultures", texte: "Besoins en eau et durée des cycles : FAO ECOCROP, valeurs à valider par l'agronome." },
     ],
     risques: risques(ch.cultures, cl, p),
-    lacune: lacune(climat, { sansRejeu: ctx.sansRejeu, sansProjections: ctx.sansProjections }),
+    lacune: lacune(climat, { sansRejeu: ctx.sansRejeu, sansProjections: ctx.sansProjections, autreCulture: p.autreCulture }),
     confiance: confiance(cl, ctx.rejeu),
     calendrier: calendrier(ch.cultures, cl),
     ...(ctx.rejeu ? { rejeu: ctx.rejeu } : {}),
