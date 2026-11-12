@@ -10,7 +10,9 @@ export default defineConfig({
   timeout: 30_000,
   fullyParallel: false,
   reporter: "list",
-  use: { baseURL: "http://localhost:3100", trace: "off" },
+  use: {
+    // Le service worker du mode hors connexion contournerait les réponses simulées (page.route) : bloqué sauf dans son test.
+    serviceWorkers: "block", baseURL: "http://localhost:3100", trace: "off" },
   webServer: {
     command: "npm run build && npx next start -p 3100",
     url: "http://localhost:3100",

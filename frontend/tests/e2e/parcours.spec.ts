@@ -317,3 +317,24 @@ test("carte des risques : les 33 régions classées, la carte s'affiche", async 
   await expect(page.locator("ol > li")).toHaveCount(33);
   await expect(page.locator(".leaflet-interactive").first()).toBeVisible();
 });
+
+test.describe("mode hors connexion", () => {
+  test.use({ serviceWorkers: "allow" });
+test("hors connexion : les pages déjà consultées restent disponibles sans internet", async ({ page, context }) => {
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.goto("/rotations");
+  await expect(page.locator("article").first()).toBeVisible();
+  // Le service worker prend la main sur la page.
+  await page.waitForFunction(() => navigator.serviceWorker?.controller != null, null, { timeout: 15_000 });
+  await page.reload();
+  await expect(page.locator("article").first()).toBeVisible();
+  await context.setOffline(true);
+  await page.reload();
+  await expect(page.locator("article").first()).toBeVisible();
+  await expect(page.getByText(/Hors connexion/)).toBeVisible();
+  await page.goto("/methode");
+  await expect(page.getByRole("heading", { name: /Pas encore disponible hors connexion|Comment ForoSat/ })).toBeVisible();
+  await context.setOffline(false);
+});
+});
