@@ -8,7 +8,7 @@ import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
 import * as TaskManager from "expo-task-manager";
 import { Platform } from "react-native";
-import { cleAlerte, decider, memoriser, texteAlerte, type EtatSemis } from "@/lib/alerte";
+import { alertesANotifier, cleAlerte, cleMeteo, decider, memoriser, texteAlerte, texteMeteo, type AlerteMeteo, type EtatSemis } from "@/lib/alerte";
 import { WEB_URL } from "@/lib/config";
 
 export const TACHE = "forosat-semis";
@@ -32,10 +32,12 @@ export async function ecrireReglage(maj: Partial<Reglage>): Promise<Reglage> {
   return r;
 }
 
-async function etatDuJour(region: string): Promise<EtatSemis | null> {
+type EtatDuJour = EtatSemis & { message?: string; alertes?: AlerteMeteo[] };
+
+async function etatDuJour(region: string): Promise<EtatDuJour | null> {
   const r = await fetch(`${WEB_URL}/api/semis/${encodeURIComponent(region)}`);
   if (!r.ok) return null;
-  const j = (await r.json()) as EtatSemis;
+  const j = (await r.json()) as EtatDuJour;
   return typeof j?.etat === "string" ? j : null;
 }
 
@@ -56,14 +58,27 @@ export async function verifier(forcer = false): Promise<boolean> {
   }
   if (forcer) {
     const t = texteAlerte(reglage.region, reglage.culture, etat.etat);
-    const corps = etat.etat === "fenetre_ouverte" || etat.etat === "poche_seche" ? t.corps : (etat as EtatSemis & { message?: string }).message ?? "Pas encore le moment de semer.";
+    const premiere = etat.alertes?.[0];
+    const corps = premiere ? texteMeteo(reglage.region, premiere).corps : etat.etat === "fenetre_ouverte" || etat.etat === "poche_seche" ? t.corps : etat.message ?? "Pas encore le moment de semer.";
     await Notifications.scheduleNotificationAsync({ content: { title: "ForoSat · test de l'alerte", body: corps }, trigger: null });
     return true;
   }
-  if (!decider(reglage.annonces, etat)) return false;
-  await notifier(reglage.region, reglage.culture, etat.etat);
-  await ecrireReglage({ annonces: memoriser(reglage.annonces, cleAlerte(etat)) });
-  return true;
+  let annonces = reglage.annonces;
+  let notifie = false;
+  if (decider(annonces, etat)) {
+    await notifier(reglage.region, reglage.culture, etat.etat);
+    annonces = memoriser(annonces, cleAlerte(etat));
+    notifie = true;
+  }
+  // Alertes météo (sécheresse, fortes pluies), chacune avec son conseil, une seule fois par événement.
+  for (const a of alertesANotifier(annonces, etat.alertes)) {
+    const t = texteMeteo(reglage.region, a);
+    await Notifications.scheduleNotificationAsync({ content: { title: t.titre, body: t.corps }, trigger: null });
+    annonces = memoriser(annonces, cleMeteo(a));
+    notifie = true;
+  }
+  if (notifie) await ecrireReglage({ annonces });
+  return notifie;
 }
 
 TaskManager.defineTask(TACHE, async () => {

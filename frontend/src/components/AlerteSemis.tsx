@@ -19,14 +19,14 @@ export function AlerteSemis() {
     <section className="flex flex-col gap-3 rounded-[22px] bg-white p-4">
       <div className="flex items-center justify-between gap-3">
         <span className="flex flex-col gap-0.5">
-          <strong className="text-[15px]">M&apos;alerter quand semer</strong>
-          <span className="text-[13px] text-muted">Notification quand les pluies s&apos;installent (NASA POWER, 2 fois par jour).</span>
+          <strong className="text-[15px]">M&apos;alerter (semis, sécheresse, fortes pluies)</strong>
+          <span className="text-[13px] text-muted">Notification quand les pluies s&apos;installent, en cas de sécheresse ou de fortes pluies, avec un conseil (NASA POWER, 2 fois par jour).</span>
         </span>
         <button
           type="button"
           role="switch"
           aria-checked={active}
-          aria-label="M'alerter quand semer"
+          aria-label="M'alerter (semis, sécheresse, fortes pluies)"
           onClick={() => envoyerAuNatif({ type: "alerte", action: active ? "desactiver" : "activer" })}
           className={`relative h-8 w-14 shrink-0 rounded-full transition-colors duration-150 ${active ? "bg-green" : "bg-[#C9D3CD]"}`}
         >

@@ -1,12 +1,13 @@
 import { etatSemis, type Jour } from "@/lib/moteur/etat-semis";
 import { regionParId } from "@/lib/regions";
+import { alertesMeteo } from "@/lib/moteur/alertes";
 
 const POWER = "https://power.larc.nasa.gov/api/temporal/daily/point";
 const PANNE = { erreur: "Données NASA POWER indisponibles pour le moment." };
 const aaaammjj = (d: Date) => d.toISOString().slice(0, 10).replaceAll("-", "");
 
 export type ReponseSemis =
-  | { statut: 200; corps: ReturnType<typeof etatSemis> & { dateDonnees: string } }
+  | { statut: 200; corps: ReturnType<typeof etatSemis> & ReturnType<typeof alertesMeteo> & { dateDonnees: string } }
   | { statut: 404 | 503; corps: { erreur: string } };
 
 /** État de semis d'une région : pluie journalière NASA POWER des 30 derniers jours, au chef-lieu. */
@@ -35,5 +36,7 @@ export async function etatSemisRegion(
   const publies = jours.filter((j) => j.pluie !== null);
   if (publies.length === 0) return { statut: 503, corps: PANNE };
   const dateDonnees = publies.at(-1)!.date;
-  return { statut: 200, corps: { ...etatSemis(jours.filter((j) => j.date <= dateDonnees), deps.climat.saisons ?? deps.climat.saisonPluies), dateDonnees } };
+  const publiesJusqua = jours.filter((j) => j.date <= dateDonnees);
+  const saisons = deps.climat.saisons ?? [deps.climat.saisonPluies];
+  return { statut: 200, corps: { ...etatSemis(publiesJusqua, saisons), ...alertesMeteo(publiesJusqua, saisons), dateDonnees } };
 }

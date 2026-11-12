@@ -138,7 +138,7 @@ describe("alerte de semis (pont vers l'app)", () => {
     (window as any).ReactNativeWebView = { postMessage };
     window.history.pushState({}, "", "/tableau?app=1");
     const { getByRole, findByText } = render(<AlerteSemis />);
-    fireEvent.click(getByRole("switch", { name: "M'alerter quand semer" }));
+    fireEvent.click(getByRole("switch", { name: "M'alerter (semis, sécheresse, fortes pluies)" }));
     expect(JSON.parse(postMessage.mock.calls.at(-1)![0])).toEqual({ type: "alerte", action: "activer" });
     act(() => duNatif({ type: "alerte", etat: "refus" }));
     expect(await findByText(/Notifications refusées : activez-les dans les réglages du téléphone/)).toBeInTheDocument();

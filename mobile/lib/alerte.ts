@@ -38,3 +38,20 @@ export function texteAlerte(region: string, culture: string | null, etat: string
     corps: `${r} : les pluies sont installées. C'est le moment de semer${culture ? ` ${article(culture)}` : ""}.`,
   };
 }
+
+export type AlerteMeteo = { type: "secheresse" | "fortes_pluies"; niveau: "moyen" | "eleve"; depuis: string; message: string; conseil: string };
+
+/** Identifiant d'une alerte météo : son type et le jour où elle a commencé. */
+export const cleMeteo = (a: AlerteMeteo) => `meteo|${a.type}|${a.depuis}`;
+
+/** Alertes météo pas encore annoncées (chaque événement une seule fois). */
+export function alertesANotifier(dejaAnnonces: string[], alertes: AlerteMeteo[] | undefined): AlerteMeteo[] {
+  return (alertes ?? []).filter((a) => !dejaAnnonces.includes(cleMeteo(a)));
+}
+
+const TITRE_METEO = { secheresse: "Alerte sécheresse", fortes_pluies: "Alerte fortes pluies" } as const;
+const NIVEAU = { moyen: "risque moyen", eleve: "risque élevé" } as const;
+
+export function texteMeteo(region: string, a: AlerteMeteo): { titre: string; corps: string } {
+  return { titre: `${TITRE_METEO[a.type]} · ${NIVEAU[a.niveau]}`, corps: `${nomRegion(region)} : ${a.message} ${a.conseil}` };
+}

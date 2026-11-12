@@ -2,8 +2,39 @@ import Link from "next/link";
 import type { Climat, Rotation } from "@/lib/contract";
 import { mesuresRecentes, saisonDuMoment } from "@/lib/saison";
 import type { EtatSemis } from "@/lib/moteur/etat-semis";
+import type { Alerte, Niveau } from "@/lib/moteur/alertes";
 
-export type Semis = { etat: EtatSemis; depuis?: string; message: string; dateDonnees: string; cle?: string };
+export type Semis = { etat: EtatSemis; depuis?: string; message: string; dateDonnees: string; cle?: string; risque?: Niveau; alertes?: Alerte[] };
+
+const RISQUE: Record<Niveau, { texte: string; fond: string; encre: string }> = {
+  faible: { texte: "Risque faible", fond: "#D9F2E6", encre: "#00703C" },
+  moyen: { texte: "Risque moyen", fond: "#FDE7CC", encre: "#5C2E00" },
+  eleve: { texte: "Risque élevé", fond: "#FBD3C4", encre: "#7A1F00" },
+};
+
+/** Indice de risque du jour et alertes (sécheresse, fortes pluies), chacune avec son conseil pratique. */
+function Alertes({ semis }: { semis: Semis }) {
+  if (!semis.risque) return null;
+  const r = RISQUE[semis.risque];
+  return (
+    <section className="flex flex-col gap-2.5 rounded-[22px] bg-white p-4" aria-label="Alertes agricoles">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <strong className="text-[15px]">Alertes de votre région</strong>
+        <span className="rounded-full px-3 py-1 text-[13px] font-bold" style={{ background: r.fond, color: r.encre }}>{r.texte}</span>
+      </div>
+      {semis.alertes?.length ? (
+        semis.alertes.map((a) => (
+          <div key={a.type + a.depuis} className="flex flex-col gap-1 rounded-2xl p-3" style={{ background: RISQUE[a.niveau].fond, color: RISQUE[a.niveau].encre }}>
+            <span className="text-[15px] font-semibold">{a.message}</span>
+            <span className="text-sm">{`Conseil : ${a.conseil}`}</span>
+          </div>
+        ))
+      ) : (
+        <span className="text-sm text-muted">Ni sécheresse ni fortes pluies ces derniers jours (NASA POWER).</span>
+      )}
+    </section>
+  );
+}
 
 const MOIS_LONG = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 const BADGE: Record<EtatSemis, string> = {
@@ -90,6 +121,8 @@ export function Tableau({ climat, reco, semis }: { climat: Climat; reco: Rotatio
         </p>
         <Frise climat={climat} moisCourant={mois} />
       </section>
+
+      {semis && <Alertes semis={semis} />}
 
       {a && (
       <div data-stagger className="grid grid-cols-2 gap-2.5">
