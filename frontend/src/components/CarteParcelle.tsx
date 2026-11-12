@@ -8,6 +8,7 @@ import { anneeDisponible, gibsTileUrl, lireNominatimListe, nominatimUrl, surface
 import { regionLaPlusProche, regionParId } from "@/lib/regions";
 import { useParcelle } from "@/lib/parcelle/context";
 import { ecouterNatif, envoyerAuNatif } from "@/lib/modeApp";
+import { GuideCouche } from "./GuideCouche";
 
 type Point = [number, number];
 type Fond = "satellite" | "plan";
@@ -357,6 +358,7 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
           </>
         )}
       </div>
+      {nasa && <GuideCouche couche={nasa} />}
       <p className="m-0 text-xs text-muted">Le contour de votre champ reste sur cet appareil : il n'est envoyé nulle part.</p>
     </div>
   );

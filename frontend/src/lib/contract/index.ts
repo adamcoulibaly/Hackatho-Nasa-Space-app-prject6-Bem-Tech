@@ -199,6 +199,15 @@ export const CoucheSchema = z.object({
     depuis: z.number().int(),
   }),
   opacite: z.number().min(0).max(1),
+  /** Guide de lecture pour l'agriculteur : ce que mesure la couche, sa finesse, ses couleurs, ce que ça veut dire pour le champ. */
+  guide: z
+    .object({
+      mesure: z.string(),
+      finesse: z.string(),
+      lecture: z.array(z.object({ couleur: z.string().regex(/^#[0-9A-Fa-f]{6}$/), sens: z.string() })).min(1),
+      pourVotreChamp: z.string(),
+    })
+    .optional(),
 });
 export type Couche = z.infer<typeof CoucheSchema>;
 export type CoucheId = Couche["id"];

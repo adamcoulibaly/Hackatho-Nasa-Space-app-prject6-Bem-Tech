@@ -8,6 +8,7 @@ import { regionParId } from "@/lib/regions";
 import { RainChart } from "./RainChart";
 import { YearMatrix } from "./YearMatrix";
 import { GraceChart } from "./GraceChart";
+import { EffetsSurLeSol } from "./EffetsSurLeSol";
 import { AlertCard } from "./AlertCard";
 import { ClimatTabs } from "./ClimatTabs";
 
@@ -104,6 +105,7 @@ export function ClimatVue({ initial }: { initial: Climat }) {
       <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3.5">
         {climat.alertes.map((a) => <AlertCard key={a.titre} alerte={a} />)}
       </div>
+      <EffetsSurLeSol climat={climat} />
     </>
   );
 }

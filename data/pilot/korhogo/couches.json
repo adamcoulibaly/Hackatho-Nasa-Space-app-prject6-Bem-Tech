@@ -25,7 +25,26 @@
       "date": "08-01",
       "depuis": 2001
     },
-    "opacite": 0.7
+    "opacite": 0.7,
+    "guide": {
+      "mesure": "L'indice de végétation NDVI : la quantité de feuilles vertes et vivantes vue par le satellite MODIS Terra, en moyenne sur le mois.",
+      "finesse": "Pixel d'environ 1 km : il couvre votre champ et ceux de vos voisins.",
+      "lecture": [
+        {
+          "couleur": "#8C6A3F",
+          "sens": "brun : sol nu ou végétation sèche (NDVI sous 0,2)"
+        },
+        {
+          "couleur": "#B5D96B",
+          "sens": "vert clair : végétation clairsemée, cultures jeunes (0,2 à 0,5)"
+        },
+        {
+          "couleur": "#1E7A2E",
+          "sens": "vert foncé : végétation dense, cultures développées ou forêt (au-dessus de 0,5)"
+        }
+      ],
+      "pourVotreChamp": "En pleine saison, une zone plus brune que ses voisines peut signaler une levée en retard, un sol fatigué ou un manque d'eau."
+    }
   },
   {
     "id": "chaleur",
@@ -39,7 +58,26 @@
       "date": "03-15",
       "depuis": 2001
     },
-    "opacite": 0.7
+    "opacite": 0.7,
+    "guide": {
+      "mesure": "La température de la surface du sol le jour, mesurée par MODIS Terra. Ce n'est pas la température de l'air : un sol nu au soleil est bien plus chaud.",
+      "finesse": "Pixel d'environ 1 km.",
+      "lecture": [
+        {
+          "couleur": "#3B6FD9",
+          "sens": "bleu à vert : surface fraîche (moins de 30 °C)"
+        },
+        {
+          "couleur": "#F2C230",
+          "sens": "jaune à orange : surface chaude (30 à 45 °C)"
+        },
+        {
+          "couleur": "#C2410C",
+          "sens": "rouge : surface brûlante (plus de 45 °C), souvent du sol nu"
+        }
+      ],
+      "pourVotreChamp": "Au-delà de 40 °C en surface, les jeunes plants souffrent et la matière organique du sol se dégrade : couvrir le sol (paillage, culture de couverture) le garde plus frais."
+    }
   },
   {
     "id": "sol",
@@ -53,6 +91,25 @@
       "date": "09-15",
       "depuis": 2015
     },
-    "opacite": 0.7
+    "opacite": 0.7,
+    "guide": {
+      "mesure": "L'humidité du sol dans la zone des racines (jusqu'à environ 1 m), estimée par la mission SMAP de la NASA à partir des mesures du satellite et d'un modèle.",
+      "finesse": "Pixel d'environ 9 km : c'est la tendance de votre zone, pas l'état exact de votre parcelle.",
+      "lecture": [
+        {
+          "couleur": "#A0703A",
+          "sens": "brun : sol sec"
+        },
+        {
+          "couleur": "#9CCB86",
+          "sens": "vert clair : humidité moyenne"
+        },
+        {
+          "couleur": "#2A6FB0",
+          "sens": "bleu : sol humide"
+        }
+      ],
+      "pourVotreChamp": "Semez quand le sol est humide en profondeur : après une seule pluie, un sol encore sec en dessous fait mourir les semis."
+    }
   }
 ]
