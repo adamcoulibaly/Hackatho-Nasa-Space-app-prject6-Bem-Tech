@@ -103,6 +103,7 @@ export default function Home() {
           </ol>
           <div className="flex flex-wrap gap-3">
             <Link href="/bienvenue" className={`${CTA} bg-orange text-ink hover:text-ink`}>Commencer</Link>
+            <Link href="/guide" className={`${CTA} border border-ink text-ink hover:text-ink`}>Guide d&apos;utilisation</Link>
             <Link href="/methode" className={`${CTA} border border-ink text-ink hover:text-ink`}>Méthode et incertitude</Link>
           </div>
         </section>

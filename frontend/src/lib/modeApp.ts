@@ -11,7 +11,8 @@ export type MessageVersNatif =
   | { type: "ouvrir"; onglet: Onglet; chemin: string }
   | { type: "parcelle"; region: string; culture: string | null }
   | { type: "alerte"; action: "activer" | "desactiver" | "tester" }
-  | { type: "photo" };
+  | { type: "photo" }
+  | { type: "lire"; texte: string };
 export type MessageDuNatif =
   | { type: "position"; lat: number; lon: number }
   | { type: "position"; erreur: "refus" | "indisponible" }

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/risques", "/suivi", "/fiche/B", "/methode", "/lexique", "/conseiller"];
+const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/risques", "/suivi", "/guide", "/fiche/B", "/methode", "/lexique", "/conseiller"];
 
 test("parcours complet : parcelle → climat → rotations → détail → fiche", async ({ page }) => {
   await page.goto("/parcelle");

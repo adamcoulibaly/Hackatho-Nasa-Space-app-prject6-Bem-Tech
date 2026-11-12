@@ -7,6 +7,9 @@ import { lireLienFiche, lienFiche } from "@/lib/moteur/fiche-lien";
 import { useRotations } from "@/lib/useRotations";
 import { DEFAULT_PARCELLE } from "@/lib/parcelle/validate";
 import { Fiche } from "./Fiche";
+import { LireAVoixHaute } from "./LireAVoixHaute";
+import { texteFiche } from "@/lib/voix";
+import { prochaineCulture } from "@/lib/whatsapp";
 import { ShareActions } from "./ShareActions";
 import { EtatCalcul } from "./EtatCalcul";
 
@@ -34,6 +37,7 @@ export function FicheVue({ id, initial, cultures, params }: { id: "A" | "B" | "C
     <>
       <Link href={`/rotations/${id}`} className="no-print inline-flex min-h-[44px] items-center text-sm font-semibold">← Détail de la rotation {id}</Link>
       <Fiche rotation={rotation} />
+      <div className="mx-auto flex w-full max-w-[540px]"><LireAVoixHaute texte={texteFiche(rotation, prochaineCulture(rotation))} /></div>
       <ShareActions rotation={rotation} lien={lienFiche(id, parcelle)} />
     </>
   );

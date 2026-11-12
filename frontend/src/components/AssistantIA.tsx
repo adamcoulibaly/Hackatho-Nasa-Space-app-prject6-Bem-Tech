@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import type { Parcelle } from "@/lib/parcelle/validate";
 import { lienFiche } from "@/lib/moteur/fiche-lien";
+import { LireAVoixHaute } from "./LireAVoixHaute";
 
 type Etat = { statut: "repos" } | { statut: "attente" } | { statut: "ok"; texte: string } | { statut: "erreur"; message: string };
 
@@ -51,6 +52,7 @@ export function AssistantIA({ id, parcelle }: { id: "A" | "B" | "C"; parcelle: P
         {etat.statut === "ok" && (
           <div className="fade-in flex flex-col gap-2 rounded-2xl bg-[#F4F6F1] p-4">
             <p className="m-0 whitespace-pre-line text-base leading-relaxed">{etat.texte}</p>
+            <LireAVoixHaute texte={etat.texte} />
             <p className="m-0 text-xs text-muted">Texte rédigé par une IA à partir des données ForoSat. Le score vient des règles agronomiques, pas de l'IA. Vérifiez avec un conseiller agricole.</p>
           </div>
         )}

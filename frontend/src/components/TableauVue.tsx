@@ -28,6 +28,13 @@ export function TableauVue({ initial, cultures }: { initial: Climat; cultures: C
     <>
       <Tableau climat={etat.climat} reco={rotationConseillee(etat.rotations)} semis={semis} />
       <AlerteSemis />
+      <Link href="/guide" className="flex items-center justify-between gap-3 rounded-3xl border border-line p-[18px] text-ink no-underline hover:text-ink">
+        <span className="flex flex-col gap-1">
+          <strong className="text-[15px]">Guide d&apos;utilisation</strong>
+          <span className="text-sm text-muted">Découvrir ForoSat en sept étapes.</span>
+        </span>
+        <span aria-hidden="true" className="text-xl">→</span>
+      </Link>
       <Link href="/suivi" className="flex items-center justify-between gap-3 rounded-3xl bg-white p-[18px] text-ink no-underline hover:text-ink">
         <span className="flex flex-col gap-1">
           <strong className="text-[15px]">Mon carnet de suivi</strong>

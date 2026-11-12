@@ -1,5 +1,6 @@
 import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
+import * as Speech from "expo-speech";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState, type ComponentType, type ReactElement, type Ref } from "react";
 import { ActivityIndicator, BackHandler, Linking, Pressable, Share, StyleSheet, Text, View } from "react-native";
@@ -8,6 +9,7 @@ import { COULEURS, WEB_URL, estPageForoSat, urlPage } from "@/lib/config";
 import { demanderChemin, estCheminInterne, estOnglet, inscrirePage, prendreCheminEnAttente, type Onglet } from "@/lib/onglets";
 import { activer, desactiver, ecrireReglage, lireReglage, verifier } from "@/lib/tacheSemis";
 import { prendrePhoto } from "@/lib/photo";
+import { texteALire } from "@/lib/alerte";
 
 type Message =
   | { type: "position" }
@@ -15,7 +17,8 @@ type Message =
   | { type: "ouvrir"; onglet: unknown; chemin: unknown }
   | { type: "parcelle"; region: unknown; culture: unknown }
   | { type: "alerte"; action: unknown }
-  | { type: "photo" };
+  | { type: "photo" }
+  | { type: "lire"; texte: unknown };
 
 /**
  * Propriétés de WebView utilisées ici. Les types fournis par react-native-webview 14.0.1 se réduisent à `never`
@@ -110,6 +113,13 @@ export function PageWeb({ onglet, chemin }: { onglet: Onglet; chemin: string }) 
           const { status } = await Notifications.requestPermissionsAsync();
           if (status !== "granted") repondre({ type: "alerte", etat: "refus" });
           else await verifier(true).catch(() => false);
+        }
+      } else if (m.type === "lire") {
+        // Lecture à voix haute en français avec la voix du téléphone (la page la demande, le téléphone lit).
+        const texte = texteALire(m.texte);
+        if (texte) {
+          Speech.stop();
+          Speech.speak(texte, { language: "fr-FR" });
         }
       } else if (m.type === "photo") {
         repondre(await prendrePhoto().catch(() => ({ type: "photo" as const, erreur: "annule" as const })));

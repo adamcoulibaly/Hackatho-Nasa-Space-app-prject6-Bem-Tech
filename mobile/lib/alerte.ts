@@ -55,3 +55,9 @@ const NIVEAU = { moyen: "risque moyen", eleve: "risque élevé" } as const;
 export function texteMeteo(region: string, a: AlerteMeteo): { titre: string; corps: string } {
   return { titre: `${TITRE_METEO[a.type]} · ${NIVEAU[a.niveau]}`, corps: `${nomRegion(region)} : ${a.message} ${a.conseil}` };
 }
+
+/** Texte demandé par la page pour la lecture à voix haute : une chaîne, sans espaces autour, 3000 caractères au plus. */
+export function texteALire(t: unknown): string | null {
+  if (typeof t !== "string" || !t.trim()) return null;
+  return t.trim().slice(0, 3000);
+}
