@@ -12,6 +12,7 @@ const SECHERESSE = { moyen: 10, eleve: 15 };
 const PLUIE_JOUR = { moyen: 50, eleve: 80 };
 const PLUIE_3J = { moyen: 100, eleve: 150 };
 const FENETRE_PLUIE = 7;
+const PLUIE_DEBUT_SAISON = 10;
 const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 const jourLisible = (iso: string) => {
   const [, m, j] = iso.split("-").map(Number);
@@ -26,9 +27,14 @@ export function alertesMeteo(jours: Jour[], saisons: { debut: number; fin: numbe
   if (!dernier) return { risque: "faible", alertes };
 
   const mois = Number(dernier.date.slice(5, 7));
-  if (saisons.some((s) => mois >= s.debut && mois <= s.fin)) {
+  const saison = saisons.find((s) => mois >= s.debut && mois <= s.fin);
+  if (saison) {
+    // La sécheresse ne se compte qu'après le vrai début de la saison (une première pluie d'au moins 10 mm depuis
+    // le 1er du mois de début) : le temps sec normal d'avant-saison n'est pas une alerte.
+    const debutSaison = `${dernier.date.slice(0, 4)}-${String(saison.debut).padStart(2, "0")}-01`;
+    const iDebut = valides.findIndex((j) => j.date >= debutSaison && j.pluie >= PLUIE_DEBUT_SAISON);
     let sec = 0;
-    for (let i = valides.length - 1; i >= 0 && valides[i].pluie < SEC_MM; i--) sec++;
+    for (let i = valides.length - 1; iDebut >= 0 && i > iDebut && valides[i].pluie < SEC_MM; i--) sec++;
     if (sec >= SECHERESSE.moyen) {
       const depuis = valides[valides.length - sec].date;
       alertes.push({

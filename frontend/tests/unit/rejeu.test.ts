@@ -132,3 +132,10 @@ describe("rendement relatif (FAO-33)", () => {
     expect(cultures.find((c) => c.nom === "Maïs")!.ky.valeur).toBe(1.25);
   });
 });
+
+describe("rendement d'une saison perdue", () => {
+  it("une saison « perdue » n'affiche jamais un rendement élevé (plafond 30 %)", () => {
+    const s = saisons({ Arachide: [v(2010, "perdue", 0.45)] });
+    expect(rejouer(["Arachide"], s, { Arachide: 0.7 }).saisons[0].rendement).toBe(30);
+  });
+});

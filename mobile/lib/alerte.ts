@@ -41,12 +41,24 @@ export function texteAlerte(region: string, culture: string | null, etat: string
 
 export type AlerteMeteo = { type: "secheresse" | "fortes_pluies"; niveau: "moyen" | "eleve"; depuis: string; message: string; conseil: string };
 
-/** Identifiant d'une alerte météo : son type et le jour où elle a commencé. */
-export const cleMeteo = (a: AlerteMeteo) => `meteo|${a.type}|${a.depuis}`;
+/** Dernière notification envoyée pour chaque type d'alerte météo (date AAAA-MM-JJ). */
+export type DerniersMeteo = Partial<Record<AlerteMeteo["type"], string>>;
+const DELAI_JOURS = 7;
+const joursEntre = (a: string, b: string) => Math.round((Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86_400_000);
 
-/** Alertes météo pas encore annoncées (chaque événement une seule fois). */
-export function alertesANotifier(dejaAnnonces: string[], alertes: AlerteMeteo[] | undefined): AlerteMeteo[] {
-  return (alertes ?? []).filter((a) => !dejaAnnonces.includes(cleMeteo(a)));
+/**
+ * Alertes météo à notifier : au plus une par type tous les 7 jours. Un même orage recalculé sur 3 jours,
+ * ou une sécheresse qui dure, ne renvoie donc pas de notification chaque jour.
+ */
+export function alertesANotifier(derniers: DerniersMeteo, alertes: AlerteMeteo[] | undefined, aujourdhui: string): AlerteMeteo[] {
+  return (alertes ?? []).filter((a) => {
+    const d = derniers[a.type];
+    return !d || joursEntre(d, aujourdhui) >= DELAI_JOURS;
+  });
+}
+
+export function noterMeteo(derniers: DerniersMeteo, notifiees: AlerteMeteo[], aujourdhui: string): DerniersMeteo {
+  return { ...derniers, ...Object.fromEntries(notifiees.map((a) => [a.type, aujourdhui])) };
 }
 
 const TITRE_METEO = { secheresse: "Alerte sécheresse", fortes_pluies: "Alerte fortes pluies" } as const;

@@ -95,3 +95,15 @@ describe("etatAuJour (simulateur visuel)", () => {
     expect(etatAuJour(s, cultures, 1, 190).etat).toBe("récolte compromise");
   });
 });
+
+describe("simuler : notes communes et avertissements propres à la rotation", () => {
+  it("la note du scénario est commune, l'avertissement d'érosion ne concerne que la rotation peu couvrante", async () => {
+    const cultures = await getCultures();
+    const peuCouvrante = simuler(["Coton", "Maïs"], saisons(), cultures, 3, "pluvieux");
+    const couvrante = simuler(["Niébé"], saisons(), cultures, 3, "pluvieux");
+    expect(peuCouvrante.notes.join(" ")).toMatch(/saison la plus pluvieuse mesurée/);
+    expect(couvrante.notes).toEqual(peuCouvrante.notes);
+    expect(peuCouvrante.avertissements.join(" ")).toMatch(/érosion/);
+    expect(couvrante.avertissements.join(" ")).not.toMatch(/érosion/);
+  });
+});

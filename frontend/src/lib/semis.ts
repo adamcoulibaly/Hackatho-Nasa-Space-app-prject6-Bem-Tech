@@ -20,7 +20,8 @@ export async function etatSemisRegion(
   const fin = new Date(deps.aujourdhui);
   fin.setUTCDate(fin.getUTCDate() - 1);
   const debut = new Date(deps.aujourdhui);
-  debut.setUTCDate(debut.getUTCDate() - 30);
+  // 45 jours : assez pour voir le début de la saison et une poche sèche qui dure.
+  debut.setUTCDate(debut.getUTCDate() - 45);
   const q = new URLSearchParams({ parameters: "PRECTOTCORR", community: "AG", latitude: String(r.lat), longitude: String(r.lon), start: aaaammjj(debut), end: aaaammjj(fin), format: "JSON" });
   let valeurs: Record<string, number>;
   try {

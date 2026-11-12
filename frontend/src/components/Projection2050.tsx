@@ -53,10 +53,10 @@ export function Projection2050({ projection, phrase }: { projection: Projection;
       <Barre id="barre-ssp585" libelle={`vers ${horizon} — pessimiste`} {...parScenario.ssp585} total={projection.total} active={scenario === "ssp585"} />
       <p className="m-0 text-[15px] leading-normal" aria-live="polite">
         {f.desaccord
-          ? `Scénario ${LIBELLE[scenario].toLowerCase()} : les modèles ne s'accordent pas (${f.min} à ${f.max} bonnes saisons sur ${projection.total}).`
+          ? `Scénario ${LIBELLE[scenario].toLowerCase()}, vers ${horizon} : les modèles ne s'accordent pas (${f.min} à ${f.max} bonnes saisons sur ${projection.total}).`
           : `Scénario ${LIBELLE[scenario].toLowerCase()} : ${f.min === f.max ? f.min : `${f.min} à ${f.max}`} bonnes saisons sur ${projection.total} vers ${horizon}.`}
       </p>
-      <p className="m-0 rounded-2xl bg-paper p-3.5 text-[15px] font-semibold leading-normal">{phrase}</p>
+      <p className="m-0 rounded-2xl bg-paper p-3.5 text-[15px] font-semibold leading-normal">{horizon === "2050" ? phrase : `Vers 2050 : ${phrase}`}</p>
       <p className="m-0 text-xs leading-normal text-muted">
         Source : NASA NEX-GDDP-CMIP6 (25 km, corrigé des biais), modèles IPSL-CM6A-LR, MRI-ESM2-0 et GFDL-ESM4, 1995–2014 puis 2021–2040 (vers 2030), 2031–2050 (vers 2040) et 2041–2060 (vers 2050), scénarios SSP2-4.5 (modéré) et SSP5-8.5 (pessimiste). L&apos;évolution de chaque modèle est appliquée aux saisons réellement mesurées. La pluie future est très incertaine en Afrique de l&apos;Ouest.
       </p>

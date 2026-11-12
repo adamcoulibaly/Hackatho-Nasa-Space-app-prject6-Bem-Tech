@@ -98,7 +98,7 @@ export function CarnetSuivi({ saisons }: { saisons: Saisons | null }) {
                 </div>
                 <span className="text-[15px]">{`État ${MOT_ETAT[x.etat]}, ${MOT_PLUIE[x.pluie]}.${x.note ? ` ${x.note}` : ""}`}</span>
                 <span className="text-sm text-muted">{c.attendu}</span>
-                {c.ecart && <span className="text-sm font-semibold text-[#5C2E00]">Écart avec la prévision : parlez-en à votre conseiller. Vos observations aident à vérifier et améliorer ForoSat.</span>}
+                {c.ecart && <span className="text-sm font-semibold text-[#5C2E00]">Écart avec la prévision : votre saison s&apos;écarte de l&apos;habitude ; parlez-en à votre conseiller. Vos observations aident à vérifier et améliorer ForoSat.</span>}
               </li>
             );
           })}

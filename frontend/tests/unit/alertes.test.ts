@@ -28,10 +28,23 @@ describe("alertesMeteo", () => {
   });
 
   it("sécheresse en saison : 10 jours secs → moyen, 15 jours → élevé", () => {
-    expect(alertesMeteo(jours("2026-07-15", Array(10).fill(0)), SAISON).alertes[0]).toMatchObject({ type: "secheresse", niveau: "moyen" });
-    const r = alertesMeteo(jours("2026-07-20", Array(15).fill(0.2)), SAISON);
+    expect(alertesMeteo(jours("2026-07-15", [12, ...Array(10).fill(0)]), SAISON).alertes[0]).toMatchObject({ type: "secheresse", niveau: "moyen" });
+    const r = alertesMeteo(jours("2026-07-20", [12, ...Array(15).fill(0.2)]), SAISON);
     expect(r).toMatchObject({ risque: "eleve" });
     expect(r.alertes[0].conseil).toMatch(/paillage|semis|eau/);
+  });
+
+  it("début de saison après un mois sec normal : pas d'alerte sécheresse (la saison n'a pas encore commencé)", () => {
+    const sec30 = (fin: string) => alertesMeteo(jours(fin, Array(30).fill(0)), SAISON);
+    for (const fin of ["2026-05-10", "2026-05-11", "2026-05-12"]) expect(sec30(fin).alertes).toEqual([]);
+  });
+
+  it("la sécheresse se compte après la vraie première pluie de la saison, et son début reste stable", () => {
+    const serie = (fin: string, secs: number) => jours(fin, [0, 0, 15, ...Array(secs).fill(0)]);
+    const a = alertesMeteo(serie("2026-06-20", 12), SAISON).alertes[0];
+    const b = alertesMeteo(serie("2026-06-21", 13), SAISON).alertes[0];
+    expect(a).toMatchObject({ type: "secheresse", depuis: "2026-06-09" });
+    expect(b.depuis).toBe(a.depuis);
   });
 
   it("hors saison, des jours secs ne sont pas une alerte sécheresse", () => {

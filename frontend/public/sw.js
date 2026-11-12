@@ -28,12 +28,26 @@ self.addEventListener("activate", (e) => {
   );
 });
 
+/** Délai maximal d'attente du réseau : au-delà (2G faible), on sert la copie gardée. */
+const DELAI_RESEAU = 5000;
+
+function delai(ms) {
+  return new Promise((_, rejeter) => setTimeout(() => rejeter(new Error("délai réseau dépassé")), ms));
+}
+
 async function reseauDabord(requete, secours) {
   const cache = await caches.open(VERSION);
-  try {
-    const r = await fetch(requete);
+  // La réponse du réseau met à jour la copie gardée, même si elle arrive après le délai.
+  const reseau = fetch(requete).then((r) => {
     if (r.ok) cache.put(requete, r.clone());
     return r;
+  });
+  try {
+    const r = await Promise.race([reseau, delai(DELAI_RESEAU)]);
+    if (r.ok) return r;
+    // Erreur du serveur (ex. NASA POWER en panne) : la dernière copie correcte vaut mieux qu'une page d'erreur.
+    const garde = await cache.match(requete, { ignoreVary: true });
+    return garde ?? r;
   } catch {
     const garde = await cache.match(requete, { ignoreVary: true });
     if (garde) return garde;
@@ -62,7 +76,7 @@ self.addEventListener("fetch", (e) => {
   if (A_GARDER.test(url.pathname)) return e.respondWith(reseauDabord(req));
   // Navigations et données de page de Next (?_rsc=…) : le chemin sans paramètres identifie la page gardée.
   if (req.mode === "navigate") {
-    if (url.pathname === PAGE_HORS_LIGNE) return e.respondWith(cacheDabord(req));
+    if (url.pathname === PAGE_HORS_LIGNE) return e.respondWith(reseauDabord(req));
     return e.respondWith(reseauDabord(new Request(url.origin + url.pathname, { credentials: "same-origin" }), PAGE_HORS_LIGNE));
   }
   if (req.headers.get("RSC") === "1") return e.respondWith(reseauDabord(req));

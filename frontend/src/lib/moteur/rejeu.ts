@@ -13,6 +13,15 @@ export function rendementRelatif(ratio: number | null, ky: number): number {
   return Math.round(Math.max(0, 1 - ky * (1 - Math.min(1, ratio))) * 100);
 }
 
+/** Plafond du rendement d'une saison jugée « perdue » : le verdict pèse double la floraison, pas la formule FAO-33. */
+export const PLAFOND_PERDUE = 30;
+
+/** Rendement relatif d'une saison, cohérent avec son verdict (une saison perdue ne dépasse jamais 30 %). */
+export function rendementSaison(v: { verdict: string; ratio: number | null }, ky: number): number {
+  const r = rendementRelatif(v.ratio, ky);
+  return v.verdict === "perdue" ? Math.min(r, PLAFOND_PERDUE) : r;
+}
+
 export function rejouer(sequence: string[], saisons: Saisons, ky?: Record<string, number>): Rejeu {
   const annees = new Set(Object.values(saisons.cultures).flatMap((v) => v.map((x) => x.annee)));
   const ordre = [...annees].sort((a, b) => a - b);
@@ -20,7 +29,7 @@ export function rejouer(sequence: string[], saisons: Saisons, ky?: Record<string
   for (const annee of ordre) {
     const culture = sequence[(((annee - PREMIERE_ANNEE) % sequence.length) + sequence.length) % sequence.length];
     const v = saisons.cultures[culture]?.find((x) => x.annee === annee);
-    if (v) jouees.push({ ...v, culture, ...(ky?.[culture] ? { rendement: rendementRelatif(v.ratio, ky[culture]) } : {}) });
+    if (v) jouees.push({ ...v, culture, ...(ky?.[culture] ? { rendement: rendementSaison(v, ky[culture]) } : {}) });
   }
   const compte = (k: keyof typeof ORDRE) => jouees.filter((x) => x.verdict === k).length;
   const mauvaises = jouees

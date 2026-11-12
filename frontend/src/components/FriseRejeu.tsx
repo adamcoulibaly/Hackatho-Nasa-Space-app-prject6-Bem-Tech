@@ -53,7 +53,7 @@ export function FriseRejeu({ rejeu }: { rejeu: Rejeu }) {
         </p>
       )}
       <p className="m-0 text-xs leading-normal text-muted">
-        Source : NASA POWER, journalier, 2005–2025 (pluie, températures), besoins en eau FAO-56, rendement relatif selon FAO-33 (en % du potentiel, sans engrais ni ravageurs). Hypothèse : réservoir du sol de 100 mm d&apos;eau utile, faute de mesure de votre parcelle. La pluie NASA est moyennée sur environ 50 km : les poches sèches locales peuvent être sous-estimées.
+        Source : NASA POWER, journalier, 2005–2025 (pluie, températures), besoins en eau FAO-56, rendement relatif selon FAO-33 (en % du potentiel, sans engrais ni ravageurs ; une saison perdue est comptée à 30 % au plus). Hypothèse : réservoir du sol de 100 mm d&apos;eau utile, faute de mesure de votre parcelle. La pluie NASA est moyennée sur environ 50 km : les poches sèches locales peuvent être sous-estimées.
       </p>
     </div>
   );

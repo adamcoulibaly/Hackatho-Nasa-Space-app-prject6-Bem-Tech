@@ -8,15 +8,15 @@ import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
 import * as TaskManager from "expo-task-manager";
 import { Platform } from "react-native";
-import { alertesANotifier, cleAlerte, cleMeteo, decider, memoriser, texteAlerte, texteMeteo, type AlerteMeteo, type EtatSemis } from "@/lib/alerte";
+import { alertesANotifier, cleAlerte, decider, memoriser, noterMeteo, texteAlerte, texteMeteo, type AlerteMeteo, type DerniersMeteo, type EtatSemis } from "@/lib/alerte";
 import { WEB_URL } from "@/lib/config";
 
 export const TACHE = "forosat-semis";
 const CLE = "forosat.alerte";
 const CANAL = "semis";
 
-export type Reglage = { active: boolean; region: string | null; culture: string | null; annonces: string[] };
-const VIDE: Reglage = { active: false, region: null, culture: null, annonces: [] };
+export type Reglage = { active: boolean; region: string | null; culture: string | null; annonces: string[]; meteo: DerniersMeteo };
+const VIDE: Reglage = { active: false, region: null, culture: null, annonces: [], meteo: {} };
 
 export async function lireReglage(): Promise<Reglage> {
   try {
@@ -70,14 +70,16 @@ export async function verifier(forcer = false): Promise<boolean> {
     annonces = memoriser(annonces, cleAlerte(etat));
     notifie = true;
   }
-  // Alertes météo (sécheresse, fortes pluies), chacune avec son conseil, une seule fois par événement.
-  for (const a of alertesANotifier(annonces, etat.alertes)) {
+  // Alertes météo (sécheresse, fortes pluies), chacune avec son conseil : au plus une par type tous les 7 jours,
+  // gardées à part pour ne jamais effacer la mémoire de l'alerte de semis.
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  const meteo = alertesANotifier(reglage.meteo, etat.alertes, aujourdhui);
+  for (const a of meteo) {
     const t = texteMeteo(reglage.region, a);
     await Notifications.scheduleNotificationAsync({ content: { title: t.titre, body: t.corps }, trigger: null });
-    annonces = memoriser(annonces, cleMeteo(a));
-    notifie = true;
   }
-  if (notifie) await ecrireReglage({ annonces });
+  if (notifie || meteo.length) await ecrireReglage({ annonces, meteo: noterMeteo(reglage.meteo, meteo, aujourdhui) });
+  notifie = notifie || meteo.length > 0;
   return notifie;
 }
 

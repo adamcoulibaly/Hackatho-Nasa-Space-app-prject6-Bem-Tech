@@ -4,7 +4,7 @@
  * la saison la plus pluvieuse répétée. Fertilité et couverture du sol suivent des règles écrites ; le revenu reste une hypothèse.
  */
 import type { Culture, Saisons, VerdictSaison } from "@/lib/contract";
-import { rendementRelatif } from "./rejeu";
+import { rendementSaison } from "./rejeu";
 
 export type Scenario = "reel" | "sec" | "pluvieux";
 export type Duree = 1 | 3 | 5 | 10;
@@ -32,6 +32,9 @@ export type Simulation = {
   tendanceFertilite: "s'enrichit" | "stable" | "s'appauvrit";
   couvertureMoyenne: number;
   revenu: { note: number; hypothese: true };
+  /** Notes communes au scénario (mêmes pour toutes les rotations). */
+  notes: string[];
+  /** Avertissements propres à cette rotation (érosion, saison remplacée). */
   avertissements: string[];
 };
 
@@ -86,20 +89,21 @@ export function simuler(sequence: string[], s: Saisons, cultures: Culture[], n: 
       verdict: saison.v.verdict,
       semis: saison.v.semis,
       cause: saison.v.cause,
-      rendement: rendementRelatif(saison.v.ratio, fiche.ky.valeur),
+      rendement: rendementSaison(saison.v, fiche.ky.valeur),
       fertilite,
       couvertureMois: moisCouverts(fiche),
     });
   }
   const moyenne = (x: number[]) => (x.length ? x.reduce((a, b) => a + b, 0) / x.length : 0);
   const notesRevenu = annees.map((a) => fiches.get(a.culture)!.revenu);
+  const notes: string[] = [];
   const avertissements: string[] = [];
-  if (scenario === "sec") avertissements.push(`Chaque année rejoue la saison la plus sèche mesurée (${extremes.seche}, ${s.meta.pluieSaison?.[extremes.seche] ?? "?"} mm).`);
+  if (scenario === "sec") notes.push(`Chaque année rejoue la saison la plus sèche mesurée (${extremes.seche}, ${s.meta.pluieSaison?.[extremes.seche] ?? "?"} mm).`);
   if (scenario === "pluvieux") {
-    avertissements.push(`Chaque année rejoue la saison la plus pluvieuse mesurée (${extremes.pluvieuse}, ${s.meta.pluieSaison?.[extremes.pluvieuse] ?? "?"} mm).`);
+    notes.push(`Chaque année rejoue la saison la plus pluvieuse mesurée (${extremes.pluvieuse}, ${s.meta.pluieSaison?.[extremes.pluvieuse] ?? "?"} mm).`);
+    notes.push("Le modèle ne simule pas l'excès d'eau (inondation, lessivage) : seule la sécheresse est calculée.");
     const peuCouvrantes = [...new Set(sequence)].filter((c) => (fiches.get(c)?.couverture ?? 5) <= 2);
     if (peuCouvrantes.length) avertissements.push(`Fortes pluies : ${peuCouvrantes.join(", ")} couvre peu le sol, risque d'érosion. Paillez ou associez une culture couvrante.`);
-    avertissements.push("Le modèle ne simule pas l'excès d'eau (inondation, lessivage) : seule la sécheresse est calculée.");
   }
   if (annees.some((a) => a.remplacee)) avertissements.push("Certaines saisons manquaient pour une culture : la saison mesurée la plus proche est utilisée.");
   return {
@@ -111,6 +115,7 @@ export function simuler(sequence: string[], s: Saisons, cultures: Culture[], n: 
     tendanceFertilite: fertilite > 1 ? "s'enrichit" : fertilite < -1 ? "s'appauvrit" : "stable",
     couvertureMoyenne: Math.round((moyenne(annees.map((a) => a.couvertureMois)) / 12) * 100),
     revenu: { note: Math.round(moyenne(notesRevenu) * 10) / 10, hypothese: true },
+    notes,
     avertissements,
   };
 }

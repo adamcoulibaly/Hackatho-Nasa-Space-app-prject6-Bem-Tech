@@ -152,3 +152,21 @@ describe("horizons 2030, 2040, 2050", () => {
     expect(screen.getByText(/18 bonnes saisons sur 20 vers 2030/)).toBeInTheDocument();
   });
 });
+
+describe("horizon et phrases", () => {
+  it("avec 2030 choisi, la synthèse 2050 n'est pas présentée comme celle de 2030", async () => {
+    const projection = {
+      aujourdhui: 18, total: 20, scenarios: { ssp245: { min: 16, max: 17, desaccord: false }, ssp585: { min: 13, max: 15, desaccord: true } },
+      horizons: {
+        "2030": { ssp245: { min: 18, max: 18, desaccord: false }, ssp585: { min: 10, max: 18, desaccord: true } },
+        "2050": { ssp245: { min: 16, max: 17, desaccord: false }, ssp585: { min: 13, max: 15, desaccord: true } },
+      },
+    };
+    render(<Projection2050 projection={projection} phrase="La rotation B résiste le mieux au climat de 2050." />);
+    const u = userEvent.setup();
+    await u.click(screen.getByRole("button", { name: "2030" }));
+    await u.click(screen.getByRole("button", { name: "Pessimiste" }));
+    expect(screen.getByText(/vers 2030 : les modèles ne s'accordent pas/)).toBeInTheDocument();
+    expect(screen.getByText(/^Vers 2050 : La rotation B résiste/)).toBeInTheDocument();
+  });
+});

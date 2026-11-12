@@ -78,18 +78,19 @@ export function Simulateur({ rotations, saisons, cultures }: { rotations: Rotati
               ))}
             </div>
             <ul className="m-0 grid list-none grid-cols-1 gap-x-4 gap-y-1 p-0 text-[15px] min-[480px]:grid-cols-2">
-              <li><strong>{s.bonnes}</strong>{` bonnes saisons sur ${duree}`}</li>
+              <li><strong>{s.bonnes}</strong>{` bonnes saisons sur ${s.annees.length}`}</li>
               <li>{`Rendement : ${s.rendementMoyen} % du potentiel`}</li>
               <li>{`Sol ${s.tendanceFertilite}`}</li>
               <li>{`${s.couvertureMoyenne} % de l'année sol couvert`}</li>
               <li className="text-muted">{`Revenu : ${s.revenu.note.toLocaleString("fr-FR")} sur 5 (hypothèse, prix locaux manquants)`}</li>
             </ul>
+            {s.avertissements.map((a) => <p key={a} className="m-0 rounded-2xl bg-[#FDE7CC] p-3 text-sm text-[#5C2E00]">{a}</p>)}
           </article>
         ))}
         <p className="m-0 text-[15px] leading-normal">
           {`Sur ${duree} ans, la rotation ${meilleure.r.id} offre le meilleur équilibre : ${meilleure.s.rendementMoyen} % du potentiel de rendement, ${SOL[meilleure.s.tendanceFertilite]}, ${meilleure.s.couvertureMoyenne} % de l'année couvert. Le classement peut changer avec la durée, le climat et vos priorités.`}
         </p>
-        {sims[0].s.avertissements.map((a) => <p key={a} className="m-0 rounded-2xl bg-[#FDE7CC] p-3 text-sm text-[#5C2E00]">{a}</p>)}
+        {sims[0].s.notes.map((a) => <p key={a} className="m-0 rounded-2xl bg-paper p-3 text-sm">{a}</p>)}
       </section>
 
       <section className="flex min-w-0 flex-col gap-4 rounded-[28px] bg-white p-5 sm:p-[26px]">
@@ -110,6 +111,7 @@ export function Simulateur({ rotations, saisons, cultures }: { rotations: Rotati
           value={jour}
           onChange={(e) => setJour(Number(e.target.value))}
           aria-label="Date de la simulation"
+          aria-valuetext={`Année ${annee}, ${moisDuJour((jour % 365) + 1)}`}
           className="w-full accent-[#F77F00]"
         />
         <p className="m-0 text-xs leading-normal text-muted">

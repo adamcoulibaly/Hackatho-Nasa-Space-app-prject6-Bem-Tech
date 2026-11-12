@@ -33,7 +33,7 @@ describe("carnet (stockage sur le téléphone)", () => {
 
   it("compare l'observation à ce que les saisons réelles laissaient prévoir", () => {
     const c = comparerObservation(obs, saisons);
-    expect(c.attendu).toBe("ForoSat prévoyait plutôt une bonne saison (18 sur 20 en moyenne).");
+    expect(c.attendu).toBe("En général (2005–2025), cette culture a plutôt de bonnes saisons ici : 18 sur 20.");
     expect(c.ecart).toBe(true);
     expect(comparerObservation({ ...obs, etat: "bonne" }, saisons).ecart).toBe(false);
     expect(comparerObservation({ ...obs, culture: "Anacarde" }, saisons).attendu).toMatch(/pas de prévision/i);

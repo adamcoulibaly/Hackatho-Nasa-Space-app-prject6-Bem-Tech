@@ -41,3 +41,12 @@ describe("risqueRegion", () => {
     }
   });
 });
+
+describe("niveau d'aujourd'hui et estimation 2050 séparés", () => {
+  it("le niveau d'aujourd'hui ne dépend que des pertes mesurées (comme la légende)", () => {
+    const r = risqueRegion(saisons([...Array(19).fill("bonne"), "perdue"]), proj(-0.2));
+    expect(r.niveau).toBe("faible");
+    expect(r.niveau2050).toBe("moyen");
+    expect(r.pertes2050).toBeCloseTo(0.25, 3);
+  });
+});

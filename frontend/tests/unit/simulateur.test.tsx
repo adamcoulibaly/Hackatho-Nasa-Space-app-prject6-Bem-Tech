@@ -49,3 +49,24 @@ describe("Simulateur", () => {
     expect(ongletDe("/simulateur")).toBe("rotations");
   });
 });
+
+describe("Simulateur : avertissements et accessibilité", () => {
+  it("chaque carte porte ses propres avertissements, le décompte suit les saisons simulées", async () => {
+    const d = await donnees();
+    render(<Simulateur {...d} />);
+    await userEvent.setup().click(screen.getByRole("button", { name: /Année pluvieuse/ }));
+    const lignes = screen.getAllByTestId("ligne-simulation");
+    d.rotations.forEach((r, i) => {
+      const peuCouvrante = r.sequence.some((c) => (d.cultures.find((x) => x.nom === c)?.couverture ?? 5) <= 2);
+      expect(within(lignes[i]).queryByText(/risque d'érosion/) !== null).toBe(peuCouvrante);
+    });
+    expect(screen.getByText(/saison la plus pluvieuse mesurée/)).toBeInTheDocument();
+  });
+
+  it("le curseur de date s'annonce en clair", async () => {
+    render(<Simulateur {...await donnees()} />);
+    const curseur = screen.getByRole("slider", { name: "Date de la simulation" });
+    fireEvent.change(curseur, { target: { value: "190" } });
+    expect(curseur).toHaveAttribute("aria-valuetext", "Année 1, juillet");
+  });
+});

@@ -48,14 +48,15 @@ export function supprimerObservation(id: string) {
 export function comparerObservation(o: Observation, s: Saisons | null): { attendu: string; ecart: boolean } {
   const liste = s?.cultures[o.culture];
   if (!liste?.length) return { attendu: "Pas de prévision ForoSat pour cette culture (pas encore de fiche).", ecart: false };
+  // Référence : la fréquence des bonnes saisons 2005–2025, pas une prévision de l'année en cours.
   const bonnes = liste.filter((x) => x.verdict === "bonne").length;
   const part = bonnes / liste.length;
   const attendu =
     part >= 0.6
-      ? `ForoSat prévoyait plutôt une bonne saison (${bonnes} sur ${liste.length} en moyenne).`
+      ? `En général (2005–2025), cette culture a plutôt de bonnes saisons ici : ${bonnes} sur ${liste.length}.`
       : part < 0.4
-        ? `ForoSat prévoyait une saison difficile (${bonnes} bonnes sur ${liste.length}).`
-        : `ForoSat prévoyait une saison incertaine (${bonnes} bonnes sur ${liste.length}).`;
+        ? `En général (2005–2025), cette culture a souvent des saisons difficiles ici : ${bonnes} bonnes sur ${liste.length}.`
+        : `En général (2005–2025), les saisons de cette culture sont incertaines ici : ${bonnes} bonnes sur ${liste.length}.`;
   const ecart = (o.etat === "mauvaise" && part >= 0.6) || (o.etat === "bonne" && part < 0.4);
   return { attendu, ecart };
 }
