@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
 
-export type Step = "parcelle" | "climat" | "rotations" | "simulateur" | "tableau" | "lexique";
+export type Step = "parcelle" | "climat" | "rotations" | "simulateur" | "risques" | "tableau" | "lexique";
 
 const STEPS: { id: Step; label: string; href: string }[] = [
   { id: "parcelle", label: "Parcelle", href: "/parcelle" },
   { id: "climat", label: "Climat", href: "/climat" },
   { id: "rotations", label: "Rotations", href: "/rotations" },
   { id: "simulateur", label: "Simulateur", href: "/simulateur" },
+  { id: "risques", label: "Risques", href: "/risques" },
   { id: "tableau", label: "Tableau de bord", href: "/tableau" },
   { id: "lexique", label: "Lexique", href: "/lexique" },
 ];

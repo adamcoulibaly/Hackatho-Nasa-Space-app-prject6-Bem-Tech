@@ -29,7 +29,7 @@ export function ongletDe(chemin: string): Onglet | null {
   const p = chemin.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
   if (p === "/" || p === "/tableau") return "tableau";
   if (p === "/parcelle") return "champ";
-  if (p === "/climat") return "climat";
+  if (p === "/climat" || p === "/risques") return "climat";
   if (p === "/rotations" || p.startsWith("/rotations/") || p.startsWith("/fiche/") || p === "/simulateur") return "rotations";
   return null;
 }

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/fiche/B", "/methode", "/lexique", "/conseiller"];
+const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/risques", "/fiche/B", "/methode", "/lexique", "/conseiller"];
 
 test("parcours complet : parcelle → climat → rotations → détail → fiche", async ({ page }) => {
   await page.goto("/parcelle");
@@ -309,4 +309,11 @@ test("simulateur : comparer sur 10 ans, en année sèche, et faire défiler la p
   await expect(page.getByText(/saison la plus sèche mesurée/)).toBeVisible();
   await page.getByRole("slider", { name: "Date de la simulation" }).fill("190");
   await expect(page.getByTestId("etat-du-jour")).toContainText("Année 1 · juillet");
+});
+
+test("carte des risques : les 33 régions classées, la carte s'affiche", async ({ page }) => {
+  await page.goto("/risques");
+  await expect(page.getByRole("heading", { name: /Où le climat menace le plus les récoltes/ })).toBeVisible();
+  await expect(page.locator("ol > li")).toHaveCount(33);
+  await expect(page.locator(".leaflet-interactive").first()).toBeVisible();
 });

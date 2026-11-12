@@ -36,6 +36,7 @@ export function ClimatVue({ initial }: { initial: Climat }) {
         </h1>
       </div>
       <Link href="/rotations" className="inline-flex h-[52px] items-center rounded-full bg-orange px-6 text-base font-bold text-ink no-underline hover:text-ink">Voir les 3 rotations</Link>
+      <Link href="/risques" className="inline-flex h-[52px] items-center rounded-full border border-ink px-6 text-base font-bold text-ink no-underline hover:text-ink">Carte des risques</Link>
     </div>
   );
 
