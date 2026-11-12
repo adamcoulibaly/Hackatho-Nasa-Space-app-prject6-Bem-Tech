@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/fiche/B", "/methode", "/lexique", "/conseiller"];
+const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/fiche/B", "/methode", "/lexique", "/conseiller"];
 
 test("parcours complet : parcelle → climat → rotations → détail → fiche", async ({ page }) => {
   await page.goto("/parcelle");
@@ -295,4 +295,18 @@ test("photo : la photo du champ est réduite, envoyée, et confrontée à la vue
   await expect(page.getByText("Les deux regards concordent.")).toBeVisible();
   expect(recu!.image.startsWith("data:image/jpeg;base64,")).toBe(true);
   expect(recu!.region).toBe("poro");
+});
+
+test("simulateur : comparer sur 10 ans, en année sèche, et faire défiler la parcelle", async ({ page }) => {
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.goto("/rotations");
+  await page.getByRole("link", { name: /Simuler sur 3, 5 ou 10 ans/ }).click();
+  await expect(page).toHaveURL(/\/simulateur$/);
+  await expect(page.getByTestId("ligne-simulation")).toHaveCount(3);
+  await page.getByRole("button", { name: "10 ans" }).click();
+  await page.getByRole("button", { name: /Année sèche/ }).click();
+  await expect(page.getByText(/saison la plus sèche mesurée/)).toBeVisible();
+  await page.getByRole("slider", { name: "Date de la simulation" }).fill("190");
+  await expect(page.getByTestId("etat-du-jour")).toContainText("Année 1 · juillet");
 });

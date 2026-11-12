@@ -46,6 +46,21 @@ def table_region(jours: dict, lat: float, saison: dict, cultures: list[dict], an
     return table
 
 
+def pluie_par_saison(jours: dict, saison: dict, annees: Iterable[int] = ANNEES) -> dict:
+    """Pluie cumulée (mm) de la saison des pluies principale, par année ; les jours sans mesure ne comptent pas."""
+    import calendar
+    from datetime import date as d
+    jour0 = d.fromisoformat(jours["debut"])
+    sortie = {}
+    for a in annees:
+        i0 = (d(a, saison["debut"], 1) - jour0).days
+        i1 = (d(a, saison["fin"], calendar.monthrange(a, saison["fin"])[1]) - jour0).days
+        if i0 < 0 or i1 >= len(jours["pluie"]):
+            continue
+        sortie[str(a)] = round(sum(v for v in jours["pluie"][i0 : i1 + 1] if v is not None), 1)
+    return sortie
+
+
 def _serie(region: dict) -> dict:
     fichier = RAW / f"{region['id']}.json"
     if not fichier.exists():
@@ -71,7 +86,10 @@ def main(argv: list[str]) -> int:
     for r in regions:
         saison = json.loads((CLIMATS / f"{r['id']}.json").read_text("utf8"))["saisonPluies"]
         sortie = {
-            "meta": {"region": r["id"], "source": "NASA POWER (journalier)", "periode": "2005–2025", "saison": saison, "reserveMm": RESERVE_MM},
+            "meta": {
+                "region": r["id"], "source": "NASA POWER (journalier)", "periode": "2005–2025", "saison": saison, "reserveMm": RESERVE_MM,
+                "pluieSaison": pluie_par_saison(series[r["id"]], saison),
+            },
             "cultures": table_region(series[r["id"]], r["lat"], saison, cultures),
         }
         (SORTIE / f"{r['id']}.json").write_text(json.dumps(sortie, ensure_ascii=False, separators=(",", ":")) + "\n", "utf8")

@@ -40,3 +40,17 @@ class TestTable(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestPluieSaison(unittest.TestCase):
+    def test_pluie_de_la_saison_par_annee(self):
+        from build_saisons import pluie_par_saison
+        from datetime import date
+        n = (date(2011, 12, 31) - date(2010, 1, 1)).days + 1
+        pluie = [0.0] * n
+        mai2010 = (date(2010, 5, 1) - date(2010, 1, 1)).days
+        for i in range(mai2010, mai2010 + 10):
+            pluie[i] = 5.0
+        pluie[mai2010 + 1] = None
+        jours = {"debut": "2010-01-01", "pluie": pluie, "tmax": [30.0] * n, "tmin": [20.0] * n}
+        self.assertEqual(pluie_par_saison(jours, {"debut": 5, "fin": 10}, range(2010, 2012)), {"2010": 45.0, "2011": 0.0})

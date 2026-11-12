@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import type { Climat, Culture } from "@/lib/contract";
 import { useParcelle } from "@/lib/parcelle/context";
 import { useRotations } from "@/lib/useRotations";
@@ -33,6 +35,13 @@ export function RotationsVue({ initial, cultures }: { initial: Climat; cultures:
       <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-stretch gap-4">
         {etat.rotations.map((r) => <RotationCard key={r.id} rotation={r} dark={r.recommandee} />)}
       </div>
+      <Link href="/simulateur" className="flex items-center justify-between gap-3 rounded-3xl bg-ink p-5 text-paper no-underline hover:text-paper">
+        <span className="flex flex-col gap-1">
+          <strong className="font-display text-lg">Simuler sur 3, 5 ou 10 ans</strong>
+          <span className="text-sm text-[#C9D4CD]">Comparez les rotations dans le temps, en année sèche ou très pluvieuse, et voyez la parcelle évoluer.</span>
+        </span>
+        <span aria-hidden="true" className="text-2xl">→</span>
+      </Link>
       <section className="flex flex-wrap items-center gap-6 rounded-[28px] bg-white p-[26px]">
         <div className="flex flex-[1_1_380px] flex-col gap-2">
           <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">{reco.id === "A" ? "Votre rotation actuelle reste la meilleure pour vos priorités" : `Pourquoi la rotation ${reco.id} ressort ?`}</h2>

@@ -95,6 +95,8 @@ export const SaisonsSchema = z.object({
     periode: z.string(),
     saison: z.object({ debut: mois, fin: mois }),
     reserveMm: z.number().positive(),
+    /** Pluie cumulée de la saison principale, par année (mm). */
+    pluieSaison: z.record(z.string(), z.number()).optional(),
   }),
   cultures: z.record(z.string(), z.array(VerdictSaisonSchema)),
 });
