@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Couche } from "@/lib/contract";
 import { ouvrirDansApp } from "@/lib/modeApp";
@@ -26,6 +27,13 @@ export function ParcelleView({ couches }: { couches: Couche[] }) {
       <div className="w-full">
         <PhotoChamp region={parcelle.region} lat={lat} lon={lon} />
       </div>
+      <Link href="/suivi" className="flex w-full items-center justify-between gap-3 rounded-3xl bg-white p-[18px] text-ink no-underline hover:text-ink">
+        <span className="flex flex-col gap-1">
+          <strong className="text-[15px]">Mon carnet de suivi</strong>
+          <span className="text-sm text-muted">Notez l&apos;état de vos cultures au fil de la saison.</span>
+        </span>
+        <span aria-hidden="true" className="text-xl">→</span>
+      </Link>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/risques", "/fiche/B", "/methode", "/lexique", "/conseiller"];
+const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/risques", "/suivi", "/fiche/B", "/methode", "/lexique", "/conseiller"];
 
 test("parcours complet : parcelle → climat → rotations → détail → fiche", async ({ page }) => {
   await page.goto("/parcelle");
@@ -337,4 +337,18 @@ test("hors connexion : les pages déjà consultées restent disponibles sans int
   await expect(page.getByRole("heading", { name: /Pas encore disponible hors connexion|Comment ForoSat/ })).toBeVisible();
   await context.setOffline(false);
 });
+});
+
+test("carnet de suivi : une observation s'ajoute et reste après rechargement", async ({ page }) => {
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.goto("/tableau");
+  await page.getByRole("link", { name: /Mon carnet de suivi/ }).click();
+  await expect(page).toHaveURL(/\/suivi$/);
+  await page.getByText("Mauvais", { exact: true }).click();
+  await page.getByLabel("Ce que j'observe (facultatif)").fill("Feuilles jaunes");
+  await page.getByRole("button", { name: "Ajouter au carnet" }).click();
+  await expect(page.getByText(/Feuilles jaunes/)).toBeVisible();
+  await page.reload();
+  await expect(page.getByText(/Feuilles jaunes/)).toBeVisible();
 });
