@@ -126,3 +126,29 @@ describe("route /api/projections", () => {
     process.env.FOROSAT_PROJECTIONS_DIR = avant;
   });
 });
+
+describe("horizons 2030, 2040, 2050", () => {
+  it("projeter calcule chaque horizon disponible", () => {
+    const p = proj([-0.05, -0.1, -0.05], [-0.2, -0.1, -0.15]);
+    for (const c of Object.values(p.cultures)) for (const s of Object.values(c)) for (const m of Object.values(s)) Object.assign(m, { futur2030: 0.8, futur2040: 0.7 });
+    const r = projeter(["Maïs"], rejeu(18), p)!;
+    expect(r.horizons?.["2030"]?.ssp585).toEqual({ min: 18, max: 18, desaccord: false });
+    expect(r.horizons?.["2040"]?.ssp585).toEqual({ min: 16, max: 16, desaccord: false });
+    expect(r.horizons?.["2050"]).toEqual(r.scenarios);
+  });
+
+  it("le sélecteur d'horizon change les barres", async () => {
+    const projection = {
+      aujourdhui: 18, total: 20, scenarios: { ssp245: { min: 16, max: 17, desaccord: false }, ssp585: { min: 13, max: 15, desaccord: false } },
+      horizons: {
+        "2030": { ssp245: { min: 18, max: 18, desaccord: false }, ssp585: { min: 17, max: 18, desaccord: false } },
+        "2040": { ssp245: { min: 17, max: 17, desaccord: false }, ssp585: { min: 15, max: 16, desaccord: false } },
+        "2050": { ssp245: { min: 16, max: 17, desaccord: false }, ssp585: { min: 13, max: 15, desaccord: false } },
+      },
+    };
+    render(<Projection2050 projection={projection} phrase="x" />);
+    await userEvent.setup().click(screen.getByRole("button", { name: "2030" }));
+    expect(screen.getByText("vers 2030 — modéré")).toBeInTheDocument();
+    expect(screen.getByText(/18 bonnes saisons sur 20 vers 2030/)).toBeInTheDocument();
+  });
+});

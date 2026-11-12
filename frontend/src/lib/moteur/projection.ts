@@ -8,8 +8,22 @@ const SEUIL_DESACCORD = 0.05;
  * Bonnes saisons vers 2050 : pour chaque modèle, l'écart (futur − référence) moyen des cultures de la rotation est
  * appliqué à la part réelle des bonnes saisons (rejeu). Les défauts propres au modèle s'annulent ; seule son évolution compte.
  */
+type Champ = "futur" | "futur2030" | "futur2040";
+const HORIZONS: [keyof NonNullable<Projection["horizons"]>, Champ][] = [["2030", "futur2030"], ["2040", "futur2040"], ["2050", "futur"]];
+
 export function projeter(sequence: string[], rejeu: Rejeu, p: Projections): Projection | null {
   if (rejeu.total === 0) return null;
+  const scenarios = fourchettes(sequence, rejeu, p, "futur");
+  if (!scenarios) return null;
+  const horizons: NonNullable<Projection["horizons"]> = {};
+  for (const [h, champ] of HORIZONS) {
+    const f = champ === "futur" ? scenarios : fourchettes(sequence, rejeu, p, champ);
+    if (f) horizons[h] = f;
+  }
+  return { aujourdhui: rejeu.bonnes, total: rejeu.total, scenarios, horizons };
+}
+
+function fourchettes(sequence: string[], rejeu: Rejeu, p: Projections, champ: Champ): Projection["scenarios"] | null {
   const part = rejeu.bonnes / rejeu.total;
   const scenarios = {} as Projection["scenarios"];
   for (const s of SCENARIOS) {
@@ -17,8 +31,8 @@ export function projeter(sequence: string[], rejeu: Rejeu, p: Projections): Proj
       .map((m) => {
         const e = sequence
           .map((c) => p.cultures[c]?.[s]?.[m])
-          .filter((x): x is { reference: number; futur: number } => x?.reference != null && x?.futur != null)
-          .map((x) => x.futur - x.reference);
+          .map((x) => (x?.reference != null && x[champ] != null ? (x[champ] as number) - x.reference : null))
+          .filter((e): e is number => e !== null);
         return e.length ? e.reduce((a, b) => a + b, 0) / e.length : null;
       })
       .filter((e): e is number => e !== null);
@@ -30,7 +44,7 @@ export function projeter(sequence: string[], rejeu: Rejeu, p: Projections): Proj
       desaccord: ecarts.some((e) => e > SEUIL_DESACCORD) && ecarts.some((e) => e < -SEUIL_DESACCORD),
     };
   }
-  return { aujourdhui: rejeu.bonnes, total: rejeu.total, scenarios };
+  return scenarios;
 }
 
 type AvecProjection = { id: string; projection?: Projection };

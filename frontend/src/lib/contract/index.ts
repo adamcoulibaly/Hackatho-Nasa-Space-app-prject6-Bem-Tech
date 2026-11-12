@@ -120,7 +120,13 @@ export const RejeuSchema = z.object({
 });
 export type Rejeu = z.infer<typeof RejeuSchema>;
 
-const PartsModeleSchema = z.object({ reference: z.number().nullable(), futur: z.number().nullable() });
+const PartsModeleSchema = z.object({
+  reference: z.number().nullable(),
+  /** Horizon 2050 (2041–2060). */
+  futur: z.number().nullable(),
+  futur2030: z.number().nullable().optional(),
+  futur2040: z.number().nullable().optional(),
+});
 /** Projections 2050 (data/projections/<region>.json) : part des bonnes saisons par culture, scénario et modèle. */
 export const ProjectionsSchema = z.object({
   meta: z.object({
@@ -130,6 +136,7 @@ export const ProjectionsSchema = z.object({
     scenarios: z.object({ ssp245: z.string(), ssp585: z.string() }),
     reference: z.string(),
     futur: z.string(),
+    horizons: z.record(z.string(), z.string()).optional(),
   }),
   cultures: z.record(z.string(), z.object({ ssp245: z.record(z.string(), PartsModeleSchema), ssp585: z.record(z.string(), PartsModeleSchema) })),
 });
@@ -137,10 +144,14 @@ export type Projections = z.infer<typeof ProjectionsSchema>;
 
 const FourchetteSchema = z.object({ min: z.number().int(), max: z.number().int(), desaccord: z.boolean() });
 /** Bonnes saisons d'une rotation aujourd'hui (rejeu réel) et vers 2050 (fourchette des modèles), sur le même nombre de saisons. */
+const ParScenarioSchema = z.object({ ssp245: FourchetteSchema, ssp585: FourchetteSchema });
 export const ProjectionSchema = z.object({
   aujourdhui: z.number().int(),
   total: z.number().int(),
-  scenarios: z.object({ ssp245: FourchetteSchema, ssp585: FourchetteSchema }),
+  /** Horizon 2050. */
+  scenarios: ParScenarioSchema,
+  /** Horizons disponibles : 2030 (2021–2040), 2040 (2031–2050), 2050 (2041–2060). */
+  horizons: z.object({ "2030": ParScenarioSchema, "2040": ParScenarioSchema, "2050": ParScenarioSchema }).partial().optional(),
 });
 export type Projection = z.infer<typeof ProjectionSchema>;
 
