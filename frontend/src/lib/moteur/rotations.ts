@@ -72,8 +72,9 @@ export function calculerRotations(
   const choix = choisirRotations(p, climat, cultures, saisons);
   if (!choix) return null;
   const cl = extraireClimat(climat);
+  const ky = Object.fromEntries(cultures.map((c) => [c.nom, c.ky.valeur]));
   const rotations = choix.map((ch) => {
-    const rejeu = saisons ? rejouer(ch.sequence, saisons) : undefined;
+    const rejeu = saisons ? rejouer(ch.sequence, saisons, ky) : undefined;
     const projection = rejeu && projections ? projeter(ch.sequence, rejeu, projections) ?? undefined : undefined;
     const r = construireRotation(ch, { climat, cl, p, scoreActuelle: choix[0].score, rejeu, sansRejeu: saisons === null, sansProjections: projections === null });
     return projection ? { ...r, projection } : r;

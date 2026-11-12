@@ -108,3 +108,27 @@ describe("useRotations charge les saisons de la région", () => {
     expect(r.rotations[0].lacune).toContain("rejeu des saisons indisponible");
   });
 });
+
+describe("rendement relatif (FAO-33)", () => {
+  const s = saisons({
+    Maïs: [v(2005, "bonne", 1), v(2006, "difficile", 0.6), v(2007, "perdue", null, "pas assez de pluie pour semer")],
+  });
+  it("1 − Ky × (1 − eau reçue / eau demandée), borné à 0 ; pas de semis = 0", () => {
+    const r = rejouer(["Maïs"], s, { Maïs: 1.25 });
+    expect(r.saisons.map((x) => x.rendement)).toEqual([100, 50, 0]);
+    expect(r.rendementMoyen).toBe(50);
+  });
+  it("sans coefficient Ky : pas d'estimation de rendement", () => {
+    const r = rejouer(["Maïs"], s);
+    expect(r.saisons[0].rendement).toBeUndefined();
+    expect(r.rendementMoyen).toBeUndefined();
+  });
+  it("chaque fiche culture porte son Ky et sa source", async () => {
+    const cultures = await getCultures();
+    for (const c of cultures) {
+      expect(c.ky.valeur).toBeGreaterThan(0);
+      expect(c.ky.source).toMatch(/FAO-33|à valider/);
+    }
+    expect(cultures.find((c) => c.nom === "Maïs")!.ky.valeur).toBe(1.25);
+  });
+});

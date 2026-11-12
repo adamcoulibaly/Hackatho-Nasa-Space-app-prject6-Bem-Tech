@@ -17,6 +17,9 @@ MODELES = ["IPSL-CM6A-LR", "MRI-ESM2-0", "GFDL-ESM4"]
 SCENARIOS = {"ssp245": "modéré", "ssp585": "pessimiste"}
 REFERENCE = range(1995, 2015)
 FUTUR = range(2041, 2061)
+# Horizons de 20 ans centrés sur 2030, 2040 et 2050.
+HORIZONS = {"2030": range(2021, 2041), "2040": range(2031, 2051), "2050": range(2041, 2061)}
+ANNEES_FUTURES = range(2021, 2061)
 VARIABLES = ["pr", "tasmax", "tasmin"]
 BOITE = {"north": 11, "south": 4, "west": -9, "east": -2.5}
 

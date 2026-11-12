@@ -70,3 +70,15 @@ class TestPart(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestHorizons(unittest.TestCase):
+    def test_trois_horizons_de_20_ans(self):
+        from cmip6 import HORIZONS
+        self.assertEqual({h: (r.start, r.stop - 1) for h, r in HORIZONS.items()}, {"2030": (2021, 2040), "2040": (2031, 2050), "2050": (2041, 2060)})
+
+    def test_taches_couvrent_2021_a_2060(self):
+        import build_projections as b
+        t = b.taches()
+        self.assertEqual(len(t), 3 * 3 * (20 + 2 * 40))
+        self.assertIn(("IPSL-CM6A-LR", "ssp585", "pr", 2021), t)

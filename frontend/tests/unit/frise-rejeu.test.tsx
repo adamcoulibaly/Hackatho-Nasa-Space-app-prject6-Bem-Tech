@@ -51,3 +51,13 @@ describe("FriseRejeu", () => {
     expect(screen.getByText(/pas de semis possible/i)).toBeInTheDocument();
   });
 });
+
+describe("FriseRejeu : rendement relatif", () => {
+  it("affiche le rendement moyen et celui de la saison choisie, avec la méthode", async () => {
+    const r = { ...rejeu, rendementMoyen: 82, saisons: rejeu.saisons.map((x) => ({ ...x, rendement: x.verdict === "perdue" ? 30 : 95 })) };
+    render(<FriseRejeu rejeu={r} />);
+    expect(screen.getByText(/Rendement estimé : 82 % du potentiel en moyenne/)).toBeInTheDocument();
+    expect(screen.getByText(/rendement estimé 30 %/i)).toBeInTheDocument();
+    expect(screen.getByText(/FAO-33/)).toBeInTheDocument();
+  });
+});

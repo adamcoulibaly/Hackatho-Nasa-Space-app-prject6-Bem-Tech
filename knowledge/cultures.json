@@ -38,6 +38,10 @@
         0.6
       ],
       "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    },
+    "ky": {
+      "valeur": 1.25,
+      "source": "FAO-33 (Doorenbos et Kassam, 1979), tableau 24 — à valider par l'agronome"
     }
   },
   {
@@ -79,6 +83,10 @@
         0.6
       ],
       "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    },
+    "ky": {
+      "valeur": 0.85,
+      "source": "FAO-33 (Doorenbos et Kassam, 1979), tableau 24 — à valider par l'agronome"
     }
   },
   {
@@ -120,6 +128,10 @@
         0.65
       ],
       "source": "Approximation (absente de FAO-56) — à valider par l'agronome"
+    },
+    "ky": {
+      "valeur": 1.0,
+      "source": "Approximation (absente de FAO-33) — à valider par l'agronome"
     }
   },
   {
@@ -161,6 +173,10 @@
         0.3
       ],
       "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    },
+    "ky": {
+      "valeur": 0.8,
+      "source": "Approximation (culture tolérante, absente de FAO-33) — à valider par l'agronome"
     }
   },
   {
@@ -202,6 +218,10 @@
         0.6
       ],
       "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    },
+    "ky": {
+      "valeur": 0.7,
+      "source": "FAO-33 (Doorenbos et Kassam, 1979), tableau 24 — à valider par l'agronome"
     }
   },
   {
@@ -244,6 +264,10 @@
         0.9
       ],
       "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    },
+    "ky": {
+      "valeur": 1.1,
+      "source": "Approximation (FAO-33 ne donne pas de Ky saisonnier pour le riz pluvial) — à valider par l'agronome"
     }
   },
   {
@@ -285,6 +309,10 @@
         0.55
       ],
       "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    },
+    "ky": {
+      "valeur": 0.9,
+      "source": "FAO-33 (Doorenbos et Kassam, 1979), tableau 24 — à valider par l'agronome"
     }
   },
   {
@@ -326,6 +354,10 @@
         0.6
       ],
       "source": "FAO-56, tableaux 11 et 12 — à valider par l'agronome"
+    },
+    "ky": {
+      "valeur": 1.15,
+      "source": "Approximation d'après le haricot, FAO-33 — à valider par l'agronome"
     }
   }
 ]

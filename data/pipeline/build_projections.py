@@ -14,7 +14,7 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from cmip6 import FUTUR, MODELES, REFERENCE, SCENARIOS, VARIABLES, aligner_annee, lire_points, lister_s3, nom_fichier, part_bonnes, scenario_de, url_ncss
+from cmip6 import ANNEES_FUTURES, FUTUR, HORIZONS, MODELES, REFERENCE, SCENARIOS, VARIABLES, aligner_annee, lire_points, lister_s3, nom_fichier, part_bonnes, scenario_de, url_ncss
 from saison import verdict_saison
 
 ICI = Path(__file__).resolve().parent
@@ -64,7 +64,7 @@ def taches() -> list[tuple[str, str, str, int]]:
     for m in MODELES:
         for v in VARIABLES:
             t += [(m, "historical", v, a) for a in REFERENCE]
-            t += [(m, s, v, a) for s in SCENARIOS for a in FUTUR]
+            t += [(m, s, v, a) for s in SCENARIOS for a in ANNEES_FUTURES]
     return t
 
 
@@ -91,16 +91,19 @@ def main(argv: list[str]) -> int:
         cultures: dict = {c["nom"]: {s: {} for s in SCENARIOS} for c in CULTURES}
         for m in MODELES:
             ref = serie(m, "historical", REFERENCE, r["id"])
+            vr_par_culture = {c["nom"]: [v for a in REFERENCE if (v := verdict_saison(ref, r["lat"], a, saison, c))] for c in CULTURES}
             for s in SCENARIOS:
-                fut = serie(m, s, FUTUR, r["id"])
+                fut = serie(m, s, ANNEES_FUTURES, r["id"])
                 for c in CULTURES:
-                    vr = [v for a in REFERENCE if (v := verdict_saison(ref, r["lat"], a, saison, c))]
-                    vf = [v for a in FUTUR if (v := verdict_saison(fut, r["lat"], a, saison, c))]
-                    cultures[c["nom"]][s][m] = {"reference": part_bonnes(vr), "futur": part_bonnes(vf)}
+                    parts = {"reference": part_bonnes(vr_par_culture[c["nom"]])}
+                    for h, annees in HORIZONS.items():
+                        vf = [v for a in annees if (v := verdict_saison(fut, r["lat"], a, saison, c))]
+                        parts["futur" if h == "2050" else f"futur{h}"] = part_bonnes(vf)
+                    cultures[c["nom"]][s][m] = parts
         sortie = {
             "meta": {
                 "region": r["id"], "source": "NASA NEX-GDDP-CMIP6 v2.0 (NCCS)", "modeles": MODELES, "scenarios": SCENARIOS,
-                "reference": "1995–2014", "futur": "2041–2060",
+                "reference": "1995–2014", "futur": "2041–2060", "horizons": {h: f"{a.start}–{a.stop - 1}" for h, a in HORIZONS.items()},
             },
             "cultures": cultures,
         }

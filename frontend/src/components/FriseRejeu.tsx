@@ -21,6 +21,9 @@ export function FriseRejeu({ rejeu }: { rejeu: Rejeu }) {
       <p className="m-0 font-display text-[26px] font-bold leading-tight tracking-[-0.03em]">
         {`${rejeu.bonnes} bonnes saisons sur ${rejeu.total}`}
       </p>
+      {rejeu.rendementMoyen !== undefined && (
+        <p className="m-0 text-[15px] font-semibold">{`Rendement estimé : ${rejeu.rendementMoyen} % du potentiel en moyenne`}</p>
+      )}
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-muted">
         <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-full" style={{ background: COULEUR.bonne }} />Bonne ({rejeu.bonnes})</span>
         <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-full" style={{ background: COULEUR.difficile }} />Difficile ({rejeu.difficiles})</span>
@@ -46,10 +49,11 @@ export function FriseRejeu({ rejeu }: { rejeu: Rejeu }) {
         <p className="m-0 rounded-2xl bg-paper p-3.5 text-[15px] leading-normal" aria-live="polite">
           <strong>{`${detail.annee} · ${detail.culture} : saison ${MOT[detail.verdict]}. `}</strong>
           {detail.semis ? `Semis le ${dateLisible(detail.semis)} ; ${detail.cause}.` : `Pas de semis possible : ${detail.cause}.`}
+          {detail.rendement !== undefined && ` Rendement estimé ${detail.rendement} % du potentiel.`}
         </p>
       )}
       <p className="m-0 text-xs leading-normal text-muted">
-        Source : NASA POWER, journalier, 2005–2025 (pluie, températures), besoins en eau FAO-56. Hypothèse : réservoir du sol de 100 mm d&apos;eau utile, faute de mesure de votre parcelle. La pluie NASA est moyennée sur environ 50 km : les poches sèches locales peuvent être sous-estimées.
+        Source : NASA POWER, journalier, 2005–2025 (pluie, températures), besoins en eau FAO-56, rendement relatif selon FAO-33 (en % du potentiel, sans engrais ni ravageurs). Hypothèse : réservoir du sol de 100 mm d&apos;eau utile, faute de mesure de votre parcelle. La pluie NASA est moyennée sur environ 50 km : les poches sèches locales peuvent être sous-estimées.
       </p>
     </div>
   );

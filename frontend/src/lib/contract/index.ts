@@ -100,7 +100,11 @@ export const SaisonsSchema = z.object({
 });
 export type Saisons = z.infer<typeof SaisonsSchema>;
 
-const SaisonRejoueeSchema = VerdictSaisonSchema.extend({ culture: z.string() });
+const SaisonRejoueeSchema = VerdictSaisonSchema.extend({
+  culture: z.string(),
+  /** Rendement relatif estimé, en % du potentiel (FAO-33) ; absent sans coefficient Ky. */
+  rendement: z.number().min(0).max(100).optional(),
+});
 /** Rotation rejouée sur les saisons réelles : la culture de l'année N de la rotation, chaque saison. */
 export const RejeuSchema = z.object({
   saisons: z.array(SaisonRejoueeSchema),
@@ -109,6 +113,8 @@ export const RejeuSchema = z.object({
   perdues: z.number().int(),
   total: z.number().int(),
   pire: SaisonRejoueeSchema.nullable(),
+  /** Moyenne des rendements relatifs des saisons rejouées, en % du potentiel. */
+  rendementMoyen: z.number().min(0).max(100).optional(),
 });
 export type Rejeu = z.infer<typeof RejeuSchema>;
 
@@ -230,6 +236,8 @@ export const CultureSchema = z.object({
     kc: z.tuple([z.number().positive(), z.number().positive(), z.number().positive()]),
     source: z.string(),
   }),
+  /** Coefficient de réponse du rendement à l'eau (FAO-33) : perte relative = Ky × (1 − eau reçue / eau demandée). */
+  ky: z.object({ valeur: z.number().positive(), source: z.string() }),
 });
 export type Culture = z.infer<typeof CultureSchema>;
 export const CulturesSchema = z.array(CultureSchema).length(8);
