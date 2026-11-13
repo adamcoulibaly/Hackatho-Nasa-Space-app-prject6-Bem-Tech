@@ -84,3 +84,17 @@ describe("intégration des alertes", () => {
     expect(screen.getByText(/Paillez le sol/)).toBeInTheDocument();
   });
 });
+
+describe("alerte chaleur", () => {
+  const avecChaleur = (fin: string, tmax: number[]) =>
+    jours(fin, Array(tmax.length).fill(3)).map((j, i, t) => ({ ...j, tmax: i >= t.length - tmax.length ? tmax[i - (t.length - tmax.length)] : 32 }));
+  it("3 jours à 38 °C ou plus en saison → moyen ; à 40 °C → élevé ; avec un conseil", () => {
+    const m = alertesMeteo(avecChaleur("2026-07-15", [38.5, 39, 38.2]), SAISON);
+    expect(m.alertes.find((a) => a.type === "chaleur")).toMatchObject({ niveau: "moyen" });
+    expect(m.alertes.find((a) => a.type === "chaleur")!.conseil).toMatch(/paill|matin/);
+    expect(alertesMeteo(avecChaleur("2026-07-15", [40.5, 41, 40.2]), SAISON).alertes.find((a) => a.type === "chaleur")!.niveau).toBe("eleve");
+  });
+  it("hors saison (pas de culture en place), la chaleur de mars n'est pas une alerte", () => {
+    expect(alertesMeteo(avecChaleur("2026-03-15", [41, 41, 41]), SAISON).alertes).toEqual([]);
+  });
+});

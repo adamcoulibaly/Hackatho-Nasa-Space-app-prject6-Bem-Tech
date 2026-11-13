@@ -39,7 +39,7 @@ export function texteAlerte(region: string, culture: string | null, etat: string
   };
 }
 
-export type AlerteMeteo = { type: "secheresse" | "fortes_pluies"; niveau: "moyen" | "eleve"; depuis: string; message: string; conseil: string };
+export type AlerteMeteo = { type: "secheresse" | "fortes_pluies" | "chaleur"; niveau: "moyen" | "eleve"; depuis: string; message: string; conseil: string };
 
 /** Dernière notification envoyée pour chaque type d'alerte météo (date AAAA-MM-JJ). */
 export type DerniersMeteo = Partial<Record<AlerteMeteo["type"], string>>;
@@ -61,7 +61,7 @@ export function noterMeteo(derniers: DerniersMeteo, notifiees: AlerteMeteo[], au
   return { ...derniers, ...Object.fromEntries(notifiees.map((a) => [a.type, aujourdhui])) };
 }
 
-const TITRE_METEO = { secheresse: "Alerte sécheresse", fortes_pluies: "Alerte fortes pluies" } as const;
+const TITRE_METEO = { secheresse: "Alerte sécheresse", fortes_pluies: "Alerte fortes pluies", chaleur: "Alerte chaleur" } as const;
 const NIVEAU = { moyen: "risque moyen", eleve: "risque élevé" } as const;
 
 export function texteMeteo(region: string, a: AlerteMeteo): { titre: string; corps: string } {

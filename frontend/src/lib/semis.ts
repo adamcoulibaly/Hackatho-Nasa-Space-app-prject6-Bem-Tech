@@ -22,18 +22,25 @@ export async function etatSemisRegion(
   const debut = new Date(deps.aujourdhui);
   // 45 jours : assez pour voir le début de la saison et une poche sèche qui dure.
   debut.setUTCDate(debut.getUTCDate() - 45);
-  const q = new URLSearchParams({ parameters: "PRECTOTCORR", community: "AG", latitude: String(r.lat), longitude: String(r.lon), start: aaaammjj(debut), end: aaaammjj(fin), format: "JSON" });
+  const q = new URLSearchParams({ parameters: "PRECTOTCORR,T2M_MAX", community: "AG", latitude: String(r.lat), longitude: String(r.lon), start: aaaammjj(debut), end: aaaammjj(fin), format: "JSON" });
   let valeurs: Record<string, number>;
+  let tmax: Record<string, number> = {};
   try {
     const rep = await deps.fetch(`${POWER}?${q}`, { next: { revalidate: 21600 } } as RequestInit);
     if (!rep.ok) return { statut: 503, corps: PANNE };
-    valeurs = (await rep.json()).properties.parameter.PRECTOTCORR;
+    const p = (await rep.json()).properties.parameter;
+    valeurs = p.PRECTOTCORR;
+    tmax = p.T2M_MAX ?? {};
   } catch {
     return { statut: 503, corps: PANNE };
   }
   const jours: Jour[] = Object.keys(valeurs)
     .sort()
-    .map((k) => ({ date: `${k.slice(0, 4)}-${k.slice(4, 6)}-${k.slice(6)}`, pluie: valeurs[k] <= -999 ? null : valeurs[k] }));
+    .map((k) => ({
+      date: `${k.slice(0, 4)}-${k.slice(4, 6)}-${k.slice(6)}`,
+      pluie: valeurs[k] <= -999 ? null : valeurs[k],
+      tmax: tmax[k] == null || tmax[k] <= -999 ? null : tmax[k],
+    }));
   const publies = jours.filter((j) => j.pluie !== null);
   if (publies.length === 0) return { statut: 503, corps: PANNE };
   const dateDonnees = publies.at(-1)!.date;

@@ -62,6 +62,19 @@ export function ndviFenetre(png: Buffer, px: number, py: number, palette: Palett
   return valeurs.length ? Math.round((valeurs.reduce((a, b) => a + b, 0) / valeurs.length) * 1e4) / 1e4 : null;
 }
 
+/** NDVI d'un mois précis (AAAA-MM) au point, ou null si l'image manque ou est illisible. */
+export async function ndviMois(lat: number, lon: number, mois: string, lire: (url: string) => Promise<Buffer | null>): Promise<number | null> {
+  const { x, y, px, py } = positionTuile(lat, lon);
+  const url = URL.replace("{couche}", COUCHE).replace("{date}", `${mois}-01`).replace("{z}", String(ZOOM)).replace("{y}", String(y)).replace("{x}", String(x));
+  const png = await lire(url).catch(() => null);
+  if (!png) return null;
+  try {
+    return ndviFenetre(png, px, py, PALETTE_NDVI);
+  } catch {
+    return null;
+  }
+}
+
 /** NDVI du dernier mois publié au point : le mois précédent, puis on recule (4 mois au plus) ; null si aucune image. */
 export async function ndviParcelle(
   lat: number,

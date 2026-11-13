@@ -5,13 +5,14 @@
 import type { Jour } from "./etat-semis";
 
 export type Niveau = "faible" | "moyen" | "eleve";
-export type Alerte = { type: "secheresse" | "fortes_pluies"; niveau: Exclude<Niveau, "faible">; depuis: string; message: string; conseil: string };
+export type Alerte = { type: "secheresse" | "fortes_pluies" | "chaleur"; niveau: Exclude<Niveau, "faible">; depuis: string; message: string; conseil: string };
 
 const SEC_MM = 1;
 const SECHERESSE = { moyen: 10, eleve: 15 };
 const PLUIE_JOUR = { moyen: 50, eleve: 80 };
 const PLUIE_3J = { moyen: 100, eleve: 150 };
 const FENETRE_PLUIE = 7;
+const CHALEUR = { moyen: 38, eleve: 40, jours: 3 };
 const PLUIE_DEBUT_SAISON = 10;
 const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 const jourLisible = (iso: string) => {
@@ -43,6 +44,27 @@ export function alertesMeteo(jours: Jour[], saisons: { debut: number; fin: numbe
         depuis,
         message: `Sécheresse : ${sec} jours sans pluie utile depuis le ${jourLisible(depuis)}.`,
         conseil: "Paillez le sol pour garder l'humidité, retardez les semis et apportez de l'eau aux jeunes plants si vous le pouvez.",
+      });
+    }
+  }
+
+  // Chaleur : au moins 3 jours de suite à 38 °C ou plus (température maximale de l'air) cette semaine, cultures en place.
+  if (saison) {
+    const semaine = jours.slice(-FENETRE_PLUIE).filter((j) => j.tmax != null) as { date: string; tmax: number }[];
+    let run: { date: string; tmax: number }[] = [];
+    let meilleur: typeof run = [];
+    for (const j of semaine) {
+      run = j.tmax >= CHALEUR.moyen ? [...run, j] : [];
+      if (run.length >= meilleur.length) meilleur = run;
+    }
+    if (meilleur.length >= CHALEUR.jours) {
+      const max = Math.max(...meilleur.map((j) => j.tmax));
+      alertes.push({
+        type: "chaleur",
+        niveau: meilleur.filter((j) => j.tmax >= CHALEUR.eleve).length >= CHALEUR.jours ? "eleve" : "moyen",
+        depuis: meilleur[0].date,
+        message: `Forte chaleur : ${meilleur.length} jours à 38 °C ou plus depuis le ${jourLisible(meilleur[0].date)} (jusqu'à ${Math.round(max)} °C).`,
+        conseil: "Paillez le sol, travaillez et arrosez tôt le matin ou en fin de journée, évitez les traitements aux heures chaudes.",
       });
     }
   }

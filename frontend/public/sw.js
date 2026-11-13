@@ -5,7 +5,7 @@
  * Rien n'est gardé pour l'assistant IA ni pour la photo (envoi de données), ni pour les sites extérieurs. */
 const VERSION = "forosat-v1";
 const PAGE_HORS_LIGNE = "/hors-ligne";
-const A_GARDER = /^\/api\/(climat|saisons|projections|semis)\//;
+const A_GARDER = /^\/api\/(climat|saisons|projections|semis|anomalie)(\/|\?|$)/;
 
 /** Garde la page « hors connexion » et tous ses fichiers (scripts, styles) : elle doit s'afficher sans réseau. */
 async function garderPageHorsLigne() {

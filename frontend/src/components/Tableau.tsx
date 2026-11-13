@@ -3,6 +3,7 @@ import type { Climat, Rotation } from "@/lib/contract";
 import { mesuresRecentes, saisonDuMoment } from "@/lib/saison";
 import type { EtatSemis } from "@/lib/moteur/etat-semis";
 import type { Alerte, Niveau } from "@/lib/moteur/alertes";
+import type { Anomalie } from "@/lib/satellite/anomalie";
 
 export type Semis = { etat: EtatSemis; depuis?: string; message: string; dateDonnees: string; cle?: string; risque?: Niveau; alertes?: Alerte[] };
 
@@ -13,9 +14,11 @@ const RISQUE: Record<Niveau, { texte: string; fond: string; encre: string }> = {
 };
 
 /** Indice de risque du jour et alertes (sécheresse, fortes pluies), chacune avec son conseil pratique. */
-function Alertes({ semis }: { semis: Semis }) {
+function Alertes({ semis, anomalie }: { semis: Semis; anomalie?: Anomalie | null }) {
   if (!semis.risque) return null;
   const r = RISQUE[semis.risque];
+  const [, m, j] = semis.dateDonnees.split("-").map(Number);
+  const jusqua = `${j === 1 ? "1er" : j} ${MOIS_LONG[m - 1]}`;
   return (
     <section className="flex flex-col gap-2.5 rounded-[22px] bg-white p-4" aria-label="Alertes agricoles">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -30,8 +33,15 @@ function Alertes({ semis }: { semis: Semis }) {
           </div>
         ))
       ) : (
-        <span className="text-sm text-muted">Ni sécheresse ni fortes pluies ces derniers jours (NASA POWER).</span>
+        <span className="text-sm text-muted">Ni sécheresse, ni fortes pluies, ni forte chaleur ces derniers jours.</span>
       )}
+      {anomalie && (
+        <div className={`flex flex-col gap-1 rounded-2xl p-3 ${anomalie.anomalie ? "bg-[#FDE7CC] text-[#5C2E00]" : "bg-paper"}`}>
+          <span className="text-sm font-semibold">Végétation de votre parcelle (NASA MODIS)</span>
+          <span className="text-sm">{anomalie.message}</span>
+        </div>
+      )}
+      <span className="text-xs text-muted">{`Observé jusqu'au ${jusqua} (NASA POWER) : ce n'est pas une prévision météo.`}</span>
     </section>
   );
 }
@@ -87,7 +97,7 @@ function Frise({ climat, moisCourant }: { climat: Climat; moisCourant: number })
 }
 
 /** `semis` : état du jour (NASA POWER, /api/semis) ; sans lui, la saison est déduite des normales. */
-export function Tableau({ climat, reco, semis }: { climat: Climat; reco: Rotation; semis?: Semis }) {
+export function Tableau({ climat, reco, semis, anomalie }: { climat: Climat; reco: Rotation; semis?: Semis; anomalie?: Anomalie | null }) {
   const mois = new Date().getMonth() + 1;
   const s = saisonDuMoment(climat.saisons ?? [climat.saisonPluies], mois);
   const a = climat.actuel && mesuresRecentes(climat.actuel.dateFin) ? climat.actuel : undefined;
@@ -122,7 +132,7 @@ export function Tableau({ climat, reco, semis }: { climat: Climat; reco: Rotatio
         <Frise climat={climat} moisCourant={mois} />
       </section>
 
-      {semis && <Alertes semis={semis} />}
+      {semis && <Alertes semis={semis} anomalie={anomalie} />}
 
       {a && (
       <div data-stagger className="grid grid-cols-2 gap-2.5">

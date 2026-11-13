@@ -1,7 +1,7 @@
 /** État de semis du moment, à partir des pluies NASA POWER des derniers jours (règle de début des pluies de Sivakumar). */
 
 export type EtatSemis = "seche" | "premieres_pluies" | "fenetre_ouverte" | "poche_seche" | "en_saison";
-export type Jour = { date: string; pluie: number | null };
+export type Jour = { date: string; pluie: number | null; tmax?: number | null };
 
 const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 const SEUIL_MM = 20;
