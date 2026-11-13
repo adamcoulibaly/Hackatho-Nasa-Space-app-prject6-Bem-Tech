@@ -28,7 +28,7 @@ const ETATS_ALERTE: EtatAlerte[] = ["active", "inactive", "refus"];
 /** Onglet natif qui porte une page du site ; null pour les pages qui s'ouvrent dans l'onglet courant (méthode, lexique…). */
 export function ongletDe(chemin: string): Onglet | null {
   const p = chemin.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
-  if (p === "/" || p === "/tableau") return "tableau";
+  if (p === "/" || p === "/tableau" || p === "/calendrier") return "tableau";
   if (p === "/parcelle" || p === "/suivi") return "champ";
   if (p === "/climat" || p === "/risques") return "climat";
   if (p === "/rotations" || p.startsWith("/rotations/") || p.startsWith("/fiche/") || p === "/simulateur") return "rotations";

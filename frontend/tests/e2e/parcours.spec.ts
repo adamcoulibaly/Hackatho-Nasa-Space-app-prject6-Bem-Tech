@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/risques", "/suivi", "/guide", "/fiche/B", "/methode", "/lexique", "/conseiller"];
+const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/risques", "/suivi", "/guide", "/calendrier", "/fiche/B", "/methode", "/lexique", "/conseiller"];
 
 test("parcours complet : parcelle → climat → rotations → détail → fiche", async ({ page }) => {
   await page.goto("/parcelle");
@@ -351,4 +351,15 @@ test("carnet de suivi : une observation s'ajoute et reste après rechargement", 
   await expect(page.getByText(/Feuilles jaunes/)).toBeVisible();
   await page.reload();
   await expect(page.getByText(/Feuilles jaunes/)).toBeVisible();
+});
+
+test("calendrier agricole : les étapes datées de la culture, depuis l'accueil", async ({ page }) => {
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.goto("/tableau");
+  await page.getByRole("link", { name: /Mon calendrier agricole/ }).click();
+  await expect(page).toHaveURL(/\/calendrier$/);
+  await expect(page.getByTestId(/^etape/)).toHaveCount(8);
+  await page.getByLabel("Date de semis").fill("2026-06-10");
+  await expect(page.getByText(/28 septembre/)).toBeVisible();
 });
