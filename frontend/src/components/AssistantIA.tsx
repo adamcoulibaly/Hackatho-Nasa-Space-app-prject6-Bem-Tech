@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { Parcelle } from "@/lib/parcelle/validate";
 import { lienFiche } from "@/lib/moteur/fiche-lien";
 import { LireAVoixHaute } from "./LireAVoixHaute";
+import { DicteeVocale } from "./DicteeVocale";
 
 type Etat = { statut: "repos" } | { statut: "attente" } | { statut: "ok"; texte: string } | { statut: "erreur"; message: string };
 
@@ -43,6 +44,7 @@ export function AssistantIA({ id, parcelle }: { id: "A" | "B" | "C"; parcelle: P
         <label htmlFor="question-ia" className="text-sm font-semibold">Votre question sur cette rotation</label>
         <div className="flex flex-wrap gap-2">
           <input id="question-ia" value={question} maxLength={300} onChange={(e) => setQuestion(e.target.value)} placeholder="Ex. Et si la pluie s'arrête en août ?" className="h-12 min-w-0 flex-[1_1_240px] rounded-full border border-line bg-white px-4 text-base" />
+          <DicteeVocale onTexte={setQuestion} />
           <button type="submit" disabled={attente || !question.trim()} className="h-12 rounded-full bg-ink px-5 text-base font-bold text-paper disabled:opacity-60">Demander</button>
         </div>
       </form>
