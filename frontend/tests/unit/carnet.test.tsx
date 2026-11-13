@@ -60,3 +60,42 @@ describe("CarnetSuivi", () => {
     expect(ongletDe("/suivi")).toBe("champ");
   });
 });
+
+describe("carnet : prévisions face à la réalité", () => {
+  beforeEach(() => localStorage.clear());
+
+  it("la prévision est figée au moment de l'observation", () => {
+    const o = ajouterObservation(obs, saisons);
+    expect(o.prevision).toMatchObject({ part: 0.9 });
+    // Même si les données changent ensuite, la comparaison garde la prévision d'origine.
+    const autres: Saisons = { ...saisons, cultures: { Maïs: saisons.cultures["Maïs"].map((x) => ({ ...x, verdict: "perdue" as const })) } };
+    expect(comparerObservation(lireCarnet()[0], autres).attendu).toMatch(/18 sur 20/);
+  });
+
+  it("une récolte réelle se compare à l'habitude", () => {
+    expect(comparerObservation({ ...obs, type: "recolte", recolte: "faible" }, saisons).ecart).toBe(true);
+    expect(comparerObservation({ ...obs, type: "recolte", recolte: "bonne", etat: "bonne" }, saisons).ecart).toBe(false);
+  });
+
+  it("bilan : combien d'observations ont confirmé l'habitude ForoSat", async () => {
+    const { bilanCarnet } = await import("@/lib/carnet");
+    ajouterObservation(obs, saisons);
+    ajouterObservation({ ...obs, date: "2026-09-01", etat: "bonne" }, saisons);
+    ajouterObservation({ ...obs, date: "2026-10-01", etat: "bonne" }, saisons);
+    expect(bilanCarnet(lireCarnet(), saisons)).toEqual({ total: 3, concordent: 2 });
+  });
+});
+
+describe("CarnetSuivi : pictogrammes et récolte", () => {
+  beforeEach(() => localStorage.clear());
+  it("chaque choix d'état et de pluie porte un pictogramme ; on peut noter une récolte", async () => {
+    const u = userEvent.setup();
+    const { container } = render(<ParcelleProvider><CarnetSuivi saisons={saisons} /></ParcelleProvider>);
+    expect(container.querySelectorAll("[data-picto]").length).toBeGreaterThanOrEqual(6);
+    await u.click(screen.getByRole("radio", { name: "Récolte" }));
+    await u.click(screen.getByRole("radio", { name: "Faible" }));
+    await u.click(screen.getByRole("button", { name: "Ajouter au carnet" }));
+    expect(screen.getByText(/Récolte faible/)).toBeInTheDocument();
+    expect(screen.getByText(/sur 1 observation/)).toBeInTheDocument();
+  });
+});

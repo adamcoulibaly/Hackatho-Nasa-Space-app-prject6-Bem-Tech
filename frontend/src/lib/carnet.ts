@@ -11,6 +11,11 @@ export const ObservationSchema = z.object({
   etat: z.enum(["bonne", "moyenne", "mauvaise"]),
   pluie: z.enum(["assez", "trop", "pas_assez"]),
   note: z.string().max(280),
+  /** « suivi » (état du champ) ou « recolte » (résultat réel de la saison). */
+  type: z.enum(["suivi", "recolte"]).optional(),
+  recolte: z.enum(["bonne", "moyenne", "faible", "nulle"]).optional(),
+  /** Habitude ForoSat figée au moment de l'observation : la comparaison ne change pas si les données changent. */
+  prevision: z.object({ part: z.number().min(0).max(1), bonnes: z.number().int(), total: z.number().int() }).optional(),
 });
 export type Observation = z.infer<typeof ObservationSchema>;
 export type ObservationEnregistree = Observation & { id: string };
@@ -33,8 +38,16 @@ function ecrire(c: ObservationEnregistree[]) {
   }
 }
 
-export function ajouterObservation(o: Observation): ObservationEnregistree {
-  const v = ObservationSchema.parse(o);
+/** Part des bonnes saisons 2005–2025 pour une culture, ou undefined sans fiche. */
+function habitude(culture: string, s: Saisons | null | undefined): Observation["prevision"] {
+  const liste = s?.cultures[culture];
+  if (!liste?.length) return undefined;
+  const bonnes = liste.filter((x) => x.verdict === "bonne").length;
+  return { part: bonnes / liste.length, bonnes, total: liste.length };
+}
+
+export function ajouterObservation(o: Observation, s?: Saisons | null): ObservationEnregistree {
+  const v = ObservationSchema.parse({ ...o, prevision: o.prevision ?? habitude(o.culture, s) });
   const nouvelle = { ...v, id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}` };
   ecrire([nouvelle, ...lireCarnet()].sort((a, b) => b.date.localeCompare(a.date)));
   return nouvelle;
@@ -46,17 +59,25 @@ export function supprimerObservation(id: string) {
 
 /** Ce que les saisons réelles laissaient prévoir pour cette culture, et si l'observation s'en écarte nettement. */
 export function comparerObservation(o: Observation, s: Saisons | null): { attendu: string; ecart: boolean } {
-  const liste = s?.cultures[o.culture];
-  if (!liste?.length) return { attendu: "Pas de prévision ForoSat pour cette culture (pas encore de fiche).", ecart: false };
-  // Référence : la fréquence des bonnes saisons 2005–2025, pas une prévision de l'année en cours.
-  const bonnes = liste.filter((x) => x.verdict === "bonne").length;
-  const part = bonnes / liste.length;
+  // Référence : la fréquence des bonnes saisons 2005–2025 (figée à l'observation), pas une prévision de l'année en cours.
+  const h = o.prevision ?? habitude(o.culture, s);
+  if (!h) return { attendu: "Pas de prévision ForoSat pour cette culture (pas encore de fiche).", ecart: false };
+  const { bonnes, part } = h;
+  const liste = { length: h.total };
   const attendu =
     part >= 0.6
       ? `En général (2005–2025), cette culture a plutôt de bonnes saisons ici : ${bonnes} sur ${liste.length}.`
       : part < 0.4
         ? `En général (2005–2025), cette culture a souvent des saisons difficiles ici : ${bonnes} bonnes sur ${liste.length}.`
         : `En général (2005–2025), les saisons de cette culture sont incertaines ici : ${bonnes} bonnes sur ${liste.length}.`;
-  const ecart = (o.etat === "mauvaise" && part >= 0.6) || (o.etat === "bonne" && part < 0.4);
+  const mauvais = o.type === "recolte" ? o.recolte === "faible" || o.recolte === "nulle" : o.etat === "mauvaise";
+  const bon = o.type === "recolte" ? o.recolte === "bonne" : o.etat === "bonne";
+  const ecart = (mauvais && part >= 0.6) || (bon && part < 0.4);
   return { attendu, ecart };
+}
+
+/** Prévisions face à la réalité : sur toutes les observations comparables, combien concordent avec l'habitude ForoSat. */
+export function bilanCarnet(carnet: Observation[], s: Saisons | null): { total: number; concordent: number } {
+  const comparables = carnet.filter((o) => o.prevision ?? s?.cultures[o.culture]?.length);
+  return { total: comparables.length, concordent: comparables.filter((o) => !comparerObservation(o, s).ecart).length };
 }
