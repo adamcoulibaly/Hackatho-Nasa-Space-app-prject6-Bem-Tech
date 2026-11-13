@@ -18,7 +18,7 @@ function evaluer(seq: Culture[], p: Parcelle, cl: ClimatResume, saisons?: Saison
 }
 
 /** Suites de 3 cultures distinctes, sans même famille d'affilée (cycle compris : 3e → 1re), avec au moins une légumineuse. */
-function candidats(cultures: Culture[]): Culture[][] {
+export function candidats(cultures: Culture[]): Culture[][] {
   const out: Culture[][] = [];
   for (const a of cultures)
     for (const b of cultures)

@@ -162,6 +162,16 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
       </fieldset>
 
       <div className="flex flex-col gap-1.5">
+        <label htmlFor="moyens" className="text-sm font-semibold">Mes moyens pour acheter engrais et semences</label>
+        <select id="moyens" className={FIELD} value={parcelle.moyens ?? ""} onChange={(e) => setParcelle({ moyens: (e.target.value || undefined) as "faibles" | "moyens" | "bons" | undefined })}>
+          <option value="">Je ne sais pas</option>
+          <option value="faibles">Faibles</option>
+          <option value="moyens">Moyens</option>
+          <option value="bons">Bons</option>
+        </select>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
         <label htmlFor="materiel" className="text-sm font-semibold">Mon matériel</label>
         <select id="materiel" className={FIELD} value={parcelle.materiel} onChange={(e) => setParcelle({ materiel: e.target.value as Materiel })}>
           <option value="daba">Travail à la main (daba)</option>

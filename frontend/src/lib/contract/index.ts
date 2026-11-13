@@ -260,6 +260,8 @@ export const CultureSchema = z.object({
   }),
   /** Coefficient de réponse du rendement à l'eau (FAO-33) : perte relative = Ky × (1 − eau reçue / eau demandée). */
   ky: z.object({ valeur: z.number().positive(), source: z.string() }),
+  /** Besoin en intrants achetés (engrais, semences, traitements), de 1 (faible) à 5 (élevé) : estimation à valider. */
+  intrants: niveau,
 });
 export type Culture = z.infer<typeof CultureSchema>;
 export const CulturesSchema = z.array(CultureSchema).length(8);

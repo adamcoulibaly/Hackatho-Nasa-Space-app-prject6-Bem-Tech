@@ -18,7 +18,8 @@
     "sources": [
       "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
       "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
-      "Revenu et marché : hypothèses en attendant les prix locaux"
+      "Revenu et marché : hypothèses en attendant les prix locaux",
+      "Intrants (engrais, semences achetées, traitements) 1 à 5 : estimation ForoSat, à valider par l'agronome"
     ],
     "hypotheses": [
       "revenu",
@@ -42,7 +43,8 @@
     "ky": {
       "valeur": 1.25,
       "source": "FAO-33 (Doorenbos et Kassam, 1979), tableau 24 — à valider par l'agronome"
-    }
+    },
+    "intrants": 4
   },
   {
     "nom": "Coton",
@@ -63,7 +65,8 @@
     "sources": [
       "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
       "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
-      "Revenu et marché : hypothèses en attendant les prix locaux"
+      "Revenu et marché : hypothèses en attendant les prix locaux",
+      "Intrants (engrais, semences achetées, traitements) 1 à 5 : estimation ForoSat, à valider par l'agronome"
     ],
     "hypotheses": [
       "revenu",
@@ -87,7 +90,8 @@
     "ky": {
       "valeur": 0.85,
       "source": "FAO-33 (Doorenbos et Kassam, 1979), tableau 24 — à valider par l'agronome"
-    }
+    },
+    "intrants": 5
   },
   {
     "nom": "Igname",
@@ -108,7 +112,8 @@
     "sources": [
       "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
       "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
-      "Revenu et marché : hypothèses en attendant les prix locaux"
+      "Revenu et marché : hypothèses en attendant les prix locaux",
+      "Intrants (engrais, semences achetées, traitements) 1 à 5 : estimation ForoSat, à valider par l'agronome"
     ],
     "hypotheses": [
       "revenu",
@@ -132,7 +137,8 @@
     "ky": {
       "valeur": 1.0,
       "source": "Approximation (absente de FAO-33) — à valider par l'agronome"
-    }
+    },
+    "intrants": 3
   },
   {
     "nom": "Manioc",
@@ -153,7 +159,8 @@
     "sources": [
       "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
       "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
-      "Revenu et marché : hypothèses en attendant les prix locaux"
+      "Revenu et marché : hypothèses en attendant les prix locaux",
+      "Intrants (engrais, semences achetées, traitements) 1 à 5 : estimation ForoSat, à valider par l'agronome"
     ],
     "hypotheses": [
       "revenu",
@@ -177,7 +184,8 @@
     "ky": {
       "valeur": 0.8,
       "source": "Approximation (culture tolérante, absente de FAO-33) — à valider par l'agronome"
-    }
+    },
+    "intrants": 2
   },
   {
     "nom": "Arachide",
@@ -198,7 +206,8 @@
     "sources": [
       "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
       "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
-      "Revenu et marché : hypothèses en attendant les prix locaux"
+      "Revenu et marché : hypothèses en attendant les prix locaux",
+      "Intrants (engrais, semences achetées, traitements) 1 à 5 : estimation ForoSat, à valider par l'agronome"
     ],
     "hypotheses": [
       "revenu",
@@ -222,7 +231,8 @@
     "ky": {
       "valeur": 0.7,
       "source": "FAO-33 (Doorenbos et Kassam, 1979), tableau 24 — à valider par l'agronome"
-    }
+    },
+    "intrants": 2
   },
   {
     "nom": "Riz",
@@ -244,7 +254,8 @@
       "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
       "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
       "Revenu et marché : hypothèses en attendant les prix locaux",
-      "Riz pluvial : besoin en eau élevé ; avec irrigation de bas-fond, risque plus faible"
+      "Riz pluvial : besoin en eau élevé ; avec irrigation de bas-fond, risque plus faible",
+      "Intrants (engrais, semences achetées, traitements) 1 à 5 : estimation ForoSat, à valider par l'agronome"
     ],
     "hypotheses": [
       "revenu",
@@ -268,7 +279,8 @@
     "ky": {
       "valeur": 1.1,
       "source": "Approximation (FAO-33 ne donne pas de Ky saisonnier pour le riz pluvial) — à valider par l'agronome"
-    }
+    },
+    "intrants": 4
   },
   {
     "nom": "Sorgho",
@@ -289,7 +301,8 @@
     "sources": [
       "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
       "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
-      "Revenu et marché : hypothèses en attendant les prix locaux"
+      "Revenu et marché : hypothèses en attendant les prix locaux",
+      "Intrants (engrais, semences achetées, traitements) 1 à 5 : estimation ForoSat, à valider par l'agronome"
     ],
     "hypotheses": [
       "revenu",
@@ -313,7 +326,8 @@
     "ky": {
       "valeur": 0.9,
       "source": "FAO-33 (Doorenbos et Kassam, 1979), tableau 24 — à valider par l'agronome"
-    }
+    },
+    "intrants": 2
   },
   {
     "nom": "Niébé",
@@ -334,7 +348,8 @@
     "sources": [
       "FAO ECOCROP (cycle, pluie optimale) — https://gaez.fao.org/pages/ecocrop",
       "Notes 1 à 5 : estimation ForoSat d'après les fiches FAO, à valider par l'agronome",
-      "Revenu et marché : hypothèses en attendant les prix locaux"
+      "Revenu et marché : hypothèses en attendant les prix locaux",
+      "Intrants (engrais, semences achetées, traitements) 1 à 5 : estimation ForoSat, à valider par l'agronome"
     ],
     "hypotheses": [
       "revenu",
@@ -358,6 +373,7 @@
     "ky": {
       "valeur": 1.15,
       "source": "Approximation d'après le haricot, FAO-33 — à valider par l'agronome"
-    }
+    },
+    "intrants": 2
   }
 ]

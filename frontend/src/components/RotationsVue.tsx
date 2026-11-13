@@ -10,11 +10,15 @@ import { regionParId } from "@/lib/regions";
 import { PrioritesRappel } from "./PrioritesRappel";
 import { RotationCard } from "./RotationCard";
 import { EtatCalcul } from "./EtatCalcul";
+import { StrategiesMoyens } from "./StrategiesMoyens";
+import { strategies } from "@/lib/moteur/strategies";
+import { useSaisons } from "@/lib/useSaisons";
 
 export function RotationsVue({ initial, cultures }: { initial: Climat; cultures: Culture[] }) {
   const { parcelle } = useParcelle();
   const etat = useRotations(initial, cultures, parcelle);
   const region = regionParId(parcelle.region);
+  const saisons = useSaisons(parcelle.region);
   const entete = (
     <div className="flex flex-wrap items-end justify-between gap-4">
       <div className="flex flex-col gap-2">
@@ -29,12 +33,14 @@ export function RotationsVue({ initial, cultures }: { initial: Climat; cultures:
   if (etat.statut !== "pret") return <>{entete}<EtatCalcul etat={etat} region={parcelle.region} /></>;
 
   const reco = rotationConseillee(etat.rotations);
+  const parMoyens = strategies(parcelle, etat.climat, cultures, saisons ?? null);
   return (
     <>
       {entete}
       <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-stretch gap-4">
         {etat.rotations.map((r) => <RotationCard key={r.id} rotation={r} dark={r.recommandee} />)}
       </div>
+      {parMoyens && <StrategiesMoyens strategies={parMoyens} />}
       <Link href="/simulateur" className="flex items-center justify-between gap-3 rounded-3xl bg-ink p-5 text-paper no-underline hover:text-paper">
         <span className="flex flex-col gap-1">
           <strong className="font-display text-lg">Simuler sur 3, 5 ou 10 ans</strong>

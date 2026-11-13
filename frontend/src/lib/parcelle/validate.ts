@@ -19,6 +19,8 @@ export type Parcelle = {
   autreCulture?: string;
   /** Objectif hors liste (« Autre ») : gardé et affiché, sans poids dans le score. */
   autreObjectif?: string;
+  /** Moyens pour acheter des intrants (engrais, semences, traitements). */
+  moyens?: "faibles" | "moyens" | "bons";
 };
 
 /** Longueur maximale d'une saisie « Autre ». */
@@ -71,4 +73,5 @@ export const ParcelleSchema = z.object({
   centre: z.tuple([z.number(), z.number()]).optional(),
   autreCulture: z.string().max(AUTRE_MAX).optional(),
   autreObjectif: z.string().max(AUTRE_MAX).optional(),
+  moyens: z.enum(["faibles", "moyens", "bons"]).optional(),
 });
