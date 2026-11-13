@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/risques", "/suivi", "/guide", "/calendrier", "/fiche/B", "/methode", "/lexique", "/conseiller"];
+const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/risques", "/suivi", "/guide", "/calendrier", "/fiche/B", "/methode", "/lexique", "/conseiller", "/aujourdhui", "/traduire"];
 
 test("parcours complet : parcelle → climat → rotations → détail → fiche", async ({ page }) => {
   await page.goto("/parcelle");
@@ -362,4 +362,15 @@ test("calendrier agricole : les étapes datées de la culture, depuis l'accueil"
   await expect(page.getByTestId(/^etape/)).toHaveCount(8);
   await page.getByLabel("Date de semis").fill("2026-06-10");
   await expect(page.getByText(/28 septembre/)).toBeVisible();
+});
+
+test("ma parcelle aujourd'hui rassemble les cinq informations, et la rentabilité attend mes prix", async ({ page }) => {
+  await page.goto("/parcelle");
+  await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
+  await page.waitForURL(/\/climat$/);
+  await page.goto("/aujourdhui");
+  for (const id of ["jour-calendrier", "jour-vigilance", "jour-vegetation", "jour-observation", "jour-rotation"]) await expect(page.getByTestId(id)).toBeVisible();
+  await page.goto("/rotations");
+  await expect(page.getByText(/Saisissez vos prix/)).toBeVisible();
+  await expect(page.getByTestId("rentabilite-A")).toContainText("Prix manquant");
 });

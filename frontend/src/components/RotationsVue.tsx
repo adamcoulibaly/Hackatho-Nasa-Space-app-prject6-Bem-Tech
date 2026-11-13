@@ -13,6 +13,9 @@ import { EtatCalcul } from "./EtatCalcul";
 import { StrategiesMoyens } from "./StrategiesMoyens";
 import { strategies } from "@/lib/moteur/strategies";
 import { useSaisons } from "@/lib/useSaisons";
+import { Rentabilite } from "./Rentabilite";
+
+const aujourdhuiIso = () => new Date().toISOString().slice(0, 10);
 
 export function RotationsVue({ initial, cultures }: { initial: Climat; cultures: Culture[] }) {
   const { parcelle } = useParcelle();
@@ -41,6 +44,7 @@ export function RotationsVue({ initial, cultures }: { initial: Climat; cultures:
         {etat.rotations.map((r) => <RotationCard key={r.id} rotation={r} dark={r.recommandee} />)}
       </div>
       {parMoyens && <StrategiesMoyens strategies={parMoyens} />}
+      <Rentabilite rotations={etat.rotations.map((r) => ({ id: r.id, sequence: r.sequence }))} saisons={saisons ?? null} cultures={cultures} surface={parcelle.surface} aujourdhui={aujourdhuiIso()} />
       <Link href="/simulateur" className="flex items-center justify-between gap-3 rounded-3xl bg-ink p-5 text-paper no-underline hover:text-paper">
         <span className="flex flex-col gap-1">
           <strong className="font-display text-lg">Simuler sur 3, 5 ou 10 ans</strong>

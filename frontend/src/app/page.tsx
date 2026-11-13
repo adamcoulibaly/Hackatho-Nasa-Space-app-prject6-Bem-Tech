@@ -26,11 +26,14 @@ const EXISTANT = [
 ];
 
 const OUTILS: [string, string, string][] = [
+  ["Ma parcelle aujourd'hui", "/aujourdhui", "Calendrier, vigilance, végétation vue par satellite, carnet et rotation, en un seul écran."],
   ["Simulateur", "/simulateur", "Les rotations comparées sur 3, 5 ou 10 ans, en année sèche ou très pluvieuse, avec la parcelle qui évolue."],
   ["Calendrier agricole", "/calendrier", "Préparation, semis, entretien, floraison, récolte : les dates pour ma culture et ma saison."],
   ["Alertes du jour", "/tableau", "Semis, sécheresse, fortes pluies et chaleur, avec un conseil ; en notification dans l'app."],
   ["Carte des risques", "/risques", "Les 33 régions : saisons perdues depuis 2005 et estimation vers 2050."],
-  ["Carnet de suivi", "/suivi", "Ce que je vois dans mon champ, comparé à l'habitude de ma région."],
+  ["Carnet de suivi", "/suivi", "Ce que je vois dans mon champ, comparé à l'habitude de ma région, et prévenir mes voisins sur WhatsApp."],
+  ["Rentabilité", "/rotations", "Recettes et marges de chaque rotation, avec mes propres prix du marché."],
+  ["Traduire ForoSat", "/traduire", "Dioula, baoulé, sénoufo : aidez-nous à traduire l'application, phrase par phrase."],
 ];
 
 export default function Home() {

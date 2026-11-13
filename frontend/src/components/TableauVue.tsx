@@ -38,6 +38,13 @@ export function TableauVue({ initial, cultures }: { initial: Climat; cultures: C
     <>
       <Tableau climat={etat.climat} reco={rotationConseillee(etat.rotations)} semis={semis} anomalie={anomalie} risqueClimat={risqueClimat} />
       <AlerteSemis />
+      <Link href="/aujourdhui" className="flex items-center justify-between gap-3 rounded-3xl bg-ink p-[18px] text-paper no-underline hover:text-paper">
+        <span className="flex flex-col gap-1">
+          <strong className="text-[15px]">Ma parcelle aujourd&apos;hui</strong>
+          <span className="text-sm text-[#C9D4CD]">Calendrier, vigilance, végétation NASA, carnet et rotation en un écran.</span>
+        </span>
+        <span aria-hidden="true" className="text-xl">→</span>
+      </Link>
       <Link href="/calendrier" className="flex items-center justify-between gap-3 rounded-3xl bg-white p-[18px] text-ink no-underline hover:text-ink">
         <span className="flex flex-col gap-1">
           <strong className="text-[15px]">Mon calendrier agricole</strong>
