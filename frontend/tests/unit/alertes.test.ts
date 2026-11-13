@@ -79,7 +79,7 @@ describe("intégration des alertes", () => {
       alertes: [{ type: "secheresse" as const, niveau: "eleve" as const, depuis: "2026-07-01", message: "Sécheresse : 15 jours sans pluie utile depuis le 1er juillet.", conseil: "Paillez le sol." }],
     };
     render(createElement(Tableau, { climat, reco, semis }));
-    expect(screen.getByText("Risque élevé")).toBeInTheDocument();
+    expect(screen.getByText("Vigilance élevée")).toBeInTheDocument();
     expect(screen.getByText(/15 jours sans pluie utile/)).toBeInTheDocument();
     expect(screen.getByText(/Paillez le sol/)).toBeInTheDocument();
   });

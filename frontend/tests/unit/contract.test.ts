@@ -24,9 +24,9 @@ describe("contrat de données — Korhogo", () => {
   it("couches, sources et lexique", () => {
     expect(CouchesSchema.parse(load("couches"))).toHaveLength(4);
     const s = SourcesSchema.parse(load("sources"));
-    expect(s.sources).toHaveLength(8);
+    expect(s.sources).toHaveLength(9);
     expect(s.approches).toHaveLength(4);
-    expect(LexiqueSchema.parse(load("lexique"))).toHaveLength(14);
+    expect(LexiqueSchema.parse(load("lexique"))).toHaveLength(20);
   });
 
   it("rejette un score hors de 1 à 5", () => {

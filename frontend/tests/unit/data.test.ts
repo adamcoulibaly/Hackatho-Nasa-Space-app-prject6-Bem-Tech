@@ -12,8 +12,8 @@ const withDir = async (setup: (dir: string) => void, fn: () => Promise<void>) =>
 };
 
 describe("data", () => {
-  it("getLexique : 14 termes", async () => {
-    expect(await getLexique()).toHaveLength(14);
+  it("getLexique : 20 termes", async () => {
+    expect(await getLexique()).toHaveLength(20);
   });
   it("fichier absent : DataError en français", async () => {
     await withDir(() => {}, async () => {

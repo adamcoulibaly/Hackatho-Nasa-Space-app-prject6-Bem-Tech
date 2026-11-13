@@ -217,10 +217,10 @@ export const CouchesSchema = z.array(CoucheSchema).min(1);
 export const SourcesSchema = z.object({
   etapes: z.array(z.object({ titre: z.string(), texte: z.string() })).min(1),
   sources: z
-    .array(z.object({ nom: z.string(), mesure: z.string(), finesse: z.string(), finesseClasse: z.enum(["fine", "moyenne", "grossiere"]), usage: z.string(), priorite: z.enum(["MVP", "Bonus"]) }))
+    .array(z.object({ nom: z.string(), mesure: z.string(), finesse: z.string(), finesseClasse: z.enum(["fine", "moyenne", "grossiere"]), usage: z.string(), priorite: z.enum(["Utilisé", "Prochaine étape"]) }))
     .min(1),
   approches: z
-    .array(z.object({ id: z.string(), nom: z.string(), role: z.string(), verdict: z.enum(["Retenu", "Testé", "Écarté"]), explicabilite: niveau, besoinDonnees: niveau, precision: niveau, description: z.string() }))
+    .array(z.object({ id: z.string(), nom: z.string(), role: z.string(), verdict: z.enum(["Retenu", "Testé", "Prévu", "Écarté"]), explicabilite: niveau, besoinDonnees: niveau, precision: niveau, description: z.string() }))
     .min(1),
   humainDecide: z.array(z.string()).min(1),
 });

@@ -16,7 +16,7 @@ export default async function MethodePage() {
           <h1 className="m-0 font-display text-[clamp(30px,3.4vw,46px)] font-bold leading-[1.05] tracking-[-0.04em]">
             Comment ForoSat raisonne, <span className="font-serif font-normal italic text-orange-dark">et où il peut se tromper.</span>
           </h1>
-          <p className="m-0 text-lg leading-relaxed text-muted">L'IA détecte les tendances dans les données. Des règles agronomiques transparentes font la recommandation. L'agriculteur et son conseiller décident.</p>
+          <p className="m-0 text-lg leading-relaxed text-muted">Des statistiques détectent les tendances dans les données NASA. Des règles agronomiques transparentes font la recommandation, et l'assistant IA l'explique en mots simples. L'agriculteur et son conseiller décident.</p>
         </div>
 
         <ol data-stagger className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5 p-0">
@@ -47,7 +47,7 @@ export default async function MethodePage() {
                   <th scope="col" className="p-3 font-semibold">Ce qu'elle mesure</th>
                   <th scope="col" className="p-3 font-semibold">Finesse</th>
                   <th scope="col" className="p-3 font-semibold">Usage dans ForoSat</th>
-                  <th scope="col" className="p-3 font-semibold">Priorité</th>
+                  <th scope="col" className="p-3 font-semibold">Statut</th>
                 </tr>
               </thead>
               <tbody data-stagger>

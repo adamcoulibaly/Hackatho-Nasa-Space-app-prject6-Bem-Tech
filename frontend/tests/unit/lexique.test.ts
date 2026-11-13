@@ -18,7 +18,7 @@ describe("filterLexique", () => {
     expect(filterLexique(termes, "zzz")).toEqual([]);
   });
   it("renvoie tous les termes pour une recherche vide ou faite d'espaces", () => {
-    expect(filterLexique(termes, "")).toHaveLength(14);
-    expect(filterLexique(termes, "   ")).toHaveLength(14);
+    expect(filterLexique(termes, "")).toHaveLength(20);
+    expect(filterLexique(termes, "   ")).toHaveLength(20);
   });
 });

@@ -8,6 +8,10 @@ import { Tableau } from "./Tableau";
 import { EtatCalcul } from "./EtatCalcul";
 import { useSemis } from "@/lib/useSemis";
 import { useAnomalie } from "@/lib/useAnomalie";
+import { useSaisons } from "@/lib/useSaisons";
+import { useDonneeRegion } from "@/lib/useDonneeRegion";
+import { ProjectionsSchema } from "@/lib/contract";
+import { risqueRegion } from "@/lib/moteur/risques";
 import { useEffect } from "react";
 import { envoyerParcelle } from "@/lib/modeApp";
 import { prochaineCulture } from "@/lib/whatsapp";
@@ -19,6 +23,10 @@ export function TableauVue({ initial, cultures }: { initial: Climat; cultures: C
   const etat = useRotations(initial, cultures, parcelle);
   const semis = useSemis(parcelle.region);
   const anomalie = useAnomalie(parcelle.centre);
+  // Même calcul que la carte des risques : le chiffre de l'accueil et celui de la carte sont toujours identiques.
+  const saisons = useSaisons(parcelle.region);
+  const projections = useDonneeRegion("projections", parcelle.region, ProjectionsSchema);
+  const risqueClimat = saisons ? risqueRegion(saisons, projections ?? null) : null;
   const reco = etat.statut === "pret" ? rotationConseillee(etat.rotations) : null;
   const culture = reco ? prochaineCulture(reco).culture : null;
   // L'app garde la région et la culture à semer pour l'alerte de semis.
@@ -28,7 +36,7 @@ export function TableauVue({ initial, cultures }: { initial: Climat; cultures: C
   if (etat.statut !== "pret") return <EtatCalcul etat={etat} region={parcelle.region} />;
   return (
     <>
-      <Tableau climat={etat.climat} reco={rotationConseillee(etat.rotations)} semis={semis} anomalie={anomalie} />
+      <Tableau climat={etat.climat} reco={rotationConseillee(etat.rotations)} semis={semis} anomalie={anomalie} risqueClimat={risqueClimat} />
       <AlerteSemis />
       <Link href="/calendrier" className="flex items-center justify-between gap-3 rounded-3xl bg-white p-[18px] text-ink no-underline hover:text-ink">
         <span className="flex flex-col gap-1">

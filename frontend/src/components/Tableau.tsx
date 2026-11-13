@@ -4,13 +4,16 @@ import { mesuresRecentes, saisonDuMoment } from "@/lib/saison";
 import type { EtatSemis } from "@/lib/moteur/etat-semis";
 import type { Alerte, Niveau } from "@/lib/moteur/alertes";
 import type { Anomalie } from "@/lib/satellite/anomalie";
+import type { RisqueRegion } from "@/lib/moteur/risques";
+
+const RISQUE_CLIMAT = { faible: "faible", moyen: "moyen", eleve: "élevé" } as const;
 
 export type Semis = { etat: EtatSemis; depuis?: string; message: string; dateDonnees: string; cle?: string; risque?: Niveau; alertes?: Alerte[] };
 
 const RISQUE: Record<Niveau, { texte: string; fond: string; encre: string }> = {
-  faible: { texte: "Risque faible", fond: "#D9F2E6", encre: "#00703C" },
-  moyen: { texte: "Risque moyen", fond: "#FDE7CC", encre: "#5C2E00" },
-  eleve: { texte: "Risque élevé", fond: "#FBD3C4", encre: "#7A1F00" },
+  faible: { texte: "Vigilance faible", fond: "#D9F2E6", encre: "#00703C" },
+  moyen: { texte: "Vigilance moyenne", fond: "#FDE7CC", encre: "#5C2E00" },
+  eleve: { texte: "Vigilance élevée", fond: "#FBD3C4", encre: "#7A1F00" },
 };
 
 /** Indice de risque du jour et alertes (sécheresse, fortes pluies), chacune avec son conseil pratique. */
@@ -97,7 +100,7 @@ function Frise({ climat, moisCourant }: { climat: Climat; moisCourant: number })
 }
 
 /** `semis` : état du jour (NASA POWER, /api/semis) ; sans lui, la saison est déduite des normales. */
-export function Tableau({ climat, reco, semis, anomalie }: { climat: Climat; reco: Rotation; semis?: Semis; anomalie?: Anomalie | null }) {
+export function Tableau({ climat, reco, semis, anomalie, risqueClimat }: { climat: Climat; reco: Rotation; semis?: Semis; anomalie?: Anomalie | null; risqueClimat?: RisqueRegion | null }) {
   const mois = new Date().getMonth() + 1;
   const s = saisonDuMoment(climat.saisons ?? [climat.saisonPluies], mois);
   const a = climat.actuel && mesuresRecentes(climat.actuel.dateFin) ? climat.actuel : undefined;
@@ -133,6 +136,16 @@ export function Tableau({ climat, reco, semis, anomalie }: { climat: Climat; rec
       </section>
 
       {semis && <Alertes semis={semis} anomalie={anomalie} />}
+
+      {risqueClimat && (
+        <Link href="/risques" className="flex items-center justify-between gap-3 rounded-[22px] bg-white p-4 text-ink no-underline hover:text-ink">
+          <span className="flex flex-col gap-1">
+            <strong className="text-[15px]">{`Risque climatique de votre région : ${RISQUE_CLIMAT[risqueClimat.niveau]}`}</strong>
+            <span className="text-sm text-muted">{`${Math.round(risqueClimat.actuel * 100)} % de saisons perdues entre 2005 et 2025. Voir la carte des risques`}</span>
+          </span>
+          <span aria-hidden="true" className="text-xl">→</span>
+        </Link>
+      )}
 
       {a && (
       <div data-stagger className="grid grid-cols-2 gap-2.5">

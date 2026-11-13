@@ -2,89 +2,97 @@
   "etapes": [
     {
       "titre": "Collecte",
-      "texte": "8 sources NASA sur la zone pilote, plus SoilGrids pour le sol."
+      "texte": "Données NASA pour les 33 régions et districts : NASA POWER (pluie, chaleur, humidité du sol, 2005–2025), MODIS (végétation), SMAP, GRACE et les projections NEX-GDDP-CMIP6."
     },
     {
-      "titre": "Grille commune",
-      "texte": "Tout ramené au mois et au même maillage, de 30 m à la zone."
+      "titre": "Mise à l'échelle",
+      "texte": "Climat au chef-lieu de chaque région ; végétation au point de votre parcelle quand vous la dessinez. Chaque écran dit la finesse de sa mesure."
     },
     {
-      "titre": "Détection par IA",
-      "texte": "Saison des pluies, sol nu, anomalies, années de stress."
+      "titre": "Détection par règles et statistiques",
+      "texte": "Saisons des pluies, date de semis, poches sèches, tendance de la pluie (test de Mann-Kendall), anomalies de végétation, alertes du jour."
     },
     {
       "titre": "Score des rotations",
-      "texte": "Règles agronomiques pondérées par les priorités du paysan."
+      "texte": "Règles agronomiques pondérées par vos priorités, rejouées sur 21 saisons réelles (bilan d'eau FAO-56) et projetées vers 2030, 2040 et 2050."
     },
     {
       "titre": "Explication",
-      "texte": "Le pourquoi, les lacunes et un niveau de confiance."
+      "texte": "Le pourquoi, les lacunes, un niveau de confiance ; l'assistant IA reformule en mots simples sans changer le score."
     }
   ],
   "sources": [
     {
-      "nom": "Landsat / HLS",
-      "mesure": "Végétation (NDVI)",
-      "finesse": "30 m",
-      "finesseClasse": "fine",
-      "usage": "Sol nu, état des cultures sur la parcelle",
-      "priorite": "MVP"
-    },
-    {
-      "nom": "SRTM",
-      "mesure": "Altitude, pente",
-      "finesse": "30 m",
-      "finesseClasse": "fine",
-      "usage": "Risque d'érosion",
-      "priorite": "MVP"
-    },
-    {
-      "nom": "ECOSTRESS",
-      "mesure": "Température de surface, évapotranspiration",
-      "finesse": "≈ 70 m",
-      "finesseClasse": "fine",
-      "usage": "Stress de chaleur et stress hydrique",
-      "priorite": "Bonus"
-    },
-    {
-      "nom": "MODIS",
-      "mesure": "Végétation, chaque jour",
-      "finesse": "250 m",
-      "finesseClasse": "moyenne",
-      "usage": "Combler les jours nuageux de Landsat",
-      "priorite": "MVP"
-    },
-    {
-      "nom": "GPM IMERG",
-      "mesure": "Pluie, pluies extrêmes",
-      "finesse": "≈ 10 km",
-      "finesseClasse": "moyenne",
-      "usage": "Saison des pluies, fortes averses",
-      "priorite": "MVP"
-    },
-    {
-      "nom": "SMAP",
-      "mesure": "Humidité du sol",
-      "finesse": "9–36 km",
-      "finesseClasse": "grossiere",
-      "usage": "Fenêtres de semis, sécheresse",
-      "priorite": "MVP"
-    },
-    {
       "nom": "NASA POWER",
-      "mesure": "Température, pluie, rayonnement",
+      "mesure": "Pluie, température, humidité du sol (journalier et mensuel)",
       "finesse": "≈ 50 km",
       "finesseClasse": "grossiere",
-      "usage": "Climat sur 40 ans, chaleur",
-      "priorite": "MVP"
+      "usage": "Climat 2005–2025, rejeu des saisons, état de semis et alertes du jour",
+      "priorite": "Utilisé"
+    },
+    {
+      "nom": "MODIS Terra (NDVI)",
+      "mesure": "Végétation, chaque mois",
+      "finesse": "≈ 1 km",
+      "finesseClasse": "moyenne",
+      "usage": "Végétation de la région, anomalie de la parcelle, comparaison avec la photo",
+      "priorite": "Utilisé"
+    },
+    {
+      "nom": "MODIS Terra (température de surface)",
+      "mesure": "Chaleur du sol, le jour",
+      "finesse": "≈ 1 km",
+      "finesseClasse": "moyenne",
+      "usage": "Couche « Chaleur du sol » de la carte",
+      "priorite": "Utilisé"
+    },
+    {
+      "nom": "SMAP L4",
+      "mesure": "Humidité du sol dans la zone des racines",
+      "finesse": "≈ 9 km",
+      "finesseClasse": "grossiere",
+      "usage": "Couche « Humidité du sol » de la carte",
+      "priorite": "Utilisé"
     },
     {
       "nom": "GRACE / GRACE-FO",
       "mesure": "Réserve d'eau totale",
       "finesse": "≈ 300 km",
       "finesseClasse": "grossiere",
-      "usage": "Tendance régionale de l'eau",
-      "priorite": "Bonus"
+      "usage": "Tendance régionale de l'eau stockée (2005–2022)",
+      "priorite": "Utilisé"
+    },
+    {
+      "nom": "NASA NEX-GDDP-CMIP6",
+      "mesure": "Pluie et températures simulées jusqu'en 2060",
+      "finesse": "≈ 25 km",
+      "finesseClasse": "grossiere",
+      "usage": "Projections 2030, 2040 et 2050, carte des risques",
+      "priorite": "Utilisé"
+    },
+    {
+      "nom": "Landsat / HLS",
+      "mesure": "Végétation fine (NDVI)",
+      "finesse": "30 m",
+      "finesseClasse": "fine",
+      "usage": "État des cultures à l'échelle du champ",
+      "priorite": "Prochaine étape"
+    },
+    {
+      "nom": "GPM IMERG",
+      "mesure": "Pluie, pluies extrêmes",
+      "finesse": "≈ 10 km",
+      "finesseClasse": "moyenne",
+      "usage": "Alertes de fortes pluies plus fines",
+      "priorite": "Prochaine étape"
+    },
+    {
+      "nom": "SRTM",
+      "mesure": "Altitude, pente",
+      "finesse": "30 m",
+      "finesseClasse": "fine",
+      "usage": "Risque d'érosion de la parcelle",
+      "priorite": "Prochaine étape"
     }
   ],
   "approches": [
@@ -106,17 +114,17 @@
       "explicabilite": 4,
       "besoinDonnees": 2,
       "precision": 3,
-      "description": "Anomalies par rapport à la normale, tendance sur 20 ans (test de Mann-Kendall), début et fin des pluies par cumul de pluie. Simple, robuste, explicable."
+      "description": "Comparaison à la normale et aux années passées : tendance de la pluie (Mann-Kendall), poches sèches, anomalies de végétation. C'est ce qui produit les alertes et la carte des risques."
     },
     {
       "id": "rf",
       "nom": "Forêt aléatoire",
       "role": "Détecter",
-      "verdict": "Testé",
+      "verdict": "Prévu",
       "explicabilite": 3,
       "besoinDonnees": 4,
       "precision": 4,
-      "description": "Classe chaque mois de chaque pixel en sol nu, culture en place ou végétation stressée, à partir du NDVI, de l'humidité et de la température. Plus précis, mais il faut des exemples étiquetés sur le terrain, encore rares."
+      "description": "Pourrait classer chaque pixel en sol nu, culture ou jachère. Pas encore testé : il faut d'abord des parcelles décrites sur le terrain pour l'entraîner."
     },
     {
       "id": "dl",

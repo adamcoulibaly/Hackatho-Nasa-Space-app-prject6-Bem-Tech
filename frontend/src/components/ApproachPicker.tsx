@@ -7,6 +7,7 @@ import { scoreSegments } from "@/lib/format";
 const TAG: Record<Sources["approches"][number]["verdict"], string> = {
   Retenu: "bg-[#D7F0E2] text-[#00502B]",
   Testé: "bg-[#FDE7CC] text-[#7A3D00]",
+  Prévu: "bg-[#E7ECE6] text-ink",
   Écarté: "bg-[#E7ECE6] text-muted",
 };
 

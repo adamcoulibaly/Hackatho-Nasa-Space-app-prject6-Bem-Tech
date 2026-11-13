@@ -1,7 +1,7 @@
 [
   {
     "terme": "NDVI",
-    "tag": "MODIS · Landsat",
+    "tag": "MODIS",
     "definition": "Un indice qui mesure, depuis l'espace, à quel point la végétation est verte et dense.",
     "pourquoi": "Il montre quand votre champ est couvert et quand le sol est nu."
   },
@@ -82,5 +82,41 @@
     "tag": "Méthode",
     "definition": "Le satellite voit de grandes zones chaque jour ; une mesure au sol est plus précise mais ponctuelle.",
     "pourquoi": "Les combiner donne le résultat le plus fiable."
+  },
+  {
+    "terme": "Rendement relatif",
+    "tag": "FAO-33",
+    "definition": "La part de la récolte possible obtenue malgré le manque d'eau, en pourcentage : 100 % si la plante a eu toute l'eau dont elle avait besoin.",
+    "pourquoi": "Il compare les saisons et les rotations sans inventer des kilos par hectare."
+  },
+  {
+    "terme": "Projection climatique",
+    "tag": "NEX-GDDP-CMIP6 · SSP",
+    "definition": "Ce que des modèles du climat simulent pour 2030, 2040 ou 2050, selon un scénario modéré (SSP2-4.5) ou pessimiste (SSP5-8.5).",
+    "pourquoi": "C'est une tendance possible, pas une prévision : elle aide à choisir des cultures qui tiendront."
+  },
+  {
+    "terme": "Rejeu des saisons",
+    "tag": "NASA POWER · FAO-56",
+    "definition": "On refait tourner votre rotation sur chaque saison réellement mesurée depuis 2005, jour par jour, avec le bilan d'eau de chaque culture.",
+    "pourquoi": "Il montre combien de saisons auraient été bonnes, difficiles ou perdues."
+  },
+  {
+    "terme": "Fenêtre de semis",
+    "tag": "Règle de Sivakumar",
+    "definition": "Le moment où les pluies sont installées : au moins 20 mm en 3 jours, sans 7 jours secs juste après.",
+    "pourquoi": "Semer trop tôt, sur une fausse pluie, fait mourir les semis."
+  },
+  {
+    "terme": "Poche sèche",
+    "tag": "NASA POWER",
+    "definition": "Une suite d'au moins 7 jours presque sans pluie (moins de 1 mm par jour) pendant la saison.",
+    "pourquoi": "Pendant la floraison, elle peut faire perdre une grande partie de la récolte."
+  },
+  {
+    "terme": "Vigilance",
+    "tag": "Alertes du jour",
+    "definition": "Le niveau des alertes de ces derniers jours dans votre région (sécheresse, fortes pluies, chaleur) : faible, moyenne ou élevée.",
+    "pourquoi": "À ne pas confondre avec le risque climatique de la carte, qui résume 20 ans de saisons."
   }
 ]

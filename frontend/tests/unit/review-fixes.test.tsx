@@ -72,7 +72,7 @@ describe("I-6 : le contrat accepte des données plus riches", () => {
   it("accepte un 15e terme de lexique", () => {
     const l = load("lexique");
     l.push({ ...l[0], terme: "Quinzième" });
-    expect(LexiqueSchema.parse(l)).toHaveLength(15);
+    expect(LexiqueSchema.parse(l)).toHaveLength(21);
   });
   it("accepte une série GRACE plus longue et la dessine en entier", () => {
     const c = { ...JSON.parse(fs.readFileSync(KORHOGO, "utf8")), grace: [...GRACE_TEST, { annee: 2026, ecart: -1 }] };

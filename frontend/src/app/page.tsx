@@ -11,18 +11,26 @@ const PROBLEMES = [
 const PUBLICS = [
   ["L'agriculteur", "Petit ou moyen producteur. Il reçoit une fiche simple sur WhatsApp ou imprimée : quoi semer, quand, et pourquoi."],
   ["Le conseiller agricole", "Il analyse les parcelles des agriculteurs qu'il accompagne, compare les rotations avec eux et leur envoie la fiche."],
-  ["La coopérative", "Elle suit l'ensemble des parcelles de ses membres et planifie les semences dont ils auront besoin."],
+  ["La coopérative", "Elle voit les risques de chaque région et partage les fiches de ses membres ; un espace pour suivre toutes leurs parcelles est en préparation."],
 ];
 const ETAPES = [
   ["01", "Je situe mon champ", "Sur la carte, j'indique ma parcelle, mes cultures actuelles et ce qui compte pour moi."],
-  ["02", "Les satellites parlent", "Vingt ans d'observations NASA sur ma zone, ramenées sur une même grille. L'IA y repère la saison des pluies, le sol nu et les années de stress."],
-  ["03", "Je compare 3 rotations", "Ma rotation actuelle face à deux alternatives, avec leurs bénéfices, leurs risques et leur niveau de confiance."],
+  ["02", "Les satellites parlent", "Vingt ans d'observations NASA sur ma région. Des règles et des statistiques y repèrent la saison des pluies, les poches sèches et les années de stress."],
+  ["03", "Je compare 3 rotations", "Ma rotation actuelle face à deux alternatives, rejouées sur 21 saisons réelles et projetées vers 2050, avec leurs bénéfices, leurs risques et leur niveau de confiance."],
 ];
 const EXISTANT = [
   ["Suivi de parcelles", "OneSoil, Climate FieldView", "Pensés pour de grandes exploitations mécanisées. Montrent l'état du champ, pas quoi semer ensuite."],
   ["Plateformes de données", "Digital Earth Africa, WaPOR", "Ouvertes et fiables, mais sans interface ni conseil pour l'agriculteur."],
   ["Conseil par téléphone", "iska, Darli AI", "Très bon canal, mais météo à court terme ou questions-réponses, sans analyse de la parcelle."],
   ["Bulletins agrométéo", "FAO, SODEXAM", "Adaptés au pays, mais régionaux, limités à trois cultures et non personnalisés."],
+];
+
+const OUTILS: [string, string, string][] = [
+  ["Simulateur", "/simulateur", "Les rotations comparées sur 3, 5 ou 10 ans, en année sèche ou très pluvieuse, avec la parcelle qui évolue."],
+  ["Calendrier agricole", "/calendrier", "Préparation, semis, entretien, floraison, récolte : les dates pour ma culture et ma saison."],
+  ["Alertes du jour", "/tableau", "Semis, sécheresse, fortes pluies et chaleur, avec un conseil ; en notification dans l'app."],
+  ["Carte des risques", "/risques", "Les 33 régions : saisons perdues depuis 2005 et estimation vers 2050."],
+  ["Carnet de suivi", "/suivi", "Ce que je vois dans mon champ, comparé à l'habitude de ma région."],
 ];
 
 export default function Home() {
@@ -101,6 +109,16 @@ export default function Home() {
               <li key={n} className="lift flex flex-col gap-2 rounded-3xl bg-white p-6"><span className="font-display text-sm font-bold text-orange-dark">{n}</span><h3 className="m-0 font-display text-lg font-bold">{t}</h3><p className="m-0 text-base leading-normal text-muted">{d}</p></li>
             ))}
           </ol>
+          <h3 className="m-0 mt-4 font-display text-xl font-bold">Et pendant toute la saison</h3>
+          <ul data-stagger className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3.5 p-0">
+            {OUTILS.map(([nom, href, d]) => (
+              <li key={nom} className="lift flex flex-col gap-1.5 rounded-3xl bg-white p-5">
+                <Link href={href} className="font-display text-lg font-bold no-underline">{`${nom} →`}</Link>
+                <p className="m-0 text-[15px] leading-normal text-muted">{d}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="m-0 text-[15px] text-muted">Les pages déjà consultées restent disponibles hors connexion, sur le site comme dans l&apos;app Android.</p>
           <div className="flex flex-wrap gap-3">
             <Link href="/bienvenue" className={`${CTA} bg-orange text-ink hover:text-ink`}>Commencer</Link>
             <Link href="/guide" className={`${CTA} border border-ink text-ink hover:text-ink`}>Guide d&apos;utilisation</Link>

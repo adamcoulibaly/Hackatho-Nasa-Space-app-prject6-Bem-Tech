@@ -17,8 +17,9 @@ const PICTO: Record<string, string> = {
 };
 
 /** Calendrier agricole : étapes datées pour une culture, la saison choisie et la date de semis (habituelle ou réelle). */
-export function CalendrierAgricole({ cultures, mesCultures, saisons, saisonsRegion, aujourdhui }: {
-  cultures: Culture[]; mesCultures: string[]; saisons: Saisons | null; saisonsRegion: Saison[]; aujourdhui: string;
+/** `semisDuJour` : date où les pluies se sont installées cette année (état de semis de l'accueil), si elle existe. */
+export function CalendrierAgricole({ cultures, mesCultures, saisons, saisonsRegion, aujourdhui, semisDuJour }: {
+  cultures: Culture[]; mesCultures: string[]; saisons: Saisons | null; saisonsRegion: Saison[]; aujourdhui: string; semisDuJour?: string;
 }) {
   const connues = mesCultures.filter((c) => cultures.some((x) => x.nom === c));
   const [culture, setCulture] = useState(connues[0] ?? cultures[0].nom);
@@ -27,7 +28,10 @@ export function CalendrierAgricole({ cultures, mesCultures, saisons, saisonsRegi
   const saison = saisonsRegion[iSaison] ?? saisonsRegion[0];
   const habituel = semisHabituel(saisons, culture, annee, saison);
   const [semisReel, setSemisReel] = useState<string | null>(null);
-  const semis = semisReel ?? habituel.date;
+  // La date où les pluies se sont installées cette année (accueil) prime sur l'habitude, si elle tombe dans la saison choisie.
+  const moisDuJour = semisDuJour ? Number(semisDuJour.slice(5, 7)) : 0;
+  const pluiesInstallees = semisDuJour && semisDuJour.startsWith(String(annee)) && moisDuJour >= saison.debut - 1 && moisDuJour <= saison.fin ? semisDuJour : null;
+  const semis = semisReel ?? pluiesInstallees ?? habituel.date;
   const fiche = cultures.find((c) => c.nom === culture)!;
   const etapes = useMemo(() => calendrierCulture(fiche, semis), [fiche, semis]);
   const enCours = etapeDuJour(etapes, aujourdhui);
@@ -58,7 +62,9 @@ export function CalendrierAgricole({ cultures, mesCultures, saisons, saisonsRegi
         <p className="m-0 text-sm text-muted">
           {semisReel
             ? "Date de semis que vous avez indiquée : tout le calendrier s'y adapte."
-            : habituel.source === "mesure"
+            : pluiesInstallees
+              ? `Cette année, les pluies se sont installées le ${date(pluiesInstallees)} (NASA POWER, comme sur l'accueil) : le calendrier part de cette date. Changez-la si vous avez semé un autre jour.`
+              : habituel.source === "mesure"
               ? `Date de semis habituel observé dans votre région (médiane 2005–2025, NASA POWER) : ${date(habituel.date)}. Changez-la si vous avez semé à une autre date.`
               : `Date estimée en début de saison (${date(habituel.date)}) : indiquez votre vraie date de semis.`}
         </p>
