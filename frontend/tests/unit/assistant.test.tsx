@@ -281,3 +281,31 @@ describe("réponse de secours ForoSat (aucun modèle ne répond)", () => {
     vi.unstubAllGlobals();
   });
 });
+
+describe("second fournisseur (Groq) quand OpenRouter est à court", () => {
+  it("quota OpenRouter épuisé : Groq répond, sans attendre ; puis OpenRouter est sauté jusqu'au lendemain", async () => {
+    const { oublierQuota } = await import("@/lib/ia/assistant");
+    oublierQuota();
+    const urls: string[] = [];
+    const f = (async (u: string, init: RequestInit) => {
+      urls.push(u);
+      if (u.startsWith("https://openrouter.test")) return new Response(JSON.stringify({ error: { message: "free-models-per-day" } }), { status: 429 });
+      expect(JSON.parse(String(init.body)).reasoning).toBeUndefined();
+      return reponseOpenAI("Réponse de Groq.");
+    }) as typeof fetch;
+    const config = { cle: "k", baseUrl: "https://openrouter.test/v1", modeles: ["m"], secours: { cle: "gsk", baseUrl: "https://groq.test/openai/v1", modeles: ["llama"] } };
+    const r1 = await repondre({ id: "B", params: PARAMS }, { rotation: B, climat, config, fetch: f });
+    expect(r1).toEqual({ ok: true, texte: "Réponse de Groq." });
+    urls.length = 0;
+    await repondre({ id: "B", params: PARAMS }, { rotation: B, climat, config, fetch: f });
+    expect(urls.every((u) => u.startsWith("https://groq.test"))).toBe(true);
+    oublierQuota();
+  });
+
+  it("la clé Groq (STT_API_KEY ou GROQ_API_KEY) active le second fournisseur", () => {
+    const c = configDepuisEnv({ LLM_API_KEY: "k", STT_API_KEY: "gsk" });
+    expect(c.secours).toMatchObject({ cle: "gsk", baseUrl: "https://api.groq.com/openai/v1" });
+    expect(c.secours!.modeles.length).toBeGreaterThan(0);
+    expect(configDepuisEnv({ LLM_API_KEY: "k" }).secours).toBeUndefined();
+  });
+});

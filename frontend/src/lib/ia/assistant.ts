@@ -8,7 +8,20 @@ import { reponseSecours } from "./secours";
 
 /** Fournisseur compatible OpenAI (OpenRouter par défaut, Groq, etc.). La clé reste côté serveur. */
 /** Modèles essayés dans l'ordre : le suivant prend le relais si le précédent est saturé ou en erreur. */
-export type ConfigIA = { cle?: string; baseUrl: string; modeles: string[] };
+export type ConfigIA = { cle?: string; baseUrl: string; modeles: string[]; secours?: { cle: string; baseUrl: string; modeles: string[] } };
+
+/** Modèles gratuits de Groq (rapides, quotas larges), essayés si OpenRouter ne répond pas. Un nom retiré échoue vite. */
+export const MODELES_GROQ = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "openai/gpt-oss-20b", "qwen/qwen3-32b"];
+
+/** Quota quotidien OpenRouter épuisé jusqu'à cette date (minuit UTC) : on passe directement au second fournisseur. */
+let quotaEpuiseJusqua = 0;
+export function oublierQuota() {
+  quotaEpuiseJusqua = 0;
+}
+const minuitUtc = () => {
+  const d = new Date();
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1);
+};
 
 /**
  * Modèles gratuits légers et peu sollicités sur OpenRouter, essayés en relais (voir cascade.ts) :
@@ -21,7 +34,6 @@ export const MODELES_PAR_DEFAUT = [
   "google/gemma-4-26b-a4b-it:free",
   "baidu/ernie-5.5-flash-preview:free",
   "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-  "thinkingmachines/inkling-2-small:free",
   "google/gemma-4-31b-it:free",
   "liquid/lfm-3-1.7b:free",
   "nvidia/nemotron-3.5-super-vl:free",
@@ -33,6 +45,10 @@ export function configDepuisEnv(env: Record<string, string | undefined>): Config
     cle: env.LLM_API_KEY || undefined,
     baseUrl: (env.LLM_BASE_URL || "https://openrouter.ai/api/v1").replace(/\/+$/, ""),
     modeles: liste.length ? liste : MODELES_PAR_DEFAUT,
+    // La clé Groq (déjà utilisée pour la dictée) sert aussi de second fournisseur pour l'assistant.
+    ...((env.GROQ_API_KEY || env.STT_API_KEY)
+      ? { secours: { cle: (env.GROQ_API_KEY || env.STT_API_KEY)!, baseUrl: "https://api.groq.com/openai/v1", modeles: (env.GROQ_MODEL ?? "").split(",").map((m) => m.trim()).filter(Boolean).length ? (env.GROQ_MODEL ?? "").split(",").map((m) => m.trim()).filter(Boolean) : MODELES_GROQ } }
+      : {}),
   };
 }
 
@@ -113,22 +129,46 @@ export async function repondre(
   const { config } = deps;
   // Jamais d'erreur à l'écran : sans clé ou si aucun modèle ne répond, ForoSat répond avec ses propres données.
   const secours = (): Reponse => ({ ok: true, texte: reponseSecours(deps.rotation, deps.autres ?? [], demande.question), secours: true });
-  if (!config.cle) return secours();
   const messages = construireMessages(deps.rotation, deps.climat, demande.question, demande.historique ?? [], demande.voix ?? false, deps.autres ?? []);
-  const r = await enCascade({
-    famille: "assistant",
-    modeles: config.modeles,
-    url: `${config.baseUrl}/chat/completions`,
-    cle: config.cle,
-    fetch: deps.fetch,
-    // Les modèles qui raisonnent consomment des jetons avant de répondre : raisonnement court, non renvoyé,
-    // et une marge suffisante pour la réponse.
-    corps: (model) => ({ model, messages, temperature: 0.3, max_tokens: 1500, reasoning: { effort: "low", exclude: true } }),
-    relanceMs: 4000,
-    totalMs: 22_000,
-  });
-  if (r.ok) return { ok: true, texte: r.texte.trim() };
-  console.warn(`[ia] aucun modèle n'a répondu (${r.sature ? "saturés" : "indisponibles"}) : réponse de secours ForoSat`);
+
+  // 1. OpenRouter (Nemotron et autres modèles gratuits), sauf si son quota du jour est déjà épuisé.
+  if (config.cle && Date.now() >= quotaEpuiseJusqua) {
+    const r = await enCascade({
+      famille: "assistant",
+      modeles: config.modeles,
+      url: `${config.baseUrl}/chat/completions`,
+      cle: config.cle,
+      fetch: deps.fetch,
+      // Les modèles qui raisonnent consomment des jetons avant de répondre : raisonnement court, non renvoyé,
+      // et une marge suffisante pour la réponse.
+      corps: (model) => ({ model, messages, temperature: 0.3, max_tokens: 1500, reasoning: { effort: "low", exclude: true } }),
+      relanceMs: 4000,
+      totalMs: config.secours ? 15_000 : 22_000,
+    });
+    if (r.ok) return { ok: true, texte: r.texte.trim() };
+    if (r.quotaJour) {
+      quotaEpuiseJusqua = minuitUtc();
+      console.warn("[ia] quota quotidien OpenRouter épuisé : second fournisseur jusqu'à minuit UTC");
+    }
+  }
+
+  // 2. Groq, second fournisseur (rapide, quotas plus larges).
+  if (config.secours) {
+    const g = await enCascade({
+      famille: "assistant-groq",
+      modeles: config.secours.modeles,
+      url: `${config.secours.baseUrl}/chat/completions`,
+      cle: config.secours.cle,
+      fetch: deps.fetch,
+      corps: (model) => ({ model, messages, temperature: 0.3, max_tokens: 900 }),
+      relanceMs: 3000,
+      totalMs: 12_000,
+    });
+    if (g.ok) return { ok: true, texte: g.texte.trim() };
+  }
+
+  // 3. Aucun modèle : ForoSat répond avec ses propres données.
+  console.warn("[ia] aucun modèle n'a répondu : réponse de secours ForoSat");
   return secours();
 }
 

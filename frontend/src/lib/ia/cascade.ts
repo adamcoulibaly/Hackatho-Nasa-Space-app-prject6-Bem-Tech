@@ -6,7 +6,8 @@
  * Le dernier modèle qui a répondu passe en premier la fois suivante (mémoire de l'instance serveur).
  */
 /** `credit` : le compte OpenRouter n'a pas le solde demandé (HTTP 402, ex. 0,50 $ minimum pour l'audio). */
-export type Essai = { ok: true; texte: string; modele: string } | { ok: false; sature: boolean; credit: boolean };
+/** `quotaJour` : le quota quotidien des modèles gratuits du compte est épuisé (tous les modèles gratuits refusent). */
+export type Essai = { ok: true; texte: string; modele: string } | { ok: false; sature: boolean; credit: boolean; quotaJour?: boolean };
 
 const prefere = new Map<string, string>();
 const EN_PARALLELE = 3;
@@ -28,7 +29,7 @@ export async function enCascade(o: {
   const file = favori && o.modeles.includes(favori) ? [favori, ...o.modeles.filter((m) => m !== favori)] : [...o.modeles];
   if (!file.length) return { ok: false, sature: false, credit: false };
 
-  const essayer = async (modele: string, signal: AbortSignal): Promise<string | null | "sature" | "credit"> => {
+  const essayer = async (modele: string, signal: AbortSignal): Promise<string | null | "sature" | "credit" | "quotaJour"> => {
     try {
       const r = await o.fetch(o.url, {
         method: "POST",
@@ -39,6 +40,7 @@ export async function enCascade(o: {
       if (!r.ok) {
         const extrait = (await r.text().catch(() => "")).slice(0, 300);
         console.warn(`[ia] ${modele} : HTTP ${r.status} ${extrait}`);
+        if (r.status === 429 && /free-models-per-day/.test(extrait)) return "quotaJour";
         return r.status === 429 ? "sature" : r.status === 402 ? "credit" : null;
       }
       const json = (await r.json()) as { choices?: { message?: { content?: string }; finish_reason?: string }[] };
@@ -76,6 +78,8 @@ export async function enCascade(o: {
         enVol--;
         controles.delete(c);
         if (fini) return;
+        // Quota quotidien du compte épuisé : tous les modèles gratuits refuseront, inutile de les essayer.
+        if (t === "quotaJour") return terminer({ ok: false, sature: true, credit, quotaJour: true });
         if (t === "sature") sature = true;
         else if (t === "credit") credit = true;
         else if (t !== null) {

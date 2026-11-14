@@ -63,3 +63,18 @@ describe("modèles par défaut", () => {
     expect(MODELES_PAR_DEFAUT.every((m) => m.endsWith(":free"))).toBe(true);
   });
 });
+
+describe("quota quotidien des modèles gratuits", () => {
+  it("un refus « free-models-per-day » arrête tout de suite la cascade (les autres modèles gratuits partagent ce quota)", async () => {
+    const appels: string[] = [];
+    const f = vi.fn(async (_u: string, init: RequestInit) => {
+      appels.push(JSON.parse(String(init.body)).model);
+      return new Response(JSON.stringify({ error: { message: "Rate limit exceeded: free-models-per-day." } }), { status: 429 });
+    });
+    const debut = Date.now();
+    const r = await enCascade({ ...base, famille: "q1", modeles: ["a", "b", "c", "d"], fetch: f as typeof fetch, relanceMs: 5000, totalMs: 9000 });
+    expect(r).toMatchObject({ ok: false, quotaJour: true });
+    expect(appels).toEqual(["a"]);
+    expect(Date.now() - debut).toBeLessThan(1000);
+  });
+});
