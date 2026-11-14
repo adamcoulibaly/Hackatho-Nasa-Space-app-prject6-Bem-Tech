@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { LogoAnime } from "@/components/LogoAnime";
+import { EcranAccueil } from "@/components/EcranAccueil";
 
 const CTA = "inline-flex h-14 items-center rounded-full px-6 text-[17px] font-bold no-underline";
 
@@ -60,11 +61,12 @@ const ESPACES: { titre: string; sous: string; outils: [string, string, string][]
 export default function Home() {
   return (
     <>
+      <EcranAccueil />
       <SiteHeader />
       <main>
-        <section data-stagger className="relative mx-auto flex max-w-[1360px] flex-col items-start gap-6 px-6 pb-16 pt-14">
-          <div aria-hidden="true" className="pointer-events-none absolute right-10 top-12 hidden rounded-full bg-ink p-8 shadow-[0_30px_80px_rgba(7,18,13,0.25)] xl:block">
-            <LogoAnime size={220} />
+        <section data-stagger className="relative mx-auto flex min-h-[calc(100svh-162px)] max-w-[1360px] md:min-h-[calc(100svh-68px)] flex-col items-start justify-center gap-6 px-6 py-14">
+          <div aria-hidden="true" className="pointer-events-none absolute right-10 top-1/2 hidden -translate-y-1/2 rounded-full bg-ink p-10 shadow-[0_30px_80px_rgba(7,18,13,0.25)] xl:block">
+            <LogoAnime size={280} />
           </div>
           <span className="rounded-full border border-line px-3.5 py-2 text-sm text-muted">NASA Space Apps 2026 · Défi 6</span>
           <h1 className="m-0 max-w-4xl font-display text-[clamp(40px,6vw,84px)] font-bold leading-none tracking-[-0.05em]">
