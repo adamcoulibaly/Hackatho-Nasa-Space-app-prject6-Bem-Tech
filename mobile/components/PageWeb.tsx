@@ -10,6 +10,7 @@ import { demanderChemin, estCheminInterne, estOnglet, inscrirePage, prendreChemi
 import { activer, desactiver, ecrireReglage, lireReglage, verifier } from "@/lib/tacheSemis";
 import { prendrePhoto } from "@/lib/photo";
 import { texteALire } from "@/lib/alerte";
+import { dicter } from "@/lib/dictee";
 
 type Message =
   | { type: "position" }
@@ -18,7 +19,8 @@ type Message =
   | { type: "parcelle"; region: unknown; culture: unknown }
   | { type: "alerte"; action: unknown }
   | { type: "photo" }
-  | { type: "lire"; texte: unknown };
+  | { type: "lire"; texte: unknown }
+  | { type: "dicter" };
 
 /**
  * Propriétés de WebView utilisées ici. Les types fournis par react-native-webview 14.0.1 se réduisent à `never`
@@ -121,6 +123,10 @@ export function PageWeb({ onglet, chemin }: { onglet: Onglet; chemin: string }) 
           Speech.stop();
           Speech.speak(texte, { language: "fr-FR" });
         }
+      } else if (m.type === "dicter") {
+        // Dictée avec la reconnaissance vocale du téléphone : seul le texte reconnu revient à la page.
+        Speech.stop();
+        repondre(await dicter().catch(() => ({ type: "dictee" as const, erreur: "indisponible" as const })));
       } else if (m.type === "photo") {
         repondre(await prendrePhoto().catch(() => ({ type: "photo" as const, erreur: "annule" as const })));
       } else if (m.type === "ouvrir" && estOnglet(m.onglet) && estCheminInterne(m.chemin)) {

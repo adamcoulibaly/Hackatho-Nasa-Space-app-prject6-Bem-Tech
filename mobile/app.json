@@ -55,7 +55,7 @@
         {
           "cameraPermission": "ForoSat utilise l'appareil photo pour comparer votre champ à ce que voit le satellite de la NASA. La photo n'est pas enregistrée.",
           "photosPermission": false,
-          "microphonePermission": false
+          "microphonePermission": "ForoSat utilise le micro pour dicter votre question à l'assistant. La voix n'est pas enregistrée."
         }
       ],
       [
@@ -64,6 +64,13 @@
           "android": {
             "extraProguardRules": "# WorkManager/Room (expo-background-task, expo-notifications) : constructeurs créés par réflexion au démarrage.\n# Sans eux, R8 les supprime et l'app plante au lancement (expo/expo#52173).\n-keep class * extends androidx.room.RoomDatabase { <init>(); }\n-keep class * extends androidx.work.InputMerger { <init>(); }\n"
           }
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "ForoSat utilise le micro pour dicter votre question à l'assistant. La voix n'est pas enregistrée.",
+          "speechRecognitionPermission": "ForoSat transforme votre voix en texte pour poser votre question à l'assistant."
         }
       ]
     ],

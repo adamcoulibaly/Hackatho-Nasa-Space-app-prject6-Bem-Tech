@@ -12,7 +12,8 @@ export type MessageVersNatif =
   | { type: "parcelle"; region: string; culture: string | null }
   | { type: "alerte"; action: "activer" | "desactiver" | "tester" }
   | { type: "photo" }
-  | { type: "lire"; texte: string };
+  | { type: "lire"; texte: string }
+  | { type: "dicter" };
 export type MessageDuNatif =
   | { type: "position"; lat: number; lon: number }
   | { type: "position"; erreur: "refus" | "indisponible" }
@@ -20,7 +21,12 @@ export type MessageDuNatif =
   | { type: "sync" }
   | { type: "alerte"; etat: EtatAlerte }
   | { type: "photo"; image: string }
-  | { type: "photo"; erreur: "refus" | "annule" };
+  | { type: "photo"; erreur: "refus" | "annule" }
+  | { type: "dictee"; texte: string }
+  | { type: "dictee"; erreur: ErreurDictee };
+
+export type ErreurDictee = "refus" | "rien" | "indisponible";
+const ERREURS_DICTEE: ErreurDictee[] = ["refus", "rien", "indisponible"];
 
 export type EtatAlerte = "active" | "inactive" | "refus";
 const ETATS_ALERTE: EtatAlerte[] = ["active", "inactive", "refus"];
@@ -87,6 +93,11 @@ export function ecouterNatif(rappel: (m: MessageDuNatif) => void): () => void {
         if (typeof image === "string" && image.startsWith("data:image/") && image.length <= 4_000_000) return rappel({ type: "photo", image });
         if (erreur === "refus" || erreur === "annule") return rappel({ type: "photo", erreur });
         return;
+      }
+      if (m.type === "dictee") {
+        const { texte, erreur } = m as { texte?: unknown; erreur?: unknown };
+        if (typeof texte === "string" && texte.trim()) return rappel({ type: "dictee", texte: texte.trim().slice(0, 300) });
+        return ERREURS_DICTEE.includes(erreur as ErreurDictee) ? rappel({ type: "dictee", erreur: erreur as ErreurDictee }) : undefined;
       }
       if (m.type === "alerte") {
         const etat = (m as { etat?: unknown }).etat;
