@@ -10,6 +10,43 @@ import { enCascade } from "./cascade";
 /** Nemotron 3 Nano Omni (NVIDIA, gratuit, comprend l'audio) d'abord ; deux modèles audio légers et peu chers en secours. */
 export const MODELES_AUDIO_PAR_DEFAUT = ["nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "google/gemini-3.1-flash-lite", "openai/gpt-audio-mini"];
 
+/** Transcription dédiée, compatible OpenAI (/audio/transcriptions) : Whisper sur Groq par défaut, gratuit avec une clé. */
+export type ConfigStt = { cle: string; baseUrl: string; modele: string };
+
+export function configStt(env: Record<string, string | undefined>): ConfigStt | null {
+  const cle = env.STT_API_KEY || env.GROQ_API_KEY;
+  if (!cle) return null;
+  return {
+    cle,
+    baseUrl: (env.STT_BASE_URL || "https://api.groq.com/openai/v1").replace(/\/+$/, ""),
+    modele: env.STT_MODEL || "whisper-large-v3-turbo",
+  };
+}
+
+async function whisper(audio: string, stt: ConfigStt, f: typeof fetch): Promise<string | null> {
+  try {
+    const octets = Uint8Array.from(atob(audio), (c) => c.charCodeAt(0));
+    const form = new FormData();
+    form.append("file", new File([octets], "question.wav", { type: "audio/wav" }));
+    form.append("model", stt.modele);
+    form.append("language", "fr");
+    form.append("response_format", "json");
+    form.append("temperature", "0");
+    // Indice de vocabulaire : Whisper reconnaît mieux les mots attendus.
+    form.append("prompt", "Question d'un agriculteur ivoirien : semis, maïs, coton, igname, manioc, arachide, riz, sorgho, niébé, pluie, rotation.");
+    const r = await f(`${stt.baseUrl}/audio/transcriptions`, { method: "POST", headers: { Authorization: `Bearer ${stt.cle}` }, body: form, signal: AbortSignal.timeout(20_000) });
+    if (!r.ok) {
+      console.warn(`[stt] ${stt.modele} : HTTP ${r.status} ${(await r.text().catch(() => "")).slice(0, 200)}`);
+      return null;
+    }
+    const j = (await r.json()) as { text?: string };
+    return typeof j.text === "string" ? j.text.trim().slice(0, 300) : null;
+  } catch (e) {
+    console.warn(`[stt] ${e instanceof Error ? e.message : "erreur"}`);
+    return null;
+  }
+}
+
 export function modelesAudio(env: Record<string, string | undefined>): string[] {
   const liste = (env.LLM_AUDIO_MODEL ?? "").split(",").map((m) => m.trim()).filter(Boolean);
   return liste.length ? liste : MODELES_AUDIO_PAR_DEFAUT;
@@ -43,7 +80,8 @@ export function oublierDisponibilite() {
   disponibilite = null;
 }
 
-export async function dicteeDisponible(config: ConfigIA, f: typeof fetch, maintenant = Date.now()): Promise<boolean> {
+export async function dicteeDisponible(config: ConfigIA, f: typeof fetch, maintenant = Date.now(), stt: ConfigStt | null = null): Promise<boolean> {
+  if (stt) return true;
   if (!config.cle) return false;
   if (disponibilite && disponibilite.jusqua > maintenant) return disponibilite.valeur;
   let valeur = true;
@@ -61,8 +99,12 @@ export async function dicteeDisponible(config: ConfigIA, f: typeof fetch, mainte
   return valeur;
 }
 
-export async function transcrire(audio: string, deps: { config: ConfigIA; modeles: string[]; fetch: typeof fetch }): Promise<Transcription> {
-  if (!deps.config.cle) return { ok: false, statut: 503, erreur: "La dictée n'est pas encore configurée." };
+export async function transcrire(audio: string, deps: { config: ConfigIA; modeles: string[]; fetch: typeof fetch; stt?: ConfigStt | null }): Promise<Transcription> {
+  if (deps.stt) {
+    const t = await whisper(audio, deps.stt, deps.fetch);
+    if (t !== null) return { ok: true, texte: nettoyer(t) ?? "" };
+  }
+  if (!deps.config.cle || (deps.stt && disponibilite?.valeur === false)) return { ok: false, statut: deps.stt ? 502 : 503, erreur: deps.stt ? "La dictée ne répond pas pour le moment." : "La dictée n'est pas encore configurée." };
   const r = await enCascade({
     famille: "dictee",
     modeles: deps.modeles,

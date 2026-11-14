@@ -71,3 +71,46 @@ describe("dictée disponible seulement si le compte OpenRouter le permet", () =>
     expect(await dicteeDisponible(cfg, credits(10, 0))).toBe(false);
   });
 });
+
+describe("transcription gratuite par Whisper (Groq)", () => {
+  const audio = enBase64(encoderWav([new Float32Array(1600)], 16000));
+  const cfg = { cle: "k", baseUrl: "https://ex.test/v1", modeles: [] };
+
+  it("avec une clé de transcription : envoie le WAV à /audio/transcriptions en français et renvoie le texte", async () => {
+    const { transcrire, configStt, oublierDisponibilite } = await import("@/lib/ia/transcription");
+    oublierDisponibilite();
+    const stt = configStt({ STT_API_KEY: "gsk_test" });
+    expect(stt).toEqual({ cle: "gsk_test", baseUrl: "https://api.groq.com/openai/v1", modele: "whisper-large-v3-turbo" });
+    let url = "";
+    let form: FormData | null = null;
+    const f = vi.fn(async (u: string, init: RequestInit) => {
+      url = u;
+      form = init.body as FormData;
+      return new Response(JSON.stringify({ text: " Quand semer le maïs ? " }));
+    });
+    const r = await transcrire(audio, { config: cfg, modeles: ["m"], fetch: f as typeof fetch, stt });
+    expect(r).toEqual({ ok: true, texte: "Quand semer le maïs ?" });
+    expect(url).toBe("https://api.groq.com/openai/v1/audio/transcriptions");
+    expect(form!.get("model")).toBe("whisper-large-v3-turbo");
+    expect(form!.get("language")).toBe("fr");
+    expect((form!.get("file") as File).type).toBe("audio/wav");
+  });
+
+  it("une clé de transcription suffit pour rendre la dictée disponible, sans crédit OpenRouter", async () => {
+    const { dicteeDisponible, configStt, oublierDisponibilite } = await import("@/lib/ia/transcription");
+    oublierDisponibilite();
+    const f = vi.fn();
+    expect(await dicteeDisponible({ ...cfg, cle: undefined }, f as unknown as typeof fetch, Date.now(), configStt({ STT_API_KEY: "gsk" }))).toBe(true);
+    expect(f).not.toHaveBeenCalled();
+    expect(configStt({})).toBeNull();
+  });
+
+  it("Whisper en panne : OpenRouter prend le relais s'il le peut", async () => {
+    const { transcrire, configStt } = await import("@/lib/ia/transcription");
+    const f = vi.fn(async (u: string) =>
+      u.endsWith("/audio/transcriptions") ? new Response("{}", { status: 500 }) : new Response(JSON.stringify({ choices: [{ message: { content: "Et le coton ?" } }] })),
+    );
+    const r = await transcrire(audio, { config: cfg, modeles: ["m"], fetch: f as typeof fetch, stt: configStt({ STT_API_KEY: "gsk" }) });
+    expect(r).toEqual({ ok: true, texte: "Et le coton ?" });
+  });
+});

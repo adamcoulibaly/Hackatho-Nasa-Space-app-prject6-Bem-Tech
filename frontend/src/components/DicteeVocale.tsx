@@ -11,7 +11,7 @@ const MESSAGES = {
   refus: "Autorisez le micro pour ForoSat (réglages du téléphone ou du navigateur), puis réessayez.",
   micro: "Aucun micro trouvé sur cet appareil. Vous pouvez écrire votre question.",
   rien: "Je n'ai rien entendu. Touchez « Dicter », parlez, puis touchez « Terminer ».",
-  reseau: "La dictée a besoin d'une bonne connexion internet. Vous pouvez écrire votre question.",
+  reseau: "La dictée vocale ne marche pas dans ce navigateur. Ouvrez ForoSat dans Google Chrome ou dans l'app, ou écrivez votre question.",
   ancienne: "Mettez à jour l'application ForoSat pour dicter. Vous pouvez écrire votre question.",
   autre: "La dictée n'a pas marché. Vous pouvez écrire votre question ou réessayer.",
 } as const;

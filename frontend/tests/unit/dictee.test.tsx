@@ -125,3 +125,21 @@ describe("DicteeVocale : choix automatique du moyen de transcription", () => {
     expect(container).toBeEmptyDOMElement();
   });
 });
+
+describe("DicteeVocale : navigateur sans service de reconnaissance", () => {
+  it("erreur « network » du navigateur (Samsung Internet, Edge, Brave…) : le message dit d'utiliser Chrome, pas « pas d'internet »", async () => {
+    let instance: any;
+    (window as any).webkitSpeechRecognition = class {
+      lang = ""; continuous = false; interimResults = true; onresult: any; onend: any; onerror: any;
+      constructor() { instance = this; }
+      start() {}
+      stop() { this.onend?.(); }
+    };
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify({ disponible: false })));
+    render(<DicteeVocale onTexte={vi.fn()} />);
+    await userEvent.setup().click(await screen.findByRole("button", { name: "Poser la question à voix haute" }));
+    act(() => { instance.onerror({ error: "network" }); instance.onend(); });
+    await vi.waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(/Chrome/));
+    expect(screen.getByRole("status")).not.toHaveTextContent(/connexion internet/);
+  });
+});
