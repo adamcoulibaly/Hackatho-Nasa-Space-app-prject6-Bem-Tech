@@ -108,7 +108,7 @@ export function DicteeVocale({ onTexte, moteur }: { onTexte: (texte: string) => 
         disabled={etat === "ecriture"}
         aria-pressed={enEcoute}
         aria-label={enEcoute ? "Terminer la dictée" : "Poser la question à voix haute"}
-        className={`inline-flex h-12 items-center gap-2 rounded-full px-4 text-base font-bold disabled:opacity-60 ${enEcoute ? "bg-orange text-ink" : "border border-ink"}`}
+        className={`inline-flex h-12 items-center gap-2 rounded-full px-4 text-base font-bold disabled:opacity-60 ${enEcoute ? "micro-ecoute bg-orange text-ink" : "border border-ink"}`}
       >
         {enEcoute ? (
           <span aria-hidden="true" className="h-3 w-3 animate-pulse rounded-full bg-[#C2410C]" />

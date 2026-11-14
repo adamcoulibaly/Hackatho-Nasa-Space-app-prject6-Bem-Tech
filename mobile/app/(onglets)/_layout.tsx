@@ -1,6 +1,7 @@
 import { SymbolView, type SymbolViewProps } from "expo-symbols";
 import { Tabs, router } from "expo-router";
 import * as Notifications from "expo-notifications";
+import * as Haptics from "expo-haptics";
 import { useEffect } from "react";
 import { demanderChemin, estCheminInterne, estOnglet } from "@/lib/onglets";
 import type { ColorValue } from "react-native";
@@ -23,8 +24,12 @@ export default function Onglets() {
   }, [reponse]);
   return (
     <Tabs
+      // Petite vibration au toucher d'un onglet (retour tactile).
+      screenListeners={{ tabPress: () => void Haptics.selectionAsync().catch(() => undefined) }}
       screenOptions={{
         headerShown: false,
+        // Changement d'onglet en glissé-fondu, comme une page qui se décale.
+        animation: "shift",
         tabBarActiveTintColor: COULEURS.orange,
         tabBarInactiveTintColor: "#C9D4CD",
         tabBarStyle: { backgroundColor: COULEURS.encre, borderTopColor: COULEURS.ligne },

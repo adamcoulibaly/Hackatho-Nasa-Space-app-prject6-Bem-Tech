@@ -1,4 +1,5 @@
-export function Logo({ size = 34 }: { size?: number }) {
+/** `anime` : le satellite tourne lentement sur son orbite (écrans d'accueil). */
+export function Logo({ size = 34, anime = false }: { size?: number; anime?: boolean }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
       <defs>
@@ -11,7 +12,15 @@ export function Logo({ size = 34 }: { size?: number }) {
         ))}
       </g>
       <ellipse cx="32" cy="32" rx="30" ry="8.5" fill="none" stroke="#F4F6F1" strokeWidth="2" transform="rotate(-22 32 32)" />
-      <circle cx="57" cy="18.7" r="2.8" fill="#F4F6F1" />
+      {anime ? (
+        <g transform="rotate(-22 32 32)">
+          <circle r="2.8" fill="#F4F6F1">
+            <animateMotion dur="14s" repeatCount="indefinite" path="M62,32 A30,8.5 0 1,1 2,32 A30,8.5 0 1,1 62,32" />
+          </circle>
+        </g>
+      ) : (
+        <circle cx="57" cy="18.7" r="2.8" fill="#F4F6F1" />
+      )}
     </svg>
   );
 }

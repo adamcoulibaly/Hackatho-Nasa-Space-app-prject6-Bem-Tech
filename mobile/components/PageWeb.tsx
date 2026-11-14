@@ -3,7 +3,7 @@ import * as Notifications from "expo-notifications";
 import * as Speech from "expo-speech";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState, type ComponentType, type ReactElement, type Ref } from "react";
-import { ActivityIndicator, BackHandler, Linking, Pressable, Share, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Animated, BackHandler, Linking, Pressable, Share, StyleSheet, Text, View } from "react-native";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 import { COULEURS, WEB_URL, estPageForoSat, urlPage } from "@/lib/config";
 import { demanderChemin, estCheminInterne, estOnglet, inscrirePage, prendreCheminEnAttente, type Onglet } from "@/lib/onglets";
@@ -40,6 +40,7 @@ type PropsWebView = {
   geolocationEnabled?: boolean;
   pullToRefreshEnabled?: boolean;
   startInLoadingState?: boolean;
+  onLoadEnd?: () => void;
   renderLoading?: () => ReactElement;
   style?: object;
 };
@@ -61,6 +62,13 @@ export function PageWeb({ onglet, chemin }: { onglet: Onglet; chemin: string }) 
   const [erreur, setErreur] = useState(false);
   const [cle, setCle] = useState(0);
   const [depart, setDepart] = useState(() => prendreCheminEnAttente(onglet) ?? chemin);
+  // La page apparaît en fondu une fois chargée ; en attendant, l'écran de chargement ForoSat.
+  const [opacite] = useState(() => new Animated.Value(0));
+  const [charge, setCharge] = useState(false);
+  const afficher = useCallback(() => {
+    setCharge(true);
+    Animated.timing(opacite, { toValue: 1, duration: 300, useNativeDriver: true }).start();
+  }, [opacite]);
 
   const repondre = useCallback((m: object) => {
     vue.current?.postMessage(JSON.stringify(m));
@@ -172,6 +180,8 @@ export function PageWeb({ onglet, chemin }: { onglet: Onglet; chemin: string }) 
     );
   }
   return (
+    <View style={{ flex: 1, backgroundColor: COULEURS.papier }}>
+    <Animated.View style={{ flex: 1, opacity: opacite }}>
     <VueWeb
       key={cle}
       ref={vue}
@@ -180,6 +190,7 @@ export function PageWeb({ onglet, chemin }: { onglet: Onglet; chemin: string }) 
       onNavigationStateChange={(e) => {
         peutRevenir.current = e.canGoBack;
       }}
+      onLoadEnd={afficher}
       onError={() => setErreur(true)}
       onHttpError={(e) => e.nativeEvent.statusCode >= 500 && setErreur(true)}
       onShouldStartLoadWithRequest={(r) => {
@@ -189,18 +200,23 @@ export function PageWeb({ onglet, chemin }: { onglet: Onglet; chemin: string }) 
       }}
       geolocationEnabled
       pullToRefreshEnabled
-      startInLoadingState
-      renderLoading={() => (
-        <View style={styles.centre}>
-          <ActivityIndicator color={COULEURS.orange} size="large" />
-        </View>
-      )}
       style={{ backgroundColor: COULEURS.papier }}
     />
+    </Animated.View>
+    {!charge && (
+      <View style={[StyleSheet.absoluteFill, styles.centre]} pointerEvents="none">
+        <Text style={styles.marque}>
+          foro<Text style={{ color: COULEURS.orange }}>sat</Text>
+        </Text>
+        <ActivityIndicator color={COULEURS.orange} size="large" />
+      </View>
+    )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  marque: { fontSize: 28, fontWeight: "800", color: COULEURS.encre, letterSpacing: -1 },
   centre: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12, padding: 24, backgroundColor: COULEURS.papier },
   titre: { fontSize: 22, fontWeight: "700", color: COULEURS.encre, textAlign: "center" },
   texte: { fontSize: 16, color: "#4A5A51", textAlign: "center", lineHeight: 22 },

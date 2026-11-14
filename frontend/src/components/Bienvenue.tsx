@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Logo } from "./Logo";
+import { LogoAnime } from "./LogoAnime";
 
 type Role = "agriculteur" | "conseiller";
 
@@ -29,7 +29,7 @@ export function Bienvenue() {
       <div data-stagger className="mx-auto flex min-h-screen w-full max-w-[480px] flex-col gap-[18px] px-[22px] pb-7 pt-6 md:max-w-[1200px] md:grid md:grid-cols-[1.15fr_1fr] md:items-center md:gap-16 md:px-12 md:py-16">
         <div className="flex flex-col gap-[18px] md:gap-7">
           <div className="flex items-center gap-2.5">
-            <Logo size={44} />
+            <LogoAnime size={44} />
             <span className="font-display text-[22px] font-bold tracking-[-0.04em]">foro<span className="text-orange">sat</span></span>
           </div>
           <h1 className="m-0 font-display text-[34px] font-bold leading-none tracking-[-0.05em] md:text-[clamp(48px,5.2vw,76px)]">

@@ -4,6 +4,7 @@
 
 :root {
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
 body { margin: 0; background: #F4F6F1; color: #07120D; }
@@ -11,9 +12,11 @@ a { color: #00703C; }
 a:hover { color: #00502B; }
 
 /* ---------- Mouvement ----------
-   Durées : 100, 150, 200 ou 300 ms. Entrée en ease-out. Seuls transform (et sa forme courte
-   translate) et opacity bougent. Aucune boucle décorative. Pas de décalage entre barres : 20 ms.
-   La classe js-motion n'est posée que par MotionRoot : sans JavaScript, tout reste visible. */
+   Durées : 100, 150, 200, 300 ou 600 ms (compteurs). Entrée en ease-out, glissements en --ease-spring.
+   Seuls transform (et translate/scale) et opacity bougent. Boucles : le satellite du logo sur les écrans
+   d'accueil (SVG, 14 s, coupé en mouvement réduit), l'attente de l'IA et le micro qui écoute. Pas de décalage entre barres : 20 ms.
+   La classe js-motion n'est posée que par MotionRoot : sans JavaScript, tout reste visible.
+   « Mouvement réduit » : fondus brefs seulement (voir la fin du fichier). */
 
 @keyframes fade {
   from { opacity: 0; }
@@ -73,9 +76,53 @@ a:hover { color: #00502B; }
 .lift { transition: transform 200ms var(--ease-out); }
 .lift:hover { transform: translateY(-2px); }
 
-/* Retour tactile des boutons et liens. */
-a, button { transition: opacity 100ms var(--ease-out); }
+/* Retour tactile des boutons et liens : léger enfoncement au toucher, retour élastique. */
+a, button { transition: opacity 100ms var(--ease-out), transform 200ms var(--ease-spring); }
 a:active, button:active { opacity: 0.8; }
+button:not(:disabled):active, a.rounded-full:active, a[class*="rounded-3xl"]:active, a[class*="rounded-[28px]"]:active { transform: scale(0.97); transition-duration: 100ms; }
+.leaflet-container a:active, .leaflet-container button:active { transform: none; }
+
+/* Chaque page arrive en glissant doucement vers le haut. */
+@keyframes entree-page {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+.js-motion main { animation: entree-page 300ms var(--ease-out) both; }
+
+/* Barre du bas : la pastille glisse d'un onglet à l'autre, l'icône active rebondit. */
+.indicateur-onglet {
+  transform: translateX(calc(var(--onglet, 0) * (100% + 4px)));
+  transition: transform 300ms var(--ease-spring);
+}
+@keyframes rebond { 0% { transform: scale(0.8); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+.icone-active { animation: rebond 300ms var(--ease-out) both; animation-delay: 100ms; }
+
+/* Conversation avec l'assistant : chaque bulle arrive de son côté. */
+@keyframes bulle-droite { from { opacity: 0; transform: translateX(16px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes bulle-gauche { from { opacity: 0; transform: translateX(-16px) scale(0.96); } to { opacity: 1; transform: none; } }
+.bulle-moi { animation: bulle-droite 300ms var(--ease-spring) both; transform-origin: right bottom; }
+.bulle-ia { animation: bulle-gauche 300ms var(--ease-spring) both; transform-origin: left bottom; }
+
+/* « L'IA écrit… » : trois points qui sautillent (indicateur d'attente). */
+@keyframes point { 0%, 80%, 100% { transform: translateY(0); opacity: 0.4; } 40% { transform: translateY(-5px); opacity: 1; } }
+.points-attente span { display: inline-block; width: 7px; height: 7px; border-radius: 999px; background: currentColor; animation: point 1s ease-in-out infinite; }
+.points-attente span:nth-child(2) { animation-delay: 150ms; }
+.points-attente span:nth-child(3) { animation-delay: 300ms; }
+
+/* Messages qui apparaissent : glissent depuis le bas (toast) ou le haut (bandeau). */
+@keyframes depuis-bas { from { opacity: 0; transform: translateY(24px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes depuis-haut { from { transform: translateY(-100%); } to { transform: none; } }
+.toast-entree { animation: depuis-bas 300ms var(--ease-spring) both; }
+.bandeau-entree { animation: depuis-haut 300ms var(--ease-out) both; }
+
+/* Pastilles et badges qui apparaissent : petit rebond. */
+@keyframes apparition { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: none; } }
+.pop { animation: apparition 300ms var(--ease-spring) both; }
+
+/* Dictée : le micro « respire » pendant l'écoute. */
+@keyframes ecoute { from { opacity: 0.55; transform: scale(1); } to { opacity: 0; transform: scale(1.35); } }
+.micro-ecoute { position: relative; }
+.micro-ecoute::after { content: ""; position: absolute; inset: 0; border-radius: 999px; background: #F77F00; z-index: -1; animation: ecoute 1.4s ease-out infinite; }
 
 /* Carte : police du site et coins de parcelle faciles à attraper au doigt. */
 .leaflet-container { font-family: inherit; }
@@ -108,4 +155,11 @@ a:active, button:active { opacity: 0.8; }
   .fade-in { animation: fade 100ms linear both; }
   .lift, .lift:hover { transition: none; transform: none; }
   a, button { transition: none; }
+  button:not(:disabled):active, a.rounded-full:active, a[class*="rounded-3xl"]:active, a[class*="rounded-[28px]"]:active { transform: none; }
+  .js-motion main { animation: fade 100ms linear both; }
+  .indicateur-onglet { transition: none; }
+  .icone-active, .pop, .micro-ecoute::after { animation: none; }
+  .bulle-moi, .bulle-ia, .toast-entree { animation: fade 100ms linear both; }
+  .bandeau-entree { animation: none; }
+  .points-attente span { animation: none; opacity: 0.7; }
 }

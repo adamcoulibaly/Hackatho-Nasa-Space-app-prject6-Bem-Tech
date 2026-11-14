@@ -26,11 +26,11 @@ function Alertes({ semis, anomalie }: { semis: Semis; anomalie?: Anomalie | null
     <section className="flex flex-col gap-2.5 rounded-[22px] bg-white p-4" aria-label="Alertes agricoles">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <strong className="text-[15px]">Alertes de votre région</strong>
-        <span className="rounded-full px-3 py-1 text-[13px] font-bold" style={{ background: r.fond, color: r.encre }}>{r.texte}</span>
+        <span className="pop rounded-full px-3 py-1 text-[13px] font-bold" style={{ background: r.fond, color: r.encre, animationDelay: "250ms" }}>{r.texte}</span>
       </div>
       {semis.alertes?.length ? (
         semis.alertes.map((a) => (
-          <div key={a.type + a.depuis} className="flex flex-col gap-1 rounded-2xl p-3" style={{ background: RISQUE[a.niveau].fond, color: RISQUE[a.niveau].encre }}>
+          <div key={a.type + a.depuis} className="pop flex flex-col gap-1 rounded-2xl p-3" style={{ background: RISQUE[a.niveau].fond, color: RISQUE[a.niveau].encre }}>
             <span className="text-[15px] font-semibold">{a.message}</span>
             <span className="text-sm">{`Conseil : ${a.conseil}`}</span>
           </div>

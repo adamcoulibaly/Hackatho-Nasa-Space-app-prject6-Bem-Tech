@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
+import { LogoAnime } from "@/components/LogoAnime";
 
 const CTA = "inline-flex h-14 items-center rounded-full px-6 text-[17px] font-bold no-underline";
 
@@ -41,7 +42,10 @@ export default function Home() {
     <>
       <SiteHeader />
       <main>
-        <section data-stagger className="mx-auto flex max-w-[1360px] flex-col items-start gap-6 px-6 pb-16 pt-14">
+        <section data-stagger className="relative mx-auto flex max-w-[1360px] flex-col items-start gap-6 px-6 pb-16 pt-14">
+          <div aria-hidden="true" className="pointer-events-none absolute right-10 top-12 hidden rounded-full bg-ink p-8 shadow-[0_30px_80px_rgba(7,18,13,0.25)] xl:block">
+            <LogoAnime size={220} />
+          </div>
           <span className="rounded-full border border-line px-3.5 py-2 text-sm text-muted">NASA Space Apps 2026 · Défi 6</span>
           <h1 className="m-0 max-w-4xl font-display text-[clamp(40px,6vw,84px)] font-bold leading-none tracking-[-0.05em]">
             Lire le ciel pour mieux <span className="font-serif font-normal italic text-orange-dark">cultiver</span> la terre.

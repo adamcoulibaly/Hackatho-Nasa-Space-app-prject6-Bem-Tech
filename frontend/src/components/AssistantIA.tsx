@@ -84,18 +84,23 @@ export function AssistantIA({ id, parcelle, moteurDictee }: { id: "A" | "B" | "C
         <ol aria-label="Conversation avec l'assistant" aria-live="polite" aria-busy={attente} className="m-0 flex list-none flex-col gap-3 p-0">
           {fil.map((x) => (
             <li key={x.id} className="flex flex-col gap-2">
-              <div className="flex max-w-[85%] flex-col gap-0.5 self-end rounded-2xl rounded-br-md bg-ink px-4 py-2.5 text-paper">
+              <div className="bulle-moi flex max-w-[85%] flex-col gap-0.5 self-end rounded-2xl rounded-br-md bg-ink px-4 py-2.5 text-paper">
                 {x.voix && <span className="text-xs font-semibold text-[#FFB066]">Dit à voix haute</span>}
                 <span className="text-[15px] leading-normal">{x.question ?? EXPLIQUER}</span>
               </div>
               {x.reponse && (
-                <div className="fade-in flex max-w-[92%] flex-col gap-2 self-start rounded-2xl rounded-bl-md bg-[#F4F6F1] p-4">
+                <div className="bulle-ia flex max-w-[92%] flex-col gap-2 self-start rounded-2xl rounded-bl-md bg-[#F4F6F1] p-4">
                   <p className="m-0 whitespace-pre-line text-base leading-relaxed">{x.reponse}</p>
                   <LireAVoixHaute texte={x.reponse} />
                 </div>
               )}
-              {x.erreur && <p role="alert" className="m-0 self-start rounded-2xl bg-[#FDE7CC] p-4 text-[15px] text-[#5C2E00]">{x.erreur}</p>}
-              {!x.reponse && !x.erreur && <p className="m-0 self-start text-[15px] text-muted">L&apos;IA rédige sa réponse…</p>}
+              {x.erreur && <p role="alert" className="bulle-ia m-0 self-start rounded-2xl bg-[#FDE7CC] p-4 text-[15px] text-[#5C2E00]">{x.erreur}</p>}
+              {!x.reponse && !x.erreur && (
+                <p className="bulle-ia m-0 flex items-center gap-2 self-start rounded-2xl rounded-bl-md bg-[#F4F6F1] px-4 py-3 text-[15px] text-muted">
+                  <span className="points-attente flex items-center gap-1" aria-hidden="true"><span /><span /><span /></span>
+                  L&apos;IA rédige sa réponse…
+                </p>
+              )}
             </li>
           ))}
         </ol>

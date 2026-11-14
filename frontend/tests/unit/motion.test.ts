@@ -22,7 +22,8 @@ describe("motion : règles du projet", () => {
     expect(bloc).toContain("animation");
     expect(bloc).not.toMatch(/translate|scale/);
   });
-  it("n'a aucune animation infinie", () => {
-    expect(css).not.toMatch(/infinite/);
+  it("seules deux boucles CSS utiles : l'attente de l'IA et le micro qui écoute", () => {
+    const boucles = [...css.matchAll(/animation:\s*([a-z-]+)[^;]*infinite/g)].map((m) => m[1]).sort();
+    expect(boucles).toEqual(["ecoute", "point"]);
   });
 });

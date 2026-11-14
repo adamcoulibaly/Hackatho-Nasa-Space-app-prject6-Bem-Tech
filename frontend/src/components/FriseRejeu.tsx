@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Rejeu } from "@/lib/contract";
+import { Compteur } from "./Compteur";
 
 const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 const COULEUR = { bonne: "#009E60", difficile: "#F77F00", perdue: "#C2410C" } as const;
@@ -19,7 +20,7 @@ export function FriseRejeu({ rejeu }: { rejeu: Rejeu }) {
   return (
     <div className="flex flex-col gap-4">
       <p className="m-0 font-display text-[26px] font-bold leading-tight tracking-[-0.03em]">
-        {`${rejeu.bonnes} bonnes saisons sur ${rejeu.total}`}
+        <Compteur valeur={rejeu.bonnes} format={(n) => `${n} bonnes saisons sur ${rejeu.total}`} />
       </p>
       {rejeu.rendementMoyen !== undefined && (
         <p className="m-0 text-[15px] font-semibold">{`Rendement estimé : ${rejeu.rendementMoyen} % du potentiel en moyenne`}</p>

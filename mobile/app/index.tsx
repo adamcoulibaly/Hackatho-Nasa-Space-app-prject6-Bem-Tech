@@ -2,10 +2,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Redirect, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COULEURS } from "@/lib/config";
 
 const CLE = "forosat.entree";
+/** Les éléments arrivent en cascade, de haut en bas (mouvement réduit respecté par Reanimated). */
+const entree = (i: number) => FadeInDown.delay(80 * i).duration(400).springify().damping(18);
 type Role = "agriculteur" | "conseiller";
 
 /** Écran d'entrée : rôle et langue, affiché une seule fois. */
@@ -29,13 +32,13 @@ export default function Entree() {
 
   return (
     <SafeAreaView style={styles.fond}>
-      <Text style={styles.marque}>
+      <Animated.Text entering={entree(0)} style={styles.marque}>
         foro<Text style={{ color: COULEURS.orange }}>sat</Text>
-      </Text>
-      <Text style={styles.titre}>Lire le ciel pour mieux cultiver.</Text>
+      </Animated.Text>
+      <Animated.Text entering={entree(1)} style={styles.titre}>Lire le ciel pour mieux cultiver.</Animated.Text>
 
-      <Text style={styles.legende}>JE SUIS</Text>
-      <View style={styles.ligne}>
+      <Animated.Text entering={entree(2)} style={styles.legende}>JE SUIS</Animated.Text>
+      <Animated.View entering={entree(3)} style={styles.ligne}>
         {(
           [
             ["agriculteur", "Agriculteur", "Mon champ"],
@@ -44,16 +47,16 @@ export default function Entree() {
         ).map(([id, titre, sous]) => {
           const actif = role === id;
           return (
-            <Pressable key={id} accessibilityRole="button" accessibilityState={{ selected: actif }} onPress={() => setRole(id)} style={[styles.choix, actif && styles.choixActif]}>
+            <Pressable key={id} accessibilityRole="button" accessibilityState={{ selected: actif }} onPress={() => setRole(id)} style={({ pressed }) => [styles.choix, actif && styles.choixActif, pressed && styles.enfonce]}>
               <Text style={[styles.choixTitre, actif && { color: COULEURS.encre }]}>{titre}</Text>
               <Text style={[styles.choixSous, actif && { color: COULEURS.encre }]}>{sous}</Text>
             </Pressable>
           );
         })}
-      </View>
+      </Animated.View>
 
-      <Text style={styles.legende}>LANGUE</Text>
-      <View style={styles.ligne}>
+      <Animated.Text entering={entree(4)} style={styles.legende}>LANGUE</Animated.Text>
+      <Animated.View entering={entree(5)} style={styles.ligne}>
         <View style={[styles.langue, { backgroundColor: COULEURS.papier }]}>
           <Text style={{ fontWeight: "700", color: COULEURS.encre }}>Français</Text>
         </View>
@@ -63,18 +66,21 @@ export default function Entree() {
             <Text style={{ color: COULEURS.attenue, fontSize: 11 }}>bientôt</Text>
           </View>
         ))}
-      </View>
+      </Animated.View>
 
       <View style={{ flex: 1 }} />
-      <Pressable accessibilityRole="button" onPress={commencer} style={styles.cta}>
-        <Text style={styles.ctaTexte}>Commencer</Text>
-      </Pressable>
+      <Animated.View entering={entree(6)}>
+        <Pressable accessibilityRole="button" onPress={commencer} style={({ pressed }) => [styles.cta, pressed && styles.enfonce]}>
+          <Text style={styles.ctaTexte}>Commencer</Text>
+        </Pressable>
+      </Animated.View>
       <Text style={styles.pied}>NASA Space Apps 2026 · BEM TECH</Text>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  enfonce: { transform: [{ scale: 0.97 }], opacity: 0.9 },
   fond: { flex: 1, backgroundColor: COULEURS.encre, paddingHorizontal: 22, paddingBottom: 16 },
   marque: { marginTop: 24, fontSize: 24, fontWeight: "800", color: COULEURS.papier },
   titre: { marginTop: 12, marginBottom: 24, fontSize: 32, fontWeight: "800", lineHeight: 36, color: COULEURS.papier },
