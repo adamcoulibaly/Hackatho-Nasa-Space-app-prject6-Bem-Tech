@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
 import { FermerMenus } from "./FermerMenus";
+import { Chevron } from "./Chevron";
 
 export type Step = "parcelle" | "climat" | "rotations" | "simulateur" | "risques" | "tableau" | "lexique";
 
@@ -57,9 +58,9 @@ export function SiteHeader({ current, badge, bottomNav = false }: { current?: St
             const actif = e.liens.some((l) => l.id && l.id === current);
             return (
               <details key={e.titre} data-menu className="group relative">
-                <summary className={`inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 rounded-full px-3.5 text-sm [&::-webkit-details-marker]:hidden ${actif ? "bg-paper font-bold text-ink" : "text-[#C9D4CD] hover:text-paper"}`}>
+                <summary className={`inline-flex min-h-[44px] cursor-pointer select-none list-none items-center gap-1.5 rounded-full pl-3.5 pr-3 text-sm transition-colors duration-150 [&::-webkit-details-marker]:hidden ${actif ? "bg-paper font-bold text-ink" : "text-[#C9D4CD] hover:bg-[#1C3327] hover:text-paper group-open:bg-[#1C3327] group-open:text-paper"}`}>
                   {e.titre}
-                  <span aria-hidden="true" className="transition-transform duration-200 group-open:rotate-180">⌄</span>
+                  <Chevron taille={14} className="opacity-80" />
                 </summary>
                 <div className="fade-in absolute left-0 top-full z-[1300] mt-2 flex w-64 flex-col rounded-2xl bg-paper p-2 shadow-[0_16px_40px_rgba(7,18,13,0.25)]">
                   <span className="px-3 pb-1 pt-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-muted">{e.sous}</span>
