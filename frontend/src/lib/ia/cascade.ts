@@ -5,7 +5,8 @@
  * - la première réponse valide gagne et annule les autres ; tout s'arrête après `totalMs`.
  * Le dernier modèle qui a répondu passe en premier la fois suivante (mémoire de l'instance serveur).
  */
-export type Essai = { ok: true; texte: string; modele: string } | { ok: false; sature: boolean };
+/** `credit` : le compte OpenRouter n'a pas le solde demandé (HTTP 402, ex. 0,50 $ minimum pour l'audio). */
+export type Essai = { ok: true; texte: string; modele: string } | { ok: false; sature: boolean; credit: boolean };
 
 const prefere = new Map<string, string>();
 const EN_PARALLELE = 3;
@@ -25,9 +26,9 @@ export async function enCascade(o: {
   const valider = o.valider ?? ((t: string) => t.trim() || null);
   const favori = prefere.get(o.famille);
   const file = favori && o.modeles.includes(favori) ? [favori, ...o.modeles.filter((m) => m !== favori)] : [...o.modeles];
-  if (!file.length) return { ok: false, sature: false };
+  if (!file.length) return { ok: false, sature: false, credit: false };
 
-  const essayer = async (modele: string, signal: AbortSignal): Promise<string | null | "sature"> => {
+  const essayer = async (modele: string, signal: AbortSignal): Promise<string | null | "sature" | "credit"> => {
     try {
       const r = await o.fetch(o.url, {
         method: "POST",
@@ -38,7 +39,7 @@ export async function enCascade(o: {
       if (!r.ok) {
         const extrait = (await r.text().catch(() => "")).slice(0, 300);
         console.warn(`[ia] ${modele} : HTTP ${r.status} ${extrait}`);
-        return r.status === 429 ? "sature" : null;
+        return r.status === 429 ? "sature" : r.status === 402 ? "credit" : null;
       }
       const json = (await r.json()) as { choices?: { message?: { content?: string }; finish_reason?: string }[] };
       const brut = json.choices?.[0]?.message?.content ?? "";
@@ -56,6 +57,7 @@ export async function enCascade(o: {
     let enVol = 0;
     let fini = false;
     let sature = false;
+    let credit = false;
     const terminer = (r: Essai) => {
       if (fini) return;
       fini = true;
@@ -75,18 +77,19 @@ export async function enCascade(o: {
         controles.delete(c);
         if (fini) return;
         if (t === "sature") sature = true;
+        else if (t === "credit") credit = true;
         else if (t !== null) {
           prefere.set(o.famille, modele);
           return terminer({ ok: true, texte: t, modele });
         }
         if (file.length) lancer();
-        else if (enVol === 0) terminer({ ok: false, sature });
+        else if (enVol === 0) terminer({ ok: false, sature, credit });
       });
     };
     const relais = setInterval(() => {
       if (file.length && enVol < EN_PARALLELE) lancer();
     }, o.relanceMs ?? 5000);
-    const limite = setTimeout(() => terminer({ ok: false, sature }), o.totalMs ?? 25_000);
+    const limite = setTimeout(() => terminer({ ok: false, sature, credit }), o.totalMs ?? 25_000);
     lancer();
   });
 }

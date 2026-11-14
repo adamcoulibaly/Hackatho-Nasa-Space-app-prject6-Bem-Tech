@@ -31,6 +31,36 @@ export function nettoyer(t: string): string | null {
 
 export type Transcription = { ok: true; texte: string } | { ok: false; statut: number; erreur: string };
 
+/**
+ * OpenRouter demande un solde d'au moins 0,50 $ pour envoyer de l'audio, même aux modèles gratuits. Sans ce solde,
+ * la dictée est annoncée indisponible et l'app reste sur les questions écrites. Réponse gardée 10 minutes.
+ */
+const SOLDE_MIN = 0.5;
+const DUREE_CACHE = 10 * 60_000;
+let disponibilite: { valeur: boolean; jusqua: number } | null = null;
+
+export function oublierDisponibilite() {
+  disponibilite = null;
+}
+
+export async function dicteeDisponible(config: ConfigIA, f: typeof fetch, maintenant = Date.now()): Promise<boolean> {
+  if (!config.cle) return false;
+  if (disponibilite && disponibilite.jusqua > maintenant) return disponibilite.valeur;
+  let valeur = true;
+  try {
+    const r = await f(`${config.baseUrl}/credits`, { headers: { Authorization: `Bearer ${config.cle}` }, signal: AbortSignal.timeout(5000) });
+    if (r.ok) {
+      const j = (await r.json()) as { data?: { total_credits?: number; total_usage?: number } };
+      const solde = (j.data?.total_credits ?? 0) - (j.data?.total_usage ?? 0);
+      valeur = solde >= SOLDE_MIN;
+    }
+  } catch {
+    /* solde illisible : on laisse essayer */
+  }
+  disponibilite = { valeur, jusqua: maintenant + DUREE_CACHE };
+  return valeur;
+}
+
 export async function transcrire(audio: string, deps: { config: ConfigIA; modeles: string[]; fetch: typeof fetch }): Promise<Transcription> {
   if (!deps.config.cle) return { ok: false, statut: 503, erreur: "La dictée n'est pas encore configurée." };
   const r = await enCascade({
@@ -50,5 +80,10 @@ export async function transcrire(audio: string, deps: { config: ConfigIA; modele
     relanceMs: 6000,
     totalMs: 25_000,
   });
-  return r.ok ? { ok: true, texte: r.texte } : { ok: false, statut: 502, erreur: "La dictée ne répond pas pour le moment." };
+  if (r.ok) return { ok: true, texte: r.texte };
+  if (r.credit) {
+    disponibilite = { valeur: false, jusqua: Date.now() + DUREE_CACHE };
+    return { ok: false, statut: 503, erreur: "La dictée n'est pas disponible pour le moment : écrivez votre question." };
+  }
+  return { ok: false, statut: 502, erreur: "La dictée ne répond pas pour le moment." };
 }

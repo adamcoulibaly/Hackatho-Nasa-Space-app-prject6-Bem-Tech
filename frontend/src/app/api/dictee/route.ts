@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
 import { configDepuisEnv } from "@/lib/ia/assistant";
-import { DicteeSchema, modelesAudio, transcrire } from "@/lib/ia/transcription";
+import { DicteeSchema, dicteeDisponible, modelesAudio, transcrire } from "@/lib/ia/transcription";
 import { adresse, limiteur, memeOrigine } from "@/lib/limite";
 
 export const dynamic = "force-dynamic";
 
 // 20 dictées par adresse et par 10 minutes (par instance) : protège le quota du modèle audio.
 const autoriser = limiteur({ max: 20, fenetreMs: 10 * 60_000 });
+
+/** La page demande si la dictée est disponible (clé et solde OpenRouter suffisants) avant d'afficher le bouton. */
+export async function GET() {
+  return NextResponse.json({ disponible: await dicteeDisponible(configDepuisEnv(process.env), fetch) }, { headers: { "Cache-Control": "no-store" } });
+}
 
 /** Dictée : WAV de la question → texte. L'audio n'est ni enregistré ni journalisé. */
 export async function POST(req: Request) {

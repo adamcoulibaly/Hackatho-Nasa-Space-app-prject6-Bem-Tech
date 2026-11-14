@@ -50,7 +50,7 @@ describe("enCascade : modèles de secours sans longue attente", () => {
     );
     const debut = Date.now();
     const r = await enCascade({ ...base, famille: "t4", modeles: ["s", "lent"], fetch: f as typeof fetch, relanceMs: 20, totalMs: 150 });
-    expect(r).toEqual({ ok: false, sature: true });
+    expect(r).toEqual({ ok: false, sature: true, credit: false });
     expect(Date.now() - debut).toBeLessThan(1000);
   });
 });

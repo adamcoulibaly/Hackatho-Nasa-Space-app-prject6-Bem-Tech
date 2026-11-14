@@ -149,3 +149,59 @@ describe("AssistantIA", () => {
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("pas encore configuré"));
   });
 });
+
+describe("assistant en conversation", () => {
+  it("la demande accepte un court historique et indique si la question a été dite à voix haute", () => {
+    const h = [{ role: "user", content: "Quand semer ?" }, { role: "assistant", content: "En mai." }];
+    expect(DemandeSchema.safeParse({ id: "B", params: PARAMS, question: "Et le coton ?", voix: true, historique: h }).success).toBe(true);
+    expect(DemandeSchema.safeParse({ id: "B", params: PARAMS, historique: Array(9).fill(h[0]) }).success).toBe(false);
+    expect(DemandeSchema.safeParse({ id: "B", params: PARAMS, historique: [{ role: "system", content: "x" }] }).success).toBe(false);
+  });
+
+  it("l'IA reçoit les échanges précédents, et sait qu'une question dictée peut contenir des erreurs de transcription", () => {
+    const m = construireMessages(B, climat, "et le coton", [{ role: "user", content: "Quand semer ?" }, { role: "assistant", content: "En mai." }], true);
+    const textes = m.map((x) => `${x.role}:${x.content}`);
+    expect(textes.some((t) => t === "user:Quand semer ?")).toBe(true);
+    expect(textes.some((t) => t === "assistant:En mai.")).toBe(true);
+    expect(m.at(-1)!.content).toMatch(/et le coton/);
+    expect(m.at(-1)!.content).toMatch(/dictée à voix haute|transcri/);
+  });
+
+  it("chaque question s'ajoute au fil de la conversation, et la suivante envoie l'historique", async () => {
+    const corps: any[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (_u: string, init: RequestInit) => {
+      corps.push(JSON.parse(String(init.body)));
+      return new Response(JSON.stringify({ texte: corps.length === 1 ? "En mai." : "Le coton en juin." }));
+    }));
+    const u = userEvent.setup();
+    render(<AssistantIA id="B" parcelle={DEFAULT_PARCELLE} />);
+    await u.type(screen.getByLabelText(/Votre question/), "Quand semer ?");
+    await u.click(screen.getByRole("button", { name: "Demander" }));
+    expect(await screen.findByText("En mai.")).toBeInTheDocument();
+    expect(screen.getByLabelText(/Votre question/)).toHaveValue("");
+    await u.type(screen.getByLabelText(/Votre question/), "Et le coton ?");
+    await u.click(screen.getByRole("button", { name: "Demander" }));
+    expect(await screen.findByText("Le coton en juin.")).toBeInTheDocument();
+    expect(screen.getByText("Quand semer ?")).toBeInTheDocument();
+    expect(corps[1].historique).toEqual([{ role: "user", content: "Quand semer ?" }, { role: "assistant", content: "En mai." }]);
+    vi.unstubAllGlobals();
+  });
+
+  it("une question dite à voix haute part directement à l'assistant, comme un message de chat", async () => {
+    const corps: any[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (_u: string, init: RequestInit) => {
+      corps.push(JSON.parse(String(init.body)));
+      return new Response(JSON.stringify({ texte: "Semez après 20 mm de pluie." }));
+    }));
+    const moteur = { nom: "navigateur" as const, demarrer: vi.fn(async () => ({ terminer: async () => "quand semer le maïs", annuler: vi.fn(), surFin: () => undefined })) };
+    const u = userEvent.setup();
+    render(<AssistantIA id="B" parcelle={DEFAULT_PARCELLE} moteurDictee={moteur} />);
+    await u.click(screen.getByRole("button", { name: "Poser la question à voix haute" }));
+    await u.click(screen.getByRole("button", { name: /Terminer/ }));
+    expect(await screen.findByText("Semez après 20 mm de pluie.")).toBeInTheDocument();
+    expect(screen.getByText("quand semer le maïs")).toBeInTheDocument();
+    expect(screen.getByText(/à voix haute/)).toBeInTheDocument();
+    expect(corps[0]).toMatchObject({ question: "quand semer le maïs", voix: true });
+    vi.unstubAllGlobals();
+  });
+});

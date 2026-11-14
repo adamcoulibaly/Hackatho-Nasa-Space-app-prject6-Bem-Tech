@@ -45,3 +45,29 @@ describe("transcription côté serveur", () => {
     expect(await transcrire(audio, { config: { baseUrl: "https://ex.test/v1", modeles: [] }, modeles: ["m"], fetch: f })).toMatchObject({ ok: false, statut: 503 });
   });
 });
+
+describe("dictée disponible seulement si le compte OpenRouter le permet", () => {
+  const cfg = { cle: "k", baseUrl: "https://ex.test/v1", modeles: [] };
+  const credits = (total: number, usage: number) => (async () => new Response(JSON.stringify({ data: { total_credits: total, total_usage: usage } }))) as typeof fetch;
+
+  it("solde d'au moins 0,50 $ : disponible ; en dessous ou sans clé : non", async () => {
+    const { dicteeDisponible, oublierDisponibilite } = await import("@/lib/ia/transcription");
+    oublierDisponibilite();
+    expect(await dicteeDisponible(cfg, credits(1, 0.2))).toBe(true);
+    oublierDisponibilite();
+    expect(await dicteeDisponible(cfg, credits(0, 0))).toBe(false);
+    oublierDisponibilite();
+    expect(await dicteeDisponible({ ...cfg, cle: undefined }, credits(5, 0))).toBe(false);
+    oublierDisponibilite();
+    // Autre fournisseur sans route de solde : on essaie.
+    expect(await dicteeDisponible(cfg, (async () => new Response("", { status: 404 })) as typeof fetch)).toBe(true);
+  });
+
+  it("un refus faute de crédit (402) rend la dictée indisponible", async () => {
+    const { dicteeDisponible, oublierDisponibilite } = await import("@/lib/ia/transcription");
+    oublierDisponibilite();
+    const r = await transcrire(enBase64(encoderWav([new Float32Array(1600)], 16000)), { config: cfg, modeles: ["m"], fetch: (async () => new Response("{}", { status: 402 })) as typeof fetch });
+    expect(r).toMatchObject({ ok: false, statut: 503 });
+    expect(await dicteeDisponible(cfg, credits(10, 0))).toBe(false);
+  });
+});

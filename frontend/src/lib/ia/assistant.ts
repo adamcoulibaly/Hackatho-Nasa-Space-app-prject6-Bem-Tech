@@ -40,10 +40,15 @@ export const DemandeSchema = z.object({
   id: z.enum(["A", "B", "C"]),
   params: z.string().max(500),
   question: z.string().trim().max(300).optional(),
+  /** Vrai si la question a été dite à voix haute (transcription automatique, possibles erreurs). */
+  voix: z.boolean().optional(),
+  /** Échanges précédents de la conversation (au plus 4 questions-réponses), pour les questions de suite. */
+  historique: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().max(600) })).max(8).optional(),
 });
 export type Demande = z.infer<typeof DemandeSchema>;
 
-type Message = { role: "system" | "user"; content: string };
+type Message = { role: "system" | "user" | "assistant"; content: string };
+export type Echange = { role: "user" | "assistant"; content: string };
 
 const REGLES = `Tu es l'assistant de ForoSat, un outil d'aide à la décision pour les agriculteurs de Côte d'Ivoire.
 Règles :
@@ -53,7 +58,7 @@ Règles :
 - Tu n'as pas calculé le score : il vient de règles agronomiques transparentes. Ne le modifie pas.
 - Termine en rappelant de valider la décision avec un conseiller agricole.`;
 
-export function construireMessages(rotation: Rotation, climat: Climat, question?: string): Message[] {
+export function construireMessages(rotation: Rotation, climat: Climat, question?: string, historique: Echange[] = [], voix = false): Message[] {
   const scores = CRITERES.map((k) => `${CRITERE_LABELS[k]} : ${scoreWord(rotation.scores[k])}`).join(" ; ");
   const faits = [
     `Rotation ${rotation.id} (${rotation.tag}) : ${rotation.sequence.join(" → ")}.`,
@@ -65,10 +70,17 @@ export function construireMessages(rotation: Rotation, climat: Climat, question?
     `Climat de la zone : ${climat.indicateurs.map((i) => `${i.label} ${i.valeur}`).join(" ; ")}.`,
     climat.meta ? `Sources : ${climat.meta.reel.join(", ")} (${climat.meta.source}, ${climat.meta.periode}). Végétation et eau stockée : pas encore disponibles.` : "Source du climat inconnue.",
   ].join("\n");
-  const demande = question?.trim() ? `Question de l'agriculteur : ${question.trim()}` : "Explique simplement cette rotation à un agriculteur : ce qu'il sème, quand, pourquoi, et à quoi faire attention.";
+  const dictee = voix
+    ? "\n(Question dictée à voix haute et transcrite automatiquement : elle peut contenir des erreurs de transcription ; comprends-la au mieux selon le contexte agricole, et si elle reste obscure, demande de reformuler.)"
+    : "";
+  const demande = question?.trim()
+    ? `Question de l'agriculteur : ${question.trim()}${dictee}`
+    : "Explique simplement cette rotation à un agriculteur : ce qu'il sème, quand, pourquoi, et à quoi faire attention.";
+  const suite = historique.length ? "\nC'est la suite de la conversation ci-dessus : réponds à la nouvelle question en tenant compte des échanges précédents." : "";
   return [
     { role: "system", content: REGLES },
-    { role: "user", content: `Faits ForoSat :\n${faits}\n\n${demande}` },
+    ...historique.map((h) => ({ role: h.role, content: h.content })),
+    { role: "user", content: `Faits ForoSat :\n${faits}\n\n${demande}${suite}` },
   ];
 }
 
@@ -84,7 +96,7 @@ export async function repondre(
 ): Promise<Reponse> {
   const { config } = deps;
   if (!config.cle) return { ok: false, statut: 503, erreur: NON_CONFIGURE };
-  const messages = construireMessages(deps.rotation, deps.climat, demande.question);
+  const messages = construireMessages(deps.rotation, deps.climat, demande.question, demande.historique ?? [], demande.voix ?? false);
   const r = await enCascade({
     famille: "assistant",
     modeles: config.modeles,
