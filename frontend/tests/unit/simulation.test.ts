@@ -107,3 +107,18 @@ describe("simuler : notes communes et avertissements propres à la rotation", ()
     expect(couvrante.avertissements.join(" ")).not.toMatch(/érosion/);
   });
 });
+
+describe("simuler : cohérence avec le rejeu de la fiche", () => {
+  it("en saisons réelles, chaque année porte la même culture et le même verdict que le rejeu de la rotation", async () => {
+    const { rejouer } = await import("@/lib/moteur/rejeu");
+    const [cultures, s] = await Promise.all([getCultures(), getSaisons("poro")]);
+    const seq = ["Coton", "Maïs", "Niébé"];
+    const rejeu = rejouer(seq, s);
+    const sim = simuler(seq, s, cultures, 10, "reel");
+    for (const a of sim.annees) {
+      const r = rejeu.saisons.find((x) => x.annee === a.anneeSource)!;
+      expect([a.culture, a.verdict]).toEqual([r.culture, r.verdict]);
+    }
+    expect(sim.annees.map((a) => a.anneeSource)).toEqual(Array.from({ length: 10 }, (_, i) => 2016 + i));
+  });
+});

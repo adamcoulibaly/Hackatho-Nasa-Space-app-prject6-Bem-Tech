@@ -14,5 +14,5 @@ export function SimulateurVue({ initial, cultures }: { initial: Climat; cultures
   if (etat.statut !== "pret") return <EtatCalcul etat={etat} region={parcelle.region} />;
   if (saisons === undefined) return <EtatCalcul etat={{ statut: "chargement" }} region={parcelle.region} />;
   if (saisons === null) return <p className="m-0 rounded-2xl bg-white p-5">Les saisons réelles de cette région sont indisponibles pour le moment : le simulateur ne peut pas tourner.</p>;
-  return <Simulateur rotations={etat.rotations} saisons={saisons} cultures={cultures} />;
+  return <Simulateur rotations={etat.rotations} saisons={saisons} cultures={cultures} surface={parcelle.surface} />;
 }

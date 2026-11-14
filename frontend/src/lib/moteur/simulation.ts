@@ -39,6 +39,7 @@ export type Simulation = {
 };
 
 const DERNIERE_ANNEE = 2025;
+const PREMIERE_ANNEE = 2005;
 
 /** Saison la plus sèche et la plus pluvieuse, d'après la pluie mesurée de la saison principale. */
 export function anneesExtremes(s: Saisons): { seche: number; pluvieuse: number } {
@@ -70,17 +71,23 @@ export function simuler(sequence: string[], s: Saisons, cultures: Culture[], n: 
   const extremes = anneesExtremes(s);
   const annees: AnneeSimulee[] = [];
   let fertilite = 0;
+  // En saisons réelles, la culture d'une année est celle du rejeu de la fiche (même calage sur 2005) :
+  // le simulateur et la frise des saisons rejouées affichent alors exactement les mêmes saisons.
+  const cultureDe = (i: number, source: number) =>
+    scenario === "reel" ? sequence[(((source - PREMIERE_ANNEE) % sequence.length) + sequence.length) % sequence.length] : sequence[i % sequence.length];
+  let nomPrecedent: string | null = null;
   for (let i = 0; i < n; i++) {
-    const nom = sequence[i % sequence.length];
-    const fiche = fiches.get(nom);
     const source = scenario === "sec" ? extremes.seche : scenario === "pluvieux" ? extremes.pluvieuse : DERNIERE_ANNEE - n + 1 + i;
+    const nom = cultureDe(i, source);
+    const fiche = fiches.get(nom);
     const saison = saisonDe(s, nom, source);
     if (!fiche || !saison) continue;
     // Règles de fertilité : une légumineuse fixe l'azote (+1), une autre culture en consomme (−0,5),
     // et la même famille deux ans de suite favorise maladies et épuisement (−0,5).
     fertilite += fiche.legumineuse ? 1 : -0.5;
-    const precedente = i > 0 ? fiches.get(sequence[(i - 1) % sequence.length]) : undefined;
+    const precedente = nomPrecedent ? fiches.get(nomPrecedent) : undefined;
     if (precedente && precedente.famille === fiche.famille) fertilite -= 0.5;
+    nomPrecedent = nom;
     annees.push({
       annee: i + 1,
       anneeSource: saison.v.annee,

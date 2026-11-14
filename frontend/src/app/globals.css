@@ -126,6 +126,9 @@ button:not(:disabled):active, a.rounded-full:active, a[class*="rounded-3xl"]:act
 .ecran-accueil-logo { animation: ecran-logo 300ms var(--ease-spring) both; }
 .ecran-accueil-barre { transform-origin: left; animation: grow-x 1s var(--ease-out) both; }
 
+/* Simulateur : les plantes grandissent en douceur quand on déplace le curseur de date. */
+.plante-pousse { transform-origin: 0 0; transform-box: view-box; transition: transform 300ms var(--ease-out); }
+
 /* Dictée : le micro « respire » pendant l'écoute. */
 @keyframes ecoute { from { opacity: 0.55; transform: scale(1); } to { opacity: 0; transform: scale(1.35); } }
 .micro-ecoute { position: relative; }
@@ -171,4 +174,5 @@ button:not(:disabled):active, a.rounded-full:active, a[class*="rounded-3xl"]:act
   .points-attente span { animation: none; opacity: 0.7; }
   .ecran-accueil { animation: ecran-sortie 100ms linear 0.6s forwards; }
   .ecran-accueil-logo, .ecran-accueil-barre { animation: none; }
+  .plante-pousse { transition: none; }
 }

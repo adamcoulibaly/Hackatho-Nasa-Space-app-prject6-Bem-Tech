@@ -23,7 +23,7 @@ describe("Simulateur", () => {
     expect(within(lignes[0]).getByText(/Sol (s'enrichit|stable|s'appauvrit)/)).toBeInTheDocument();
     expect(within(lignes[0]).getByText(/sol couvert/)).toBeInTheDocument();
     expect(within(lignes[0]).getByText(/hypothèse/)).toBeInTheDocument();
-    expect(screen.getAllByText("Meilleur équilibre")).toHaveLength(1);
+    expect(screen.getAllByText("Meilleure sur ce scénario")).toHaveLength(1);
   });
 
   it("la durée et le scénario changent la simulation", async () => {
@@ -68,5 +68,29 @@ describe("Simulateur : avertissements et accessibilité", () => {
     const curseur = screen.getByRole("slider", { name: "Date de la simulation" });
     fireEvent.change(curseur, { target: { value: "190" } });
     expect(curseur).toHaveAttribute("aria-valuetext", "Année 1, juillet");
+  });
+});
+
+describe("Simulateur : relié aux rotations et aux données", () => {
+  it("chaque carte rappelle la rotation conseillée, les saisons réelles et 2050 de la fiche, et mène à la fiche", async () => {
+    const d = await donnees();
+    render(<Simulateur {...d} />);
+    expect(screen.getAllByText("Conseillée par ForoSat")).toHaveLength(1);
+    const lignes = screen.getAllByTestId("ligne-simulation");
+    d.rotations.forEach((r, i) => {
+      expect(within(lignes[i]).getByText(new RegExp(`Fiche : ${r.rejeu!.bonnes} bonnes sur ${r.rejeu!.total} saisons réelles`))).toBeInTheDocument();
+      expect(within(lignes[i]).getByRole("link", { name: /Voir la fiche/ })).toHaveAttribute("href", `/rotations/${r.id}`);
+    });
+  });
+
+  it("en saisons réelles, les années affichées sont les vraies années mesurées", async () => {
+    render(<Simulateur {...await donnees()} />);
+    const ligne = screen.getAllByTestId("ligne-simulation")[0];
+    for (const a of ["2021", "2022", "2023", "2024", "2025"]) expect(within(ligne).getByText(a)).toBeInTheDocument();
+  });
+
+  it("la phrase de synthèse dit si la rotation conseillée reste la meilleure sur ce scénario", async () => {
+    render(<Simulateur {...await donnees()} />);
+    expect(screen.getByTestId("synthese-simulation").textContent).toMatch(/conseillée/);
   });
 });
