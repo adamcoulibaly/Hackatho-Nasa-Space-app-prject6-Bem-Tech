@@ -1,23 +1,44 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { FermerMenus } from "./FermerMenus";
 
 export type Step = "parcelle" | "climat" | "rotations" | "simulateur" | "risques" | "tableau" | "lexique";
 
-/** Navigation principale courte ; le reste dans « Plus ». */
-const STEPS: { id: Step; label: string; href: string }[] = [
-  { id: "parcelle", label: "Parcelle", href: "/parcelle" },
-  { id: "rotations", label: "Rotations", href: "/rotations" },
-  { id: "climat", label: "Climat", href: "/climat" },
-  { id: "tableau", label: "Tableau de bord", href: "/tableau" },
-];
-const PLUS: { id?: Step; label: string; href: string }[] = [
-  { id: "simulateur", label: "Simulateur", href: "/simulateur" },
-  { id: "risques", label: "Carte des risques", href: "/risques" },
-  { label: "Calendrier agricole", href: "/calendrier" },
-  { label: "Carnet de suivi", href: "/suivi" },
-  { id: "lexique", label: "Lexique", href: "/lexique" },
-  { label: "Méthode et sources", href: "/methode" },
-  { label: "Guide d'utilisation", href: "/guide" },
+type Entree = { id?: Step; label: string; href: string };
+
+/** Trois espaces : décider de sa rotation, suivre sa saison, comprendre les données. */
+const ESPACES: { titre: string; sous: string; liens: Entree[] }[] = [
+  {
+    titre: "Décider",
+    sous: "Choisir sa rotation",
+    liens: [
+      { id: "parcelle", label: "Parcelle", href: "/parcelle" },
+      { id: "rotations", label: "Rotations", href: "/rotations" },
+      { id: "simulateur", label: "Simuler sur plusieurs années", href: "/simulateur" },
+    ],
+  },
+  {
+    titre: "Suivre ma saison",
+    sous: "Au jour le jour",
+    liens: [
+      { id: "tableau", label: "Tableau de bord", href: "/tableau" },
+      { label: "Ma parcelle aujourd'hui", href: "/aujourdhui" },
+      { label: "Calendrier agricole", href: "/calendrier" },
+      { label: "Carnet de suivi", href: "/suivi" },
+    ],
+  },
+  {
+    titre: "Comprendre",
+    sous: "Les données NASA",
+    liens: [
+      { id: "climat", label: "Climat", href: "/climat" },
+      { id: "risques", label: "Carte des risques", href: "/risques" },
+      { label: "Méthode et sources", href: "/methode" },
+      { id: "lexique", label: "Lexique", href: "/lexique" },
+      { label: "Guide d'utilisation", href: "/guide" },
+      { label: "Traduire ForoSat", href: "/traduire" },
+    ],
+  },
 ];
 
 /** `bottomNav` : la barre du bas remplace la navigation du haut sur téléphone. */
@@ -32,34 +53,30 @@ export function SiteHeader({ current, badge, bottomNav = false }: { current?: St
           </span>
         </Link>
         <nav aria-label="Étapes" className={`${bottomNav ? "max-md:hidden " : ""}flex flex-grow flex-wrap gap-1`}>
-          {STEPS.map((s) => {
-            const active = s.id === current;
+          {ESPACES.map((e) => {
+            const actif = e.liens.some((l) => l.id && l.id === current);
             return (
-              <Link
-                key={s.id}
-                href={s.href}
-                aria-current={active ? "page" : undefined}
-                className={`inline-flex min-h-[44px] items-center rounded-full px-3.5 text-sm no-underline ${
-                  active ? "bg-paper font-bold text-ink hover:text-ink" : "text-[#C9D4CD] hover:text-paper"
-                }`}
-              >
-                {s.label}
-              </Link>
+              <details key={e.titre} data-menu className="group relative">
+                <summary className={`inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 rounded-full px-3.5 text-sm [&::-webkit-details-marker]:hidden ${actif ? "bg-paper font-bold text-ink" : "text-[#C9D4CD] hover:text-paper"}`}>
+                  {e.titre}
+                  <span aria-hidden="true" className="transition-transform duration-200 group-open:rotate-180">⌄</span>
+                </summary>
+                <div className="fade-in absolute left-0 top-full z-[1300] mt-2 flex w-64 flex-col rounded-2xl bg-paper p-2 shadow-[0_16px_40px_rgba(7,18,13,0.25)]">
+                  <span className="px-3 pb-1 pt-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-muted">{e.sous}</span>
+                  {e.liens.map((l) => {
+                    const ici = !!l.id && l.id === current;
+                    return (
+                      <Link key={l.href} href={l.href} aria-current={ici ? "page" : undefined} className={`rounded-xl px-3 py-2.5 text-[15px] text-ink no-underline hover:bg-white hover:text-ink ${ici ? "bg-white font-bold" : ""}`}>
+                        {l.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </details>
             );
           })}
-          <details className="group relative">
-            <summary className={`inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1 rounded-full px-3.5 text-sm [&::-webkit-details-marker]:hidden ${PLUS.some((p) => p.id && p.id === current) ? "bg-paper font-bold text-ink" : "text-[#C9D4CD] hover:text-paper"}`}>
-              Plus <span aria-hidden="true" className="transition-transform duration-200 group-open:rotate-180">⌄</span>
-            </summary>
-            <div className="fade-in absolute left-0 top-full z-[1300] mt-2 flex w-60 flex-col rounded-2xl bg-paper p-2 shadow-[0_16px_40px_rgba(7,18,13,0.25)]">
-              {PLUS.map((p) => (
-                <Link key={p.href} href={p.href} aria-current={p.id && p.id === current ? "page" : undefined} className="rounded-xl px-3 py-2.5 text-[15px] text-ink no-underline hover:bg-white hover:text-ink">
-                  {p.label}
-                </Link>
-              ))}
-            </div>
-          </details>
         </nav>
+        <FermerMenus />
         {badge && <span className="rounded-full border border-[#2A4234] px-3.5 py-2.5 text-sm">{badge}</span>}
       </div>
     </header>

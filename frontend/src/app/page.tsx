@@ -26,15 +26,35 @@ const EXISTANT = [
   ["Bulletins agrométéo", "FAO, SODEXAM", "Adaptés au pays, mais régionaux, limités à trois cultures et non personnalisés."],
 ];
 
-const OUTILS: [string, string, string][] = [
-  ["Ma parcelle aujourd'hui", "/aujourdhui", "Calendrier, vigilance, végétation vue par satellite, carnet et rotation, en un seul écran."],
-  ["Simulateur", "/simulateur", "Les rotations comparées sur 3, 5 ou 10 ans, en année sèche ou très pluvieuse, avec la parcelle qui évolue."],
-  ["Calendrier agricole", "/calendrier", "Préparation, semis, entretien, floraison, récolte : les dates pour ma culture et ma saison."],
-  ["Alertes du jour", "/tableau", "Semis, sécheresse, fortes pluies et chaleur, avec un conseil ; en notification dans l'app."],
-  ["Carte des risques", "/risques", "Les 33 régions : saisons perdues depuis 2005 et estimation vers 2050."],
-  ["Carnet de suivi", "/suivi", "Ce que je vois dans mon champ, comparé à l'habitude de ma région, et prévenir mes voisins sur WhatsApp."],
-  ["Rentabilité", "/rotations", "Recettes et marges de chaque rotation, avec mes propres prix du marché."],
-  ["Traduire ForoSat", "/traduire", "Dioula, baoulé, sénoufo : aidez-nous à traduire l'application, phrase par phrase."],
+/** Trois espaces, comme le menu : décider, suivre sa saison, comprendre. */
+const ESPACES: { titre: string; sous: string; outils: [string, string, string][] }[] = [
+  {
+    titre: "Décider",
+    sous: "Choisir sa rotation",
+    outils: [
+      ["Rotations comparées", "/rotations", "Trois rotations notées, rejouées sur les saisons réelles et projetées en 2050, avec l'assistant pour les comparer."],
+      ["Simulateur", "/simulateur", "Les rotations sur 3, 5 ou 10 ans, en année sèche ou très pluvieuse."],
+      ["Rentabilité", "/rotations", "Recettes et marges avec mes propres prix du marché."],
+    ],
+  },
+  {
+    titre: "Suivre ma saison",
+    sous: "Au jour le jour",
+    outils: [
+      ["Alertes du jour", "/tableau", "Semis, sécheresse, fortes pluies et chaleur, avec un conseil ; en notification dans l'app."],
+      ["Calendrier agricole", "/calendrier", "Préparation, semis, entretien, récolte : les dates de ma culture."],
+      ["Carnet de suivi", "/suivi", "Ce que je vois au champ, et prévenir mes voisins sur WhatsApp."],
+    ],
+  },
+  {
+    titre: "Comprendre",
+    sous: "Les données NASA",
+    outils: [
+      ["Climat de ma zone", "/climat", "Pluie, chaleur, humidité du sol et végétation mesurées depuis 2005."],
+      ["Carte des risques", "/risques", "Les 33 régions : saisons perdues depuis 2005 et estimation vers 2050."],
+      ["Traduire ForoSat", "/traduire", "Dioula, baoulé, sénoufo : traduit avec les locuteurs."],
+    ],
+  },
 ];
 
 export default function Home() {
@@ -116,15 +136,25 @@ export default function Home() {
               <li key={n} className="lift flex flex-col gap-2 rounded-3xl bg-white p-6"><span className="font-display text-sm font-bold text-orange-dark">{n}</span><h3 className="m-0 font-display text-lg font-bold">{t}</h3><p className="m-0 text-base leading-normal text-muted">{d}</p></li>
             ))}
           </ol>
-          <h3 className="m-0 mt-4 font-display text-xl font-bold">Et pendant toute la saison</h3>
-          <ul data-stagger className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3.5 p-0">
-            {OUTILS.map(([nom, href, d]) => (
-              <li key={nom} className="lift flex flex-col gap-1.5 rounded-3xl bg-white p-5">
-                <Link href={href} className="font-display text-lg font-bold no-underline">{`${nom} →`}</Link>
-                <p className="m-0 text-[15px] leading-normal text-muted">{d}</p>
-              </li>
+          <h3 className="m-0 mt-4 font-display text-xl font-bold">Trois espaces, un seul outil</h3>
+          <div data-stagger className="grid gap-4 md:grid-cols-3">
+            {ESPACES.map((e) => (
+              <section key={e.titre} aria-label={e.titre} className="lift flex flex-col gap-3 rounded-3xl bg-white p-5">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-xs font-semibold uppercase tracking-[0.12em] text-orange-dark">{e.sous}</span>
+                  <h4 className="m-0 font-display text-xl font-bold">{e.titre}</h4>
+                </div>
+                <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+                  {e.outils.map(([nom, href, d]) => (
+                    <li key={nom} className="flex flex-col gap-0.5 border-t border-line pt-2.5">
+                      <Link href={href} className="text-[16px] font-bold no-underline">{`${nom} →`}</Link>
+                      <span className="text-sm leading-normal text-muted">{d}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             ))}
-          </ul>
+          </div>
           <p className="m-0 text-[15px] text-muted">Les pages déjà consultées restent disponibles hors connexion, sur le site comme dans l&apos;app Android.</p>
           <div className="flex flex-wrap gap-3">
             <Link href="/bienvenue" className={`${CTA} bg-orange text-ink hover:text-ink`}>Commencer</Link>
