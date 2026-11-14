@@ -8,6 +8,7 @@ import { anneesExtremes, etatAuJour, simuler, type Duree, type Scenario, type Si
 import { lirePrix, rentabilite, type Prix } from "@/lib/rentabilite";
 import { scoreWord } from "@/lib/format";
 import { PlanteIllustration } from "./PlanteIllustration";
+import { IconeCulture } from "./plantes";
 
 const DUREES: Duree[] = [3, 5, 10];
 const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
@@ -53,7 +54,7 @@ function Colonne({ a, reel }: { a: Simulation["annees"][number]; reel: boolean }
         <span className="bar-grow w-full rounded-xl" style={{ height: `${Math.max(6, a.rendement)}%`, background: COULEUR[a.verdict] }} />
       </span>
       <span className="text-[11px] font-semibold tabular-nums text-muted">{reel ? String(a.anneeSource) : `An ${a.annee}`}</span>
-      <span className="max-w-full truncate text-[11px] text-muted">{a.culture}</span>
+      <span className="flex max-w-full flex-col items-center gap-0.5 text-[11px] text-muted"><IconeCulture culture={a.culture} taille={22} /><span className="max-w-full truncate">{a.culture}</span></span>
     </li>
   );
 }

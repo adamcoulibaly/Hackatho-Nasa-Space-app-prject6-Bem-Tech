@@ -14,6 +14,7 @@ import { RainSimulator } from "./RainSimulator";
 import { AssistantIA } from "./AssistantIA";
 import { EtatCalcul } from "./EtatCalcul";
 import { Repli } from "./Repli";
+import { IconeCulture } from "./plantes";
 
 const Section = ({ titre, children }: { titre: string; children: React.ReactNode }) => (
   <section className="flex min-w-0 flex-col gap-4 rounded-[28px] bg-white p-5 sm:p-[26px]">
@@ -56,7 +57,10 @@ export function RotationDetail({ id, initial, cultures }: { id: "A" | "B" | "C";
       <ol data-stagger className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5 p-0">
         {rotation.sequence.map((culture, i) => (
           <li key={culture + i} className={`lift flex flex-col gap-1.5 rounded-3xl p-[22px] ${rotation.recommandee && i === 0 ? "bg-ink text-paper" : "bg-white"}`}>
-            <span className="text-[13px] uppercase tracking-[0.12em] opacity-70">{`Année ${i + 1}`}</span>
+            <span className="flex items-start justify-between gap-2">
+              <span className="text-[13px] uppercase tracking-[0.12em] opacity-70">{`Année ${i + 1}`}</span>
+              <span className={`flex h-14 w-14 items-center justify-center rounded-2xl ${rotation.recommandee && i === 0 ? "bg-paper" : "bg-[#EEF3EC]"}`}><IconeCulture culture={culture} taille={46} /></span>
+            </span>
             <span className="font-display text-[30px] font-bold tracking-[-0.03em]">{culture}</span>
           </li>
         ))}

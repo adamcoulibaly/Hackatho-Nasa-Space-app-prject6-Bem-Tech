@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CRITERES, CRITERE_LABELS, type Rotation } from "@/lib/contract";
 import { ScoreBar } from "./ScoreBar";
+import { IconeCulture } from "./plantes";
 
 export function RotationCard({ rotation, dark = false }: { rotation: Rotation; dark?: boolean }) {
   const r = rotation;
@@ -19,7 +20,7 @@ export function RotationCard({ rotation, dark = false }: { rotation: Rotation; d
       <div data-testid="sequence" className="flex flex-wrap items-center gap-1.5 font-display text-xl font-bold tracking-[-0.02em]">
         {r.sequence.map((c, i) => (
           <span key={c + i} className="contents">
-            <span>{c}</span>
+            <span className="inline-flex items-center gap-1.5"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EEF3EC]"><IconeCulture culture={c} taille={30} /></span>{c}</span>
             {i < r.sequence.length - 1 && <span className={`text-xl font-normal ${muted}`} aria-hidden="true">→</span>}
           </span>
         ))}

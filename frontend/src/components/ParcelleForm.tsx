@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useParcelle } from "@/lib/parcelle/context";
 import { AUTRE_MAX, CULTURES, MAX_CULTURES, PRIORITES, validateParcelle, type Eau, type Materiel } from "@/lib/parcelle/validate";
 import { libelleRegion, regionsParDistrict } from "@/lib/regions";
+import { IconeCulture } from "./plantes";
 
 const FIELD = "h-12 rounded-[14px] border border-line bg-white px-3 text-[15px] text-ink";
 
@@ -85,8 +86,9 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
                   setTropDeCultures(false);
                   setParcelle({ cultures: toggle(parcelle.cultures, c) });
                 }}
-                className={`h-11 rounded-full border px-4 text-[15px] font-semibold ${on ? "border-ink bg-ink text-paper" : "border-line bg-white text-ink"}`}
+                className={`inline-flex h-12 items-center gap-1.5 rounded-full border pl-2 pr-4 text-[15px] font-semibold transition-colors duration-150 ${on ? "border-ink bg-ink text-paper" : "border-line bg-white text-ink hover:border-ink"}`}
               >
+                <span className={`flex h-9 w-9 items-center justify-center rounded-full ${on ? "bg-paper" : "bg-[#EEF3EC]"}`}><IconeCulture culture={c} taille={30} /></span>
                 {c}
               </button>
             );

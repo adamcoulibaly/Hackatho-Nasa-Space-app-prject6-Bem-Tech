@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { Culture, Saisons } from "@/lib/contract";
 import { calendrierCulture, etapeDuJour, semisHabituel } from "@/lib/moteur/calendrier-agricole";
+import { IconeCulture } from "./plantes";
 
 type Saison = { debut: number; fin: number };
 const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
@@ -43,7 +44,7 @@ export function CalendrierAgricole({ cultures, mesCultures, saisons, saisonsRegi
       <section className="flex flex-col gap-4 rounded-[28px] bg-white p-5 sm:p-[26px]">
         <div className="flex flex-wrap gap-2" role="group" aria-label="Culture">
           {(connues.length ? connues : [culture]).map((c) => (
-            <button key={c} type="button" aria-pressed={c === culture} onClick={() => { setCulture(c); setSemisReel(null); }} className={`h-11 rounded-full px-4 text-sm font-bold ${c === culture ? "bg-ink text-paper" : "border border-line"}`}>{c}</button>
+            <button key={c} type="button" aria-pressed={c === culture} onClick={() => { setCulture(c); setSemisReel(null); }} className={`inline-flex h-11 items-center gap-1.5 rounded-full pl-1.5 pr-4 text-sm font-bold ${c === culture ? "bg-ink text-paper" : "border border-line"}`}><span className={`flex h-8 w-8 items-center justify-center rounded-full ${c === culture ? "bg-paper" : "bg-[#EEF3EC]"}`}><IconeCulture culture={c} taille={26} /></span>{c}</button>
           ))}
         </div>
         {saisonsRegion.length > 1 && (

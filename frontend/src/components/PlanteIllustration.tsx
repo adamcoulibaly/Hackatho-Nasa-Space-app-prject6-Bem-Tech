@@ -1,76 +1,8 @@
 import type { Stade } from "@/lib/moteur/simulation";
-
-type Forme = "cereale" | "legumineuse" | "coton" | "tubercule";
-type Teintes = { feuille: string; clair: string; tige: string };
-
-/** Silhouette selon la culture : céréale haute, légumineuse basse et touffue, cotonnier buissonnant, tubercule à feuilles larges. */
-function formeDe(culture?: string | null): Forme {
-  const c = (culture ?? "").toLowerCase();
-  if (/arachide|niébé|niebe|soja|haricot/.test(c)) return "legumineuse";
-  if (/coton/.test(c)) return "coton";
-  if (/igname|manioc|patate/.test(c)) return "tubercule";
-  return "cereale";
-}
+import { PlanteCulture, estRiz, type Teintes } from "./plantes";
 
 /** Croissance relative de la plante à chaque stade (la plante grandit en douceur quand le curseur bouge). */
 const CROISSANCE: Record<Stade, number> = { sol_nu: 0, levee: 0.28, croissance: 0.62, floraison: 0.92, maturite: 1 };
-
-function Plante({ forme, stade, t, perdu }: { forme: Forme; stade: Stade; t: Teintes; perdu: boolean }) {
-  const fleur = stade === "floraison";
-  const mur = stade === "maturite";
-  const feuille = (d: string, clair = false) => <path d={d} fill={clair ? t.clair : t.feuille} />;
-  if (forme === "cereale") {
-    return (
-      <g>
-        <path d="M0 0V-62" stroke={t.tige} strokeWidth="3" strokeLinecap="round" />
-        {feuille("M0 -14 C-10 -20 -22 -20 -30 -12 C-20 -16 -10 -14 0 -10Z")}
-        {feuille("M0 -26 C10 -34 22 -34 30 -26 C20 -29 10 -27 0 -22Z", true)}
-        {feuille("M0 -38 C-9 -46 -20 -48 -27 -42 C-18 -44 -9 -41 0 -34Z")}
-        {feuille("M0 -50 C8 -57 17 -58 23 -53 C15 -55 8 -52 0 -46Z", true)}
-        {fleur && <path d="M0 -62 l-5 -9 M0 -62 l0 -11 M0 -62 l5 -9" stroke={perdu ? "#C9B07A" : "#E9C46A"} strokeWidth="2.5" strokeLinecap="round" />}
-        {mur && <ellipse cx="5" cy="-36" rx="4.5" ry="10" fill={perdu ? "#B79A62" : "#E2B33C"} stroke={perdu ? "#9C7F4C" : "#C48F1F"} strokeWidth="1" transform="rotate(18 5 -36)" />}
-      </g>
-    );
-  }
-  if (forme === "legumineuse") {
-    return (
-      <g>
-        <path d="M0 0V-24 M0 -12 L-12 -22 M0 -14 L12 -24" stroke={t.tige} strokeWidth="2.5" strokeLinecap="round" />
-        {[[-14, -24], [14, -26], [0, -30], [-7, -16], [8, -18]].map(([x, y], i) => (
-          <ellipse key={i} cx={x} cy={y} rx="8" ry="5.5" fill={i % 2 ? t.clair : t.feuille} transform={`rotate(${x * 2} ${x} ${y})`} />
-        ))}
-        {fleur && [[-10, -32], [6, -34], [15, -29]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="3.2" fill={perdu ? "#C9B07A" : "#F2C230"} />)}
-        {mur && [[-12, -10], [11, -12]].map(([x, y], i) => <path key={i} d={`M${x} ${y} q4 6 0 12`} stroke={perdu ? "#9C7F4C" : "#B07A3A"} strokeWidth="4" strokeLinecap="round" fill="none" />)}
-      </g>
-    );
-  }
-  if (forme === "coton") {
-    return (
-      <g>
-        <path d="M0 0V-46 M0 -20 L-14 -32 M0 -28 L14 -40" stroke={t.tige} strokeWidth="2.5" strokeLinecap="round" />
-        {[[-16, -34], [16, -42], [0, -48], [-9, -22], [9, -28]].map(([x, y], i) => (
-          <g key={i} transform={`translate(${x} ${y})`}>
-            <circle r="6.5" fill={i % 2 ? t.clair : t.feuille} />
-            <circle cx="-5" cy="-3" r="4.5" fill={i % 2 ? t.clair : t.feuille} />
-            <circle cx="5" cy="-3" r="4.5" fill={i % 2 ? t.clair : t.feuille} />
-          </g>
-        ))}
-        {fleur && [[-12, -40], [10, -48]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="4" fill={perdu ? "#C9B07A" : "#F4D9E6"} stroke="#E8A6C4" strokeWidth="1" />)}
-        {mur && [[-14, -38], [12, -46], [0, -52], [-6, -26]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="5" fill={perdu ? "#E3D8C3" : "#FFFFFF"} stroke="#D7D3C8" strokeWidth="1" />)}
-      </g>
-    );
-  }
-  return (
-    <g>
-      <path d="M0 0V-50" stroke={t.tige} strokeWidth="2.5" strokeLinecap="round" />
-      {[[-14, -20, -30], [14, -26, 30], [-12, -38, -25], [12, -46, 25]].map(([x, y, r], i) => (
-        <path key={i} d={`M0 ${y + 6} C${x} ${y + 4} ${x * 1.4} ${y - 8} ${x * 0.6} ${y - 12} C${x * 0.2} ${y - 6} 0 ${y} 0 ${y + 6}Z`} fill={i % 2 ? t.clair : t.feuille} transform={`rotate(${r / 4} 0 ${y})`} />
-      ))}
-      {fleur && <circle cx="0" cy="-53" r="3" fill={perdu ? "#C9B07A" : "#CFE3A0"} />}
-      {mur && <g>{[[-8, 9], [7, 11]].map(([x, y], i) => <ellipse key={i} cx={x} cy={y} rx="7" ry="4" fill={perdu ? "#9C7F4C" : "#8C5A2E"} stroke="#5E3A1A" strokeWidth="1" />)}</g>}
-    </g>
-  );
-}
 
 /**
  * Parcelle vue de côté à une date de la simulation : ciel et soleil selon l'état de la saison, billons de terre
@@ -79,7 +11,7 @@ function Plante({ forme, stade, t, perdu }: { forme: Forme; stade: Stade; t: Tei
 export function PlanteIllustration({ stade, etat, culture }: { stade: Stade; etat: string; culture?: string | null }) {
   const stress = etat === "stress hydrique";
   const perdu = etat === "récolte compromise";
-  const forme = formeDe(culture);
+  const riz = estRiz(culture);
   const t: Teintes = perdu
     ? { feuille: "#B8955A", clair: "#CDB07A", tige: "#9C7F4C" }
     : stress
@@ -95,7 +27,7 @@ export function PlanteIllustration({ stade, etat, culture }: { stade: Stade; eta
     xs.map((x) => (
       <g key={`${y}-${x}`} transform={`translate(${x} ${y})`} opacity={opacite}>
         <g className="plante-pousse" style={{ transform: `scale(${echelle * (0.55 + 0.45 * g)}, ${echelle * g})` }}>
-          <Plante forme={forme} stade={stade} t={t} perdu={perdu} />
+          <PlanteCulture culture={culture} stade={stade} t={t} perdu={perdu} />
         </g>
       </g>
     ));
@@ -124,6 +56,7 @@ export function PlanteIllustration({ stade, etat, culture }: { stade: Stade; eta
       <rect y="108" width="320" height="62" fill={sol} />
       <path d="M0 116 Q160 106 320 116 V124 Q160 114 0 124Z" fill={billon} />
       <path d="M0 146 Q160 134 320 146 V156 Q160 144 0 156Z" fill={billon} />
+      {riz && stade !== "sol_nu" && !perdu && <rect y="110" width="320" height="60" fill="#6FA8C9" opacity={stress ? 0.35 : 0.55} />}
       {(stress || perdu) && <path d="M30 132 l8 5 l-4 6 M120 162 l6 -6 l7 3 M210 130 l-6 6 l8 4 M280 160 l5 -7" stroke="#6E4520" strokeWidth="1.5" fill="none" strokeLinecap="round" />}
       {stade === "sol_nu" && <g fill="#5A3A1C">{[40, 95, 150, 205, 260].map((x) => <ellipse key={x} cx={x} cy="140" rx="3" ry="1.8" />)}</g>}
       {rang(117, [26, 72, 118, 164, 210, 256, 302], 0.78, 0.82)}
