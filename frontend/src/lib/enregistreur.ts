@@ -14,7 +14,14 @@ export function dicteePossible(): boolean {
 }
 
 export async function demarrerEnregistrement(): Promise<Session> {
-  const flux = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+  let flux: MediaStream;
+  try {
+    flux = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+  } catch (e) {
+    // Certains téléphones (et le navigateur intégré d'Android) refusent ces réglages : on demande le micro par défaut.
+    if ((e as { name?: string })?.name === "NotAllowedError") throw e;
+    flux = await navigator.mediaDevices.getUserMedia({ audio: true });
+  }
   const Contexte = window.AudioContext ?? (window as AvecWebkit).webkitAudioContext!;
   const ctx = new Contexte();
   await ctx.resume().catch(() => undefined);

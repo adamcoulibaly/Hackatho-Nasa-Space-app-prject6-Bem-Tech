@@ -109,7 +109,20 @@ export function DicteeVocale({ onTexte, moteur }: { onTexte: (texte: string) => 
     try {
       ecoute.current = await m.demarrer();
     } catch (err) {
-      return setMessage(MESSAGES[err instanceof ErreurDictee ? err.code : "autre"]);
+      // Dans l'app Android, le navigateur intégré n'a pas toujours accès au micro : la reconnaissance vocale
+      // du téléphone (native) prend le relais aussitôt, sans que l'agriculteur ait à recommencer.
+      const w = window as unknown as Fenetre;
+      if (m.nom !== "app" && estModeApp() && w.ReactNativeWebView) {
+        try {
+          m = moteurApp();
+          setChoisi(m);
+          ecoute.current = await m.demarrer();
+        } catch (err2) {
+          return setMessage(MESSAGES[err2 instanceof ErreurDictee ? err2.code : "autre"]);
+        }
+      } else {
+        return setMessage(MESSAGES[err instanceof ErreurDictee ? err.code : "autre"]);
+      }
     }
     // La fin de la parole (navigateur, téléphone) envoie le texte sans attendre « Terminer ».
     ecoute.current.surFin(() => void terminer());

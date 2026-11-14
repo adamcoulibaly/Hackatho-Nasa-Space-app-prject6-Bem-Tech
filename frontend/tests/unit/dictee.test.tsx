@@ -187,3 +187,42 @@ describe("DicteeVocale dans l'app (WebView Android)", () => {
     expect(screen.getByRole("status")).toHaveTextContent(/Touchez « Dicter »/);
   });
 });
+
+describe("DicteeVocale dans l'app : micro du navigateur intégré introuvable", () => {
+  it("si l'enregistrement échoue dans l'app, la reconnaissance vocale du téléphone prend le relais aussitôt", async () => {
+    const posts: string[] = [];
+    (window as any).ReactNativeWebView = { postMessage: (m: string) => posts.push(m) };
+    sessionStorage.setItem("forosat.app", "1");
+    const echec = moteurServeur(async () => { throw Object.assign(new Error("x"), { name: "NotFoundError" }); });
+    const onTexte = vi.fn();
+    render(<DicteeVocale onTexte={onTexte} moteur={echec} />);
+    await userEvent.setup().click(screen.getByRole("button", { name: "Poser la question à voix haute" }));
+    await vi.waitFor(() => expect(posts.map((p) => JSON.parse(p))).toContainEqual({ type: "dicter" }));
+    act(() => { document.dispatchEvent(new MessageEvent("message", { data: JSON.stringify({ type: "dictee", texte: "quand semer" }) })); });
+    await vi.waitFor(() => expect(onTexte).toHaveBeenCalledWith("quand semer"));
+    expect(screen.queryByText(/Aucun micro trouvé/)).not.toBeInTheDocument();
+  });
+});
+
+describe("enregistreur : réglages du micro tolérants", () => {
+  it("si le téléphone refuse les réglages audio demandés, on réessaie avec le micro par défaut", async () => {
+    const { demarrerEnregistrement } = await import("@/lib/enregistreur");
+    const getUserMedia = vi.fn()
+      .mockRejectedValueOnce(Object.assign(new Error("x"), { name: "OverconstrainedError" }))
+      .mockResolvedValueOnce({ getTracks: () => [{ stop: vi.fn() }] });
+    (navigator as any).mediaDevices = { getUserMedia };
+    (window as any).AudioContext = class {
+      sampleRate = 48000;
+      resume() { return Promise.resolve(); }
+      close() { return Promise.resolve(); }
+      createMediaStreamSource() { return { connect: vi.fn(), disconnect: vi.fn() }; }
+      createScriptProcessor() { return { connect: vi.fn(), disconnect: vi.fn(), onaudioprocess: null }; }
+      createGain() { return { gain: { value: 1 }, connect: vi.fn() }; }
+      get destination() { return {}; }
+    };
+    const s = await demarrerEnregistrement();
+    expect(getUserMedia).toHaveBeenCalledTimes(2);
+    expect(getUserMedia.mock.calls[1][0]).toEqual({ audio: true });
+    s.annuler();
+  });
+});
