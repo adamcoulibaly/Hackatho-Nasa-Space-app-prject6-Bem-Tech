@@ -143,3 +143,47 @@ describe("DicteeVocale : navigateur sans service de reconnaissance", () => {
     expect(screen.getByRole("status")).not.toHaveTextContent(/connexion internet/);
   });
 });
+
+describe("DicteeVocale dans l'app (WebView Android)", () => {
+  const UA = navigator.userAgent;
+  afterEach(() => Object.defineProperty(navigator, "userAgent", { value: UA, configurable: true }));
+  const reco = () => {
+    let instance: any;
+    (window as any).webkitSpeechRecognition = class {
+      lang = ""; continuous = false; interimResults = true; onresult: any; onend: any; onerror: any;
+      constructor() { instance = this; }
+      start() {}
+      stop() { this.onend?.(); }
+    };
+    return () => instance;
+  };
+
+  it("la reconnaissance du navigateur intégré n'est jamais utilisée dans l'app (elle n'y marche pas)", async () => {
+    Object.defineProperty(navigator, "userAgent", { value: "Mozilla/5.0 (Linux; Android 14; wv) Chrome/131", configurable: true });
+    reco();
+    const f = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify({ disponible: false })));
+    (navigator as any).mediaDevices = { getUserMedia: vi.fn() };
+    (window as any).AudioContext = class {};
+    const { container } = render(<DicteeVocale onTexte={vi.fn()} />);
+    await vi.waitFor(() => expect(f).toHaveBeenCalled());
+    await new Promise((r) => setTimeout(r, 20));
+    expect(container.querySelector("[data-moteur='navigateur']")).toBeNull();
+  });
+
+  it("un échec de la reconnaissance passe à la transcription ForoSat pour l'essai suivant", async () => {
+    const inst = reco();
+    (navigator as any).mediaDevices = { getUserMedia: vi.fn() };
+    (window as any).AudioContext = class {};
+    vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response(JSON.stringify({ disponible: false }))) // à l'ouverture
+      .mockResolvedValueOnce(new Response(JSON.stringify({ disponible: false }))) // au toucher
+      .mockResolvedValue(new Response(JSON.stringify({ disponible: true }))); // après l'échec
+    render(<DicteeVocale onTexte={vi.fn()} />);
+    const bouton = await screen.findByRole("button", { name: "Poser la question à voix haute" });
+    expect(bouton).toHaveAttribute("data-moteur", "navigateur");
+    await userEvent.setup().click(bouton);
+    act(() => { inst().onerror({ error: "network" }); inst().onend(); });
+    await vi.waitFor(() => expect(screen.getByRole("button", { name: "Poser la question à voix haute" })).toHaveAttribute("data-moteur", "serveur"));
+    expect(screen.getByRole("status")).toHaveTextContent(/Touchez « Dicter »/);
+  });
+});

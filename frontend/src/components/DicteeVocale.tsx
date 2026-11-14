@@ -16,17 +16,30 @@ const MESSAGES = {
   autre: "La dictée n'a pas marché. Vous pouvez écrire votre question ou réessayer.",
 } as const;
 
-/** Choisit le meilleur moyen disponible : transcription serveur, sinon téléphone (app), sinon navigateur ; null si aucun. */
+type Fenetre = { SpeechRecognition?: ConstructeurReconnaissance; webkitSpeechRecognition?: ConstructeurReconnaissance; ReactNativeWebView?: unknown };
+
+/** Vrai dans l'app Android (WebView) : sa reconnaissance vocale « navigateur » existe mais ne marche jamais. */
+function dansWebView(w: Fenetre): boolean {
+  return (estModeApp() && !!w.ReactNativeWebView) || /; wv\)/.test(navigator.userAgent);
+}
+
+async function serveurDisponible(): Promise<boolean> {
+  if (!dicteePossible()) return false;
+  return fetch("/api/dictee")
+    .then((r) => (r.ok ? r.json() : {}))
+    .then((j: { disponible?: boolean }) => j.disponible === true)
+    .catch(() => false);
+}
+
+/**
+ * Meilleur moyen disponible : transcription ForoSat (serveur), sinon reconnaissance du téléphone (app),
+ * sinon celle du navigateur (jamais dans l'app) ; null si aucun.
+ */
 async function choisirMoteur(): Promise<Moteur | null> {
-  const w = window as unknown as { SpeechRecognition?: ConstructeurReconnaissance; webkitSpeechRecognition?: ConstructeurReconnaissance; ReactNativeWebView?: unknown };
-  if (dicteePossible()) {
-    const ok = await fetch("/api/dictee")
-      .then((r) => (r.ok ? r.json() : {}))
-      .then((j: { disponible?: boolean }) => j.disponible === true)
-      .catch(() => false);
-    if (ok) return moteurServeur();
-  }
-  if (estModeApp() && w.ReactNativeWebView) return moteurApp();
+  const w = window as unknown as Fenetre;
+  if (await serveurDisponible()) return moteurServeur();
+  if (w.ReactNativeWebView && estModeApp()) return moteurApp();
+  if (dansWebView(w)) return null;
   const C = w.SpeechRecognition ?? w.webkitSpeechRecognition;
   return C ? moteurNavigateur(C) : null;
 }
@@ -72,7 +85,13 @@ export function DicteeVocale({ onTexte, moteur }: { onTexte: (texte: string) => 
       if (texte) rappel.current(texte);
       else setMessage(MESSAGES.rien);
     } catch (err) {
-      setMessage(MESSAGES[err instanceof ErreurDictee ? err.code : "autre"]);
+      const code = err instanceof ErreurDictee ? err.code : "autre";
+      setMessage(MESSAGES[code]);
+      // Reconnaissance du téléphone ou du navigateur en échec : l'essai suivant passe par la transcription ForoSat.
+      if (code !== "refus" && choisi.nom !== "serveur" && moteur === undefined && (await serveurDisponible())) {
+        setChoisi(moteurServeur());
+        setMessage("Cette reconnaissance vocale n'a pas marché : ForoSat transcrira votre voix. Touchez « Dicter » et parlez.");
+      }
     } finally {
       setEtat("repos");
     }
@@ -81,8 +100,14 @@ export function DicteeVocale({ onTexte, moteur }: { onTexte: (texte: string) => 
   const commencer = async () => {
     setMessage("");
     if (!exigerInternet("la dictée")) return;
+    // La transcription ForoSat a pu devenir disponible depuis l'ouverture de la page : on la préfère.
+    let m = choisi;
+    if (m.nom !== "serveur" && moteur === undefined && (await serveurDisponible())) {
+      m = moteurServeur();
+      setChoisi(m);
+    }
     try {
-      ecoute.current = await choisi.demarrer();
+      ecoute.current = await m.demarrer();
     } catch (err) {
       return setMessage(MESSAGES[err instanceof ErreurDictee ? err.code : "autre"]);
     }
