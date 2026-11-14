@@ -8,6 +8,7 @@ import { lienFiche } from "@/lib/moteur/fiche-lien";
 import { DEFAULT_PARCELLE } from "@/lib/parcelle/validate";
 const PARAMS = lienFiche("B", DEFAULT_PARCELLE).split("?")[1];
 import { configDepuisEnv, construireMessages, repondre, DemandeSchema } from "@/lib/ia/assistant";
+import { MODELES_PAR_DEFAUT } from "@/lib/ia/assistant";
 import { AssistantIA } from "@/components/AssistantIA";
 
 const load = (n: string) => JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../../data/regions/${n === "climat" ? "poro" : n}.json`), "utf8"));
@@ -22,7 +23,7 @@ describe("configuration", () => {
     const c = configDepuisEnv({});
     expect(c.cle).toBeUndefined();
     expect(c.baseUrl).toBe("https://openrouter.ai/api/v1");
-    expect(c.modeles).toEqual(["nvidia/nemotron-3.5-lightning:free", "nvidia/nemotron-3.5-super-vl:free"]);
+    expect(c.modeles).toEqual(MODELES_PAR_DEFAUT);
   });
   it("un autre fournisseur compatible OpenAI se règle par l'environnement", () => {
     const c = configDepuisEnv({ LLM_API_KEY: "k", LLM_BASE_URL: "https://api.groq.com/openai/v1/", LLM_MODEL: "m1, m2" });

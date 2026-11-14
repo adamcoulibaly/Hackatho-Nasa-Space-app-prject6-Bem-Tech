@@ -3,13 +3,25 @@ import { CRITERES, CRITERE_LABELS, type Climat, type Culture, type Rotation, typ
 import { lireLienFiche } from "@/lib/moteur/fiche-lien";
 import { calculerRotations } from "@/lib/moteur/rotations";
 import { scoreWord } from "@/lib/format";
+import { enCascade } from "./cascade";
 
 /** Fournisseur compatible OpenAI (OpenRouter par défaut, Groq, etc.). La clé reste côté serveur. */
 /** Modèles essayés dans l'ordre : le suivant prend le relais si le précédent est saturé ou en erreur. */
 export type ConfigIA = { cle?: string; baseUrl: string; modeles: string[] };
 
-/** Nemotron 3.5 Lightning (NVIDIA, rapide, peu sollicité), puis Nemotron 3.5 Super en secours. Gratuits sur OpenRouter. */
-export const MODELES_PAR_DEFAUT = ["nvidia/nemotron-3.5-lightning:free", "nvidia/nemotron-3.5-super-vl:free"];
+/**
+ * Modèles gratuits légers et peu sollicités sur OpenRouter, essayés en relais (voir cascade.ts) :
+ * Nemotron 3.5 Lightning (NVIDIA, rapide) d'abord, puis Ling 3.2 Flash, Gemma 4 26B A4B (4 milliards de paramètres actifs),
+ * ERNIE 5.5 Flash et Nemotron 3 Nano ; Nemotron 3.5 Super en dernier recours.
+ */
+export const MODELES_PAR_DEFAUT = [
+  "nvidia/nemotron-3.5-lightning:free",
+  "inclusionai/ling-3.2-flash:free",
+  "google/gemma-4-26b-a4b-it:free",
+  "baidu/ernie-5.5-flash-preview:free",
+  "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+  "nvidia/nemotron-3.5-super-vl:free",
+];
 
 export function configDepuisEnv(env: Record<string, string | undefined>): ConfigIA {
   const liste = (env.LLM_MODEL ?? "").split(",").map((m) => m.trim()).filter(Boolean);
@@ -73,31 +85,20 @@ export async function repondre(
   const { config } = deps;
   if (!config.cle) return { ok: false, statut: 503, erreur: NON_CONFIGURE };
   const messages = construireMessages(deps.rotation, deps.climat, demande.question);
-  let sature = false;
-  for (const modele of config.modeles) {
-    try {
-      const r = await deps.fetch(`${config.baseUrl}/chat/completions`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${config.cle}`, "Content-Type": "application/json", "X-Title": "ForoSat" },
-        // Les modèles qui raisonnent (Nemotron 3.5…) consomment des jetons avant de répondre :
-        // raisonnement court, non renvoyé, et une marge suffisante pour la réponse.
-        body: JSON.stringify({ model: modele, messages, temperature: 0.3, max_tokens: 1500, reasoning: { effort: "low", exclude: true } }),
-        signal: AbortSignal.timeout(25_000),
-      });
-      if (!r.ok) {
-        if (r.status === 429) sature = true;
-        const extrait = (await r.text().catch(() => "")).slice(0, 300);
-        console.warn(`[ia] ${modele} : HTTP ${r.status} ${extrait}`);
-        continue;
-      }
-      const json = (await r.json()) as { choices?: { message?: { content?: string }; finish_reason?: string }[] };
-      const texte = json.choices?.[0]?.message?.content?.trim();
-      if (texte) return { ok: true, texte };
-      console.warn(`[ia] ${modele} : réponse vide (fin : ${json.choices?.[0]?.finish_reason ?? "inconnue"})`);
-    } catch (e) {
-      console.warn(`[ia] ${modele} : ${e instanceof Error ? e.message : "erreur"}`);
-    }
-  }
+  const r = await enCascade({
+    famille: "assistant",
+    modeles: config.modeles,
+    url: `${config.baseUrl}/chat/completions`,
+    cle: config.cle,
+    fetch: deps.fetch,
+    // Les modèles qui raisonnent consomment des jetons avant de répondre : raisonnement court, non renvoyé,
+    // et une marge suffisante pour la réponse.
+    corps: (model) => ({ model, messages, temperature: 0.3, max_tokens: 1500, reasoning: { effort: "low", exclude: true } }),
+    relanceMs: 5000,
+    totalMs: 25_000,
+  });
+  if (r.ok) return { ok: true, texte: r.texte.trim() };
+  const sature = r.sature;
   return { ok: false, statut: 502, erreur: sature ? SATURE : INDISPONIBLE };
 }
 
