@@ -14,6 +14,7 @@ import { StrategiesMoyens } from "./StrategiesMoyens";
 import { strategies } from "@/lib/moteur/strategies";
 import { useSaisons } from "@/lib/useSaisons";
 import { Rentabilite } from "./Rentabilite";
+import { Repli } from "./Repli";
 
 const aujourdhuiIso = () => new Date().toISOString().slice(0, 10);
 
@@ -25,7 +26,7 @@ export function RotationsVue({ initial, cultures }: { initial: Climat; cultures:
   const entete = (
     <div className="flex flex-wrap items-end justify-between gap-4">
       <div className="flex flex-col gap-2">
-        <span className="text-[13px] uppercase tracking-[0.14em] text-muted">Étape 3 sur 3{region ? ` · ${region.nom}` : ""}</span>
+        <span className="text-[13px] uppercase tracking-[0.14em] text-muted">Étape 2 sur 2{region ? ` · ${region.nom}` : ""}</span>
         <h1 className="m-0 font-display text-[clamp(30px,3.4vw,46px)] font-bold leading-[1.05] tracking-[-0.04em]">
           Trois chemins <span className="font-serif font-normal italic text-orange-dark">pour votre sol.</span>
         </h1>
@@ -43,8 +44,6 @@ export function RotationsVue({ initial, cultures }: { initial: Climat; cultures:
       <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-stretch gap-4">
         {etat.rotations.map((r) => <RotationCard key={r.id} rotation={r} dark={r.recommandee} />)}
       </div>
-      {parMoyens && <StrategiesMoyens strategies={parMoyens} />}
-      <Rentabilite rotations={etat.rotations.map((r) => ({ id: r.id, sequence: r.sequence }))} saisons={saisons ?? null} cultures={cultures} surface={parcelle.surface} aujourdhui={aujourdhuiIso()} />
       <Link href="/simulateur" className="flex items-center justify-between gap-3 rounded-3xl bg-ink p-5 text-paper no-underline hover:text-paper">
         <span className="flex flex-col gap-1">
           <strong className="font-display text-lg">Simuler sur 3, 5 ou 10 ans</strong>
@@ -64,6 +63,16 @@ export function RotationsVue({ initial, cultures }: { initial: Climat; cultures:
           <span className="text-[15px] leading-normal">Prix au marché local, semences disponibles, avis d'un conseiller agricole. Les notes de revenu et de marché sont des estimations.</span>
         </div>
       </section>
+      <div className="flex flex-col gap-3">
+        {parMoyens && (
+          <Repli titre="Selon vos moyens" sous="Économique, équilibrée ou rendement : la rotation adaptée à votre budget.">
+            <StrategiesMoyens strategies={parMoyens} />
+          </Repli>
+        )}
+        <Repli titre="Rentabilité avec vos prix" sous="Recettes et marges de chaque rotation, avec vos prix du marché.">
+          <Rentabilite rotations={etat.rotations.map((r) => ({ id: r.id, sequence: r.sequence }))} saisons={saisons ?? null} cultures={cultures} surface={parcelle.surface} aujourdhui={aujourdhuiIso()} />
+        </Repli>
+      </div>
     </>
   );
 }

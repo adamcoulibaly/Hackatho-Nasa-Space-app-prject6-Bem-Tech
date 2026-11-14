@@ -8,7 +8,7 @@ describe("Compteur", () => {
     expect(screen.getByText("18 bonnes saisons")).toBeInTheDocument();
   });
 
-  it("monte de 0 à la valeur quand il entre à l'écran, puis s'arrête pile sur la valeur", async () => {
+  it("affiche la vraie valeur, puis monte de 0 à la valeur quand il entre à l'écran, puis s'arrête pile sur la valeur", async () => {
     let rappel: (e: { isIntersecting: boolean }[]) => void = () => undefined;
     (window as any).IntersectionObserver = class {
       constructor(cb: any) { rappel = cb; }
@@ -17,8 +17,9 @@ describe("Compteur", () => {
     };
     vi.useFakeTimers();
     render(<Compteur valeur={42} />);
-    expect(screen.getByText("0")).toBeInTheDocument();
+    expect(screen.getByText("42")).toBeInTheDocument(); // vraie valeur tant qu'il n'est pas à l'écran
     act(() => rappel([{ isIntersecting: true }]));
+    expect(screen.getByText("0")).toBeInTheDocument();
     await act(async () => { vi.advanceTimersByTime(1000); });
     expect(screen.getByText("42")).toBeInTheDocument();
     vi.useRealTimers();

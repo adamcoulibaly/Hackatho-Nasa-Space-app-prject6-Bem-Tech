@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Couche } from "@/lib/contract";
 import { ouvrirDansApp } from "@/lib/modeApp";
+import { Repli } from "./Repli";
 import { useParcelle } from "@/lib/parcelle/context";
 import { CarteParcelle } from "./CarteParcelle";
 import { ParcelleForm } from "./ParcelleForm";
@@ -20,12 +21,15 @@ export function ParcelleView({ couches }: { couches: Couche[] }) {
       <ParcelleForm
         onSubmit={() => {
           marquerSaisie();
-          // Dans l'app mobile, le climat s'ouvre dans son onglet.
-          if (!ouvrirDansApp("/climat")) router.push("/climat");
+          // Parcours court : la réponse (les rotations) tout de suite ; le climat reste à un toucher.
+          // Dans l'app mobile, les rotations s'ouvrent dans leur onglet.
+          if (!ouvrirDansApp("/rotations")) router.push("/rotations");
         }}
       />
       <div className="w-full">
-        <PhotoChamp region={parcelle.region} lat={lat} lon={lon} />
+        <Repli titre="Photographier mon champ" sous="Votre photo comparée à ce que voit le satellite de la NASA.">
+          <PhotoChamp region={parcelle.region} lat={lat} lon={lon} />
+        </Repli>
       </div>
       <Link href="/suivi" className="flex w-full items-center justify-between gap-3 rounded-3xl bg-white p-[18px] text-ink no-underline hover:text-ink">
         <span className="flex flex-col gap-1">

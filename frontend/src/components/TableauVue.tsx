@@ -20,6 +20,13 @@ import { RappelsSaison } from "./RappelsSaison";
 import { planifierRappels, semisAPlanifier } from "@/lib/rappels";
 import Link from "next/link";
 
+const RACCOURCIS: [string, string, string, boolean][] = [
+  ["Ma parcelle aujourd'hui", "/aujourdhui", "Tout en un écran", true],
+  ["Mon calendrier agricole", "/calendrier", "Les dates de ma culture", false],
+  ["Mon carnet de suivi", "/suivi", "Ce que je vois au champ", false],
+  ["Guide d'utilisation", "/guide", "ForoSat en 8 étapes", false],
+];
+
 export function TableauVue({ initial, cultures }: { initial: Climat; cultures: Culture[] }) {
   const { parcelle } = useParcelle();
   const etat = useRotations(initial, cultures, parcelle);
@@ -47,34 +54,15 @@ export function TableauVue({ initial, cultures }: { initial: Climat; cultures: C
       <Tableau climat={etat.climat} reco={rotationConseillee(etat.rotations)} semis={semis} anomalie={anomalie} risqueClimat={risqueClimat} />
       <AlerteSemis />
       <RappelsSaison rappels={rappels} />
-      <Link href="/aujourdhui" className="flex items-center justify-between gap-3 rounded-3xl bg-ink p-[18px] text-paper no-underline hover:text-paper">
-        <span className="flex flex-col gap-1">
-          <strong className="text-[15px]">Ma parcelle aujourd&apos;hui</strong>
-          <span className="text-sm text-[#C9D4CD]">Calendrier, vigilance, végétation NASA, carnet et rotation en un écran.</span>
-        </span>
-        <span aria-hidden="true" className="text-xl">→</span>
-      </Link>
-      <Link href="/calendrier" className="flex items-center justify-between gap-3 rounded-3xl bg-white p-[18px] text-ink no-underline hover:text-ink">
-        <span className="flex flex-col gap-1">
-          <strong className="text-[15px]">Mon calendrier agricole</strong>
-          <span className="text-sm text-muted">Préparation, semis, entretien, récolte : les dates pour votre culture.</span>
-        </span>
-        <span aria-hidden="true" className="text-xl">→</span>
-      </Link>
-      <Link href="/guide" className="flex items-center justify-between gap-3 rounded-3xl border border-line p-[18px] text-ink no-underline hover:text-ink">
-        <span className="flex flex-col gap-1">
-          <strong className="text-[15px]">Guide d&apos;utilisation</strong>
-          <span className="text-sm text-muted">Découvrir ForoSat en huit étapes.</span>
-        </span>
-        <span aria-hidden="true" className="text-xl">→</span>
-      </Link>
-      <Link href="/suivi" className="flex items-center justify-between gap-3 rounded-3xl bg-white p-[18px] text-ink no-underline hover:text-ink">
-        <span className="flex flex-col gap-1">
-          <strong className="text-[15px]">Mon carnet de suivi</strong>
-          <span className="text-sm text-muted">Notez ce que vous voyez dans votre champ, comparé aux prévisions.</span>
-        </span>
-        <span aria-hidden="true" className="text-xl">→</span>
-      </Link>
+      {/* Raccourcis compacts plutôt qu'une longue pile de cartes. */}
+      <nav aria-label="Raccourcis" className="grid grid-cols-2 gap-2.5">
+        {RACCOURCIS.map(([titre, href, sous, sombre]) => (
+          <Link key={href} href={href} className={`flex min-h-[92px] flex-col justify-between gap-1 rounded-3xl p-4 no-underline ${sombre ? "bg-ink text-paper hover:text-paper" : "bg-white text-ink hover:text-ink"}`}>
+            <strong className="text-[15px] leading-tight">{titre}</strong>
+            <span className={`text-[13px] leading-snug ${sombre ? "text-[#C9D4CD]" : "text-muted"}`}>{sous}</span>
+          </Link>
+        ))}
+      </nav>
     </>
   );
 }

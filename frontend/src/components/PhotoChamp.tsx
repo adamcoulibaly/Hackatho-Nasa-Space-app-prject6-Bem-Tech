@@ -59,8 +59,7 @@ export function PhotoChamp({ region, lat, lon, reduireImage = reduire }: { regio
   }, [analyser]);
 
   return (
-    <section className="flex min-w-0 flex-col gap-4 rounded-[28px] bg-white p-5 sm:p-[26px]">
-      <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">Votre champ vu du sol et de l&apos;espace</h2>
+    <section aria-label="Votre champ vu du sol et de l'espace" className="flex min-w-0 flex-col gap-4">
       <p className="m-0 text-sm leading-normal text-muted">
         La photo est envoyée à un service d&apos;IA pour l&apos;analyse, puis oubliée : elle n&apos;est pas enregistrée. La position envoyée est arrondie à environ 1 km.
       </p>

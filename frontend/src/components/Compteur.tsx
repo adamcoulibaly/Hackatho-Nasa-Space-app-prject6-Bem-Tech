@@ -11,12 +11,14 @@ export function Compteur({ valeur, duree = 600, format = (n: number) => String(n
   const el = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const reduit = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!("IntersectionObserver" in window) || reduit || !el.current) return setAffiche(valeur);
-    setAffiche(0);
+    // La vraie valeur reste affichée tant que le nombre n'est pas à l'écran (capture, impression, lecteur d'écran).
+    setAffiche(valeur);
+    if (!("IntersectionObserver" in window) || reduit || !el.current) return;
     let minuterie: ReturnType<typeof setInterval> | null = null;
     const io = new IntersectionObserver((entrees) => {
       if (!entrees.some((e) => e.isIntersecting)) return;
       io.disconnect();
+      setAffiche(0);
       const debut = Date.now();
       minuterie = setInterval(() => {
         const t = Math.min(1, (Date.now() - debut) / duree);

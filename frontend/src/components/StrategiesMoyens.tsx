@@ -3,8 +3,7 @@ import type { Strategie } from "@/lib/moteur/strategies";
 /** Trois stratégies selon les moyens : économique, équilibrée, orientée rendement, avec leurs contraintes. */
 export function StrategiesMoyens({ strategies }: { strategies: Strategie[] }) {
   return (
-    <section className="flex flex-col gap-4 rounded-[28px] bg-white p-5 sm:p-[26px]">
-      <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">Selon vos moyens</h2>
+    <section aria-label="Selon vos moyens" className="flex flex-col gap-4">
       <ul className="m-0 grid list-none gap-3 p-0 md:grid-cols-3">
         {strategies.map((s) => (
           <li key={s.id} data-testid="strategie" className={`flex min-w-0 flex-col gap-2 rounded-2xl p-4 ${s.conseillee ? "border-2 border-ink" : "bg-paper"}`}>

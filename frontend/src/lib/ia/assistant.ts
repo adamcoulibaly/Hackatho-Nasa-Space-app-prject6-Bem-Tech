@@ -56,9 +56,21 @@ Règles :
 - Appuie-toi uniquement sur les faits fournis. N'invente aucun chiffre, aucune date, aucun prix.
 - Si l'information manque, dis-le simplement et propose de demander à un conseiller agricole.
 - Tu n'as pas calculé le score : il vient de règles agronomiques transparentes. Ne le modifie pas.
+- Pour comparer des rotations, n'utilise que les faits de chaque rotation fournie (scores, saisons réelles, projection) et dis clairement laquelle convient le mieux et pourquoi.
 - Termine en rappelant de valider la décision avec un conseiller agricole.`;
 
-export function construireMessages(rotation: Rotation, climat: Climat, question?: string, historique: Echange[] = [], voix = false): Message[] {
+/** Résumé d'une rotation pour l'IA : de quoi la comparer aux autres sans tout répéter. */
+export function resumeRotation(r: Rotation): string {
+  const scores = CRITERES.map((k) => `${CRITERE_LABELS[k]} ${scoreWord(r.scores[k])}`).join(", ");
+  const rejeu = r.rejeu?.total
+    ? ` Saisons réelles 2005–2025 : ${r.rejeu.bonnes} bonnes, ${r.rejeu.difficiles} difficiles, ${r.rejeu.perdues} perdues sur ${r.rejeu.total}${r.rejeu.rendementMoyen !== undefined ? ` (rendement moyen ${r.rejeu.rendementMoyen} % du potentiel)` : ""}.`
+    : "";
+  const p = r.projection?.scenarios.ssp245;
+  const futur = p && r.projection ? ` Vers 2050 (scénario modéré) : ${p.min === p.max ? p.min : `${p.min} à ${p.max}`} bonnes saisons sur ${r.projection.total}.` : "";
+  return `Rotation ${r.id} (${r.tag}${r.recommandee ? ", conseillée par ForoSat" : ""}) : ${r.sequence.join(" → ")}. Scores : ${scores}.${rejeu}${futur} Confiance ${r.confiance.niveau}.`;
+}
+
+export function construireMessages(rotation: Rotation, climat: Climat, question?: string, historique: Echange[] = [], voix = false, autres: Rotation[] = []): Message[] {
   const scores = CRITERES.map((k) => `${CRITERE_LABELS[k]} : ${scoreWord(rotation.scores[k])}`).join(" ; ");
   const faits = [
     `Rotation ${rotation.id} (${rotation.tag}) : ${rotation.sequence.join(" → ")}.`,
@@ -69,7 +81,9 @@ export function construireMessages(rotation: Rotation, climat: Climat, question?
     `Confiance : ${rotation.confiance.niveau}.`,
     `Climat de la zone : ${climat.indicateurs.map((i) => `${i.label} ${i.valeur}`).join(" ; ")}.`,
     climat.meta ? `Sources : ${climat.meta.reel.join(", ")} (${climat.meta.source}, ${climat.meta.periode}). Végétation et eau stockée : pas encore disponibles.` : "Source du climat inconnue.",
-  ].join("\n");
+    rotation.rejeu?.total || rotation.projection ? `En bref : ${resumeRotation(rotation)}` : "",
+    autres.length ? `Autres rotations proposées pour cette parcelle (pour comparer) :\n${autres.map((r) => `- ${resumeRotation(r)}`).join("\n")}` : "",
+  ].filter(Boolean).join("\n");
   const dictee = voix
     ? "\n(Question dictée à voix haute et transcrite automatiquement : elle peut contenir des erreurs de transcription ; comprends-la au mieux selon le contexte agricole, et si elle reste obscure, demande de reformuler.)"
     : "";
@@ -92,11 +106,11 @@ const INDISPONIBLE = "L'assistant IA ne répond pas pour le moment.";
 
 export async function repondre(
   demande: Demande,
-  deps: { config: ConfigIA; fetch: typeof fetch; rotation: Rotation; climat: Climat },
+  deps: { config: ConfigIA; fetch: typeof fetch; rotation: Rotation; climat: Climat; autres?: Rotation[] },
 ): Promise<Reponse> {
   const { config } = deps;
   if (!config.cle) return { ok: false, statut: 503, erreur: NON_CONFIGURE };
-  const messages = construireMessages(deps.rotation, deps.climat, demande.question, demande.historique ?? [], demande.voix ?? false);
+  const messages = construireMessages(deps.rotation, deps.climat, demande.question, demande.historique ?? [], demande.voix ?? false, deps.autres ?? []);
   const r = await enCascade({
     famille: "assistant",
     modeles: config.modeles,
@@ -112,6 +126,15 @@ export async function repondre(
   if (r.ok) return { ok: true, texte: r.texte.trim() };
   const sature = r.sature;
   return { ok: false, statut: 502, erreur: sature ? SATURE : INDISPONIBLE };
+}
+
+/** Les trois rotations recalculées par le moteur ; null si la parcelle est invalide. */
+export function rotationsDepuisDemande(d: Pick<Demande, "id" | "params">, ctx: { climat: Climat; cultures: Culture[]; saisons?: Saisons | null }): { rotation: Rotation; autres: Rotation[] } | null {
+  const parcelle = lireLienFiche(new URLSearchParams(d.params));
+  if (!parcelle) return null;
+  const toutes = calculerRotations(parcelle, ctx.climat, ctx.cultures, ctx.saisons) ?? [];
+  const rotation = toutes.find((r) => r.id === d.id);
+  return rotation ? { rotation, autres: toutes.filter((r) => r.id !== d.id) } : null;
 }
 
 /** Rotation recalculée par le moteur à partir des paramètres de la demande, ou null si la parcelle est invalide. */

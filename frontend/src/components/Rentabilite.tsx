@@ -37,8 +37,7 @@ export function Rentabilite({ rotations, saisons, cultures, surface, aujourdhui 
   const toutes = [...new Set(rotations.flatMap((r) => r.sequence))];
   const aucun = toutes.every((c) => !prix[c]);
   return (
-    <section className="flex flex-col gap-4 rounded-[28px] bg-white p-5 sm:p-[26px]">
-      <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">Rentabilité avec vos prix</h2>
+    <section aria-label="Rentabilité avec vos prix" className="flex flex-col gap-4">
       {aucun && <p className="m-0 text-[15px] text-muted">Saisissez vos prix du marché, votre récolte habituelle et vos dépenses : ForoSat n&apos;a pas encore de prix locaux fiables et n&apos;en invente pas.</p>}
       <ul className="m-0 flex list-none flex-col gap-2 p-0">
         {rotations.map((r) => {

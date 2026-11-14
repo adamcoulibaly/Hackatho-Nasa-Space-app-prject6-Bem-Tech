@@ -205,3 +205,31 @@ describe("assistant en conversation", () => {
     vi.unstubAllGlobals();
   });
 });
+
+describe("comparer les rotations avec l'assistant", () => {
+  it("l'IA reçoit aussi les autres rotations de la parcelle, avec leurs saisons réelles, pour comparer", () => {
+    const [A, , C] = rotations();
+    const m = construireMessages(B, climat, "Compare B et A", [], false, [A, C]);
+    const dernier = m.at(-1)!.content;
+    expect(dernier).toContain("Autres rotations proposées pour cette parcelle");
+    expect(dernier).toContain(`Rotation A`);
+    expect(dernier).toContain(A.sequence.join(" → "));
+    expect(dernier).toContain(C.sequence.join(" → "));
+    expect(m[0].content).toMatch(/compar/i);
+  });
+
+  it("la fiche propose de comparer en un toucher avec chacune des autres rotations", async () => {
+    const corps: any[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (_u: string, init: RequestInit) => {
+      corps.push(JSON.parse(String(init.body)));
+      return new Response(JSON.stringify({ texte: "B tient mieux les années sèches que A." }));
+    }));
+    const u = userEvent.setup();
+    render(<AssistantIA id="B" parcelle={DEFAULT_PARCELLE} autres={["A", "C"]} />);
+    expect(screen.getByRole("button", { name: "Comparer avec C" })).toBeInTheDocument();
+    await u.click(screen.getByRole("button", { name: "Comparer avec A" }));
+    expect(await screen.findByText("B tient mieux les années sèches que A.")).toBeInTheDocument();
+    expect(corps[0].question).toMatch(/rotation B.*rotation A/);
+    vi.unstubAllGlobals();
+  });
+});

@@ -31,7 +31,7 @@ export function ClimatVue({ initial }: { initial: Climat }) {
   const entete = (
     <div className="flex flex-wrap items-end justify-between gap-4">
       <div className="flex flex-col gap-2">
-        <span className="text-[13px] uppercase tracking-[0.14em] text-muted">Étape 2 sur 3{region ? ` · ${region.nom}` : ""}</span>
+        <span className="text-[13px] uppercase tracking-[0.14em] text-muted">Climat de votre zone{region ? ` · ${region.nom}` : ""}</span>
         <h1 className="m-0 font-display text-[clamp(30px,3.4vw,46px)] font-bold leading-[1.05] tracking-[-0.04em]">
           Le climat de votre champ, <span className="font-serif font-normal italic text-green-dark">vu de l'espace.</span>
         </h1>

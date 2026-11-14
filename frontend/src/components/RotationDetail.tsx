@@ -13,6 +13,7 @@ import { ConfianceBreakdown } from "./ConfianceBreakdown";
 import { RainSimulator } from "./RainSimulator";
 import { AssistantIA } from "./AssistantIA";
 import { EtatCalcul } from "./EtatCalcul";
+import { Repli } from "./Repli";
 
 const Section = ({ titre, children }: { titre: string; children: React.ReactNode }) => (
   <section className="flex min-w-0 flex-col gap-4 rounded-[28px] bg-white p-5 sm:p-[26px]">
@@ -29,9 +30,21 @@ export function RotationDetail({ id, initial, cultures }: { id: "A" | "B" | "C";
   if (etat.statut !== "pret") return <>{retour}<EtatCalcul etat={etat} region={parcelle.region} /></>;
   const rotation = etat.rotations.find((r) => r.id === id)!;
 
+  const ids = etat.rotations.map((r) => r.id as "A" | "B" | "C");
   return (
     <>
-      {retour}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {retour}
+        {/* Passer d'une rotation à l'autre sans revenir à la liste. */}
+        <nav aria-label="Changer de rotation" className="flex gap-1 rounded-full bg-white p-1">
+          {etat.rotations.map((r) => (
+            <Link key={r.id} href={`/rotations/${r.id}`} aria-current={r.id === id ? "page" : undefined}
+              className={`flex h-10 min-w-[52px] items-center justify-center rounded-full px-3 text-[15px] font-bold no-underline ${r.id === id ? "bg-ink text-paper hover:text-paper" : "text-ink hover:text-ink"}`}>
+              {r.id}{r.recommandee ? " ★" : ""}
+            </Link>
+          ))}
+        </nav>
+      </div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-col gap-2">
           <span className="text-[13px] uppercase tracking-[0.14em] text-muted">{rotation.tag}</span>
@@ -49,7 +62,16 @@ export function RotationDetail({ id, initial, cultures }: { id: "A" | "B" | "C";
         ))}
       </ol>
 
-      <Section titre="Le calendrier sur 3 ans"><CalendrierTrois calendrier={rotation.calendrier} /></Section>
+      <Section titre="Pourquoi cette rotation">
+        <ol className="m-0 flex list-none flex-col gap-3 p-0">
+          {rotation.pourquoi.map((p, i) => (
+            <li key={p} className="flex gap-3 text-base leading-normal">
+              <span className="font-display font-bold text-orange-dark">{String(i + 1).padStart(2, "0")}</span>
+              <span>{p}</span>
+            </li>
+          ))}
+        </ol>
+      </Section>
 
       {rotation.rejeu && rotation.rejeu.total > 0 && (
         <Section titre={`Rejouée sur ${rotation.rejeu.total} saisons réelles`}><FriseRejeu rejeu={rotation.rejeu} /></Section>
@@ -61,18 +83,15 @@ export function RotationDetail({ id, initial, cultures }: { id: "A" | "B" | "C";
         </Section>
       )}
 
-      <div data-stagger className="grid gap-[22px] lg:grid-cols-2">
-        <Section titre="Pourquoi cette rotation">
-          <ol className="m-0 flex list-none flex-col gap-3 p-0">
-            {rotation.pourquoi.map((p, i) => (
-              <li key={p} className="flex gap-3 text-base leading-normal">
-                <span className="font-display font-bold text-orange-dark">{String(i + 1).padStart(2, "0")}</span>
-                <span>{p}</span>
-              </li>
-            ))}
-          </ol>
-        </Section>
-        <Section titre="Ce que disent les données">
+      <Section titre="Demander à l'assistant IA">
+        <p className="m-0 text-[15px] text-muted">Posez votre question, ou comparez cette rotation aux autres en un toucher.</p>
+        <AssistantIA id={id} parcelle={parcelle} autres={ids.filter((x) => x !== id)} />
+      </Section>
+
+      <div className="flex flex-col gap-3">
+        <Repli titre="Le calendrier sur 3 ans"><CalendrierTrois calendrier={rotation.calendrier} /></Repli>
+        <Repli titre="Et si… la pluie ou la chaleur changeait ?"><RainSimulator rotations={etat.rotations} courante={rotation.id} /></Repli>
+        <Repli titre="Ce que disent les données">
           <ul className="m-0 flex list-none flex-col gap-3 p-0">
             {rotation.donnees.map((d) => (
               <li key={d.source + d.texte} className="flex flex-col gap-0.5 text-[15px] leading-normal">
@@ -81,19 +100,8 @@ export function RotationDetail({ id, initial, cultures }: { id: "A" | "B" | "C";
               </li>
             ))}
           </ul>
-        </Section>
-      </div>
-
-      <Section titre="Demander à l'assistant IA">
-        <AssistantIA id={id} parcelle={parcelle} />
-      </Section>
-
-      <Section titre="Et si… la pluie ou la chaleur changeait ?">
-        <RainSimulator rotations={etat.rotations} courante={rotation.id} />
-      </Section>
-
-      <div data-stagger className="grid gap-[22px] lg:grid-cols-2">
-        <Section titre="Risques & incertitudes">
+        </Repli>
+        <Repli titre="Risques, lacunes et confiance">
           {rotation.risques.length > 0 ? (
             <ul className="m-0 flex flex-col gap-2 pl-5 text-[15px] leading-normal">
               {rotation.risques.map((r) => <li key={r}>{r}</li>)}
@@ -102,8 +110,8 @@ export function RotationDetail({ id, initial, cultures }: { id: "A" | "B" | "C";
             <p className="m-0 text-[15px] text-muted">Aucun risque particulier détecté par les règles.</p>
           )}
           <p className="m-0 rounded-2xl bg-[#FDE7CC] p-3.5 text-[15px] text-[#5C2E00]"><strong>Lacunes :</strong> {rotation.lacune}</p>
-        </Section>
-        <Section titre="Comment la confiance est calculée"><ConfianceBreakdown confiance={rotation.confiance} /></Section>
+          <ConfianceBreakdown confiance={rotation.confiance} />
+        </Repli>
       </div>
 
       <p className="m-0 rounded-[20px] bg-ink p-5 text-base text-paper">Validez avec un conseiller agricole avant de vous lancer : ForoSat aide à décider, il ne décide pas à votre place.</p>

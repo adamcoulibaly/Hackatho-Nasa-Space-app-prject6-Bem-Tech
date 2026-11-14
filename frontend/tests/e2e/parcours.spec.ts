@@ -2,11 +2,9 @@ import { test, expect } from "@playwright/test";
 
 const ROUTES = ["/", "/bienvenue", "/tableau", "/parcelle", "/climat", "/rotations", "/rotations/B", "/simulateur", "/risques", "/suivi", "/guide", "/calendrier", "/fiche/B", "/methode", "/lexique", "/conseiller", "/aujourdhui", "/traduire"];
 
-test("parcours complet : parcelle → climat → rotations → détail → fiche", async ({ page }) => {
+test("parcours court : parcelle → rotations → détail → fiche", async ({ page }) => {
   await page.goto("/parcelle");
   await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
-  await expect(page).toHaveURL(/\/climat$/);
-  await page.getByRole("link", { name: "Voir les 3 rotations" }).click();
   await expect(page).toHaveURL(/\/rotations$/);
   await page.getByRole("link", { name: "Voir le détail de la rotation B" }).click();
   await expect(page).toHaveURL(/\/rotations\/B$/);
@@ -19,9 +17,9 @@ test("parcours complet : parcelle → climat → rotations → détail → fiche
 test("la parcelle saisie survit à un rechargement", async ({ page }) => {
   await page.goto("/parcelle");
   await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
-  await expect(page).toHaveURL(/\/climat$/);
+  await expect(page).toHaveURL(/\/rotations$/);
   await page.reload();
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Le climat de votre champ");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Trois chemins");
 });
 
 test("/climat sans parcelle saisie propose l'étape 1", async ({ page }) => {
@@ -53,7 +51,7 @@ for (const route of ROUTES) {
   test(`pas de défilement horizontal de la page : ${route}`, async ({ page }) => {
     await page.goto("/parcelle");
     await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
-    await page.waitForURL(/\/climat$/);
+    await page.waitForURL(/\/rotations$/);
     await page.goto(route);
     await page.waitForLoadState("networkidle");
     const { sw, iw } = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth }));
@@ -70,7 +68,7 @@ test("l'écran d'entrée mène au formulaire de parcelle", async ({ page }) => {
 test("le tableau de bord résume le champ et mène aux rotations", async ({ page }) => {
   await page.goto("/parcelle");
   await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
-  await page.waitForURL(/\/climat$/);
+  await page.waitForURL(/\/rotations$/);
   await page.goto("/tableau");
   await expect(page.getByText(/Mesures NASA POWER du/)).toBeVisible();
   await page.getByRole("link", { name: /Rotation conseillée/ }).click();
@@ -135,7 +133,7 @@ test("assistant IA sans clé : l'écran le dit clairement", async ({ page }) => 
   test.skip(!!process.env.LLM_API_KEY, "une clé est configurée");
   await page.goto("/parcelle");
   await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
-  await page.waitForURL(/\/climat$/);
+  await page.waitForURL(/\/rotations$/);
   await page.goto("/rotations/B");
   await page.getByRole("button", { name: "Expliquer simplement" }).click();
   await expect(page.getByRole("alert").filter({ hasText: "pas encore configuré" })).toBeVisible();
@@ -153,6 +151,8 @@ test("carte : on ferme le contour en touchant le premier point, et on peut retir
   await expect(carte.locator(".leaflet-pane").first()).toBeAttached();
   await page.getByRole("button", { name: "Dessiner ma parcelle" }).click();
   await carte.scrollIntoViewIfNeeded();
+  // L'entrée animée de la page déplace la carte pendant 300 ms : on mesure une fois les animations finies.
+  await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getTiming().iterations === Infinity));
   const b = (await carte.boundingBox())!;
   const cx = b.x + b.width / 2;
   const cy = b.y + b.height / 2 - 40;
@@ -176,12 +176,13 @@ test("toutes les régions : le climat suit la région choisie", async ({ page })
   await expect(page.locator("#region option")).toHaveCount(33);
   await page.getByLabel("Région").selectOption("gbeke");
   await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
-  await expect(page).toHaveURL(/\/climat$/);
-  await expect(page.getByText(/Étape 2 sur 3 · Gbêkê/i)).toBeVisible();
+  await expect(page).toHaveURL(/\/rotations$/);
+  await page.goto("/climat");
+  await expect(page.getByText(/Climat de votre zone · Gbêkê/i)).toBeVisible();
   await expect(page.getByText(/NASA POWER, Bouaké/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "L'eau stockée dans la zone, sur 20 ans" })).toBeVisible();
   await page.goto("/rotations");
-  await expect(page.getByText(/Étape 3 sur 3 · Gbêkê/i)).toBeVisible();
+  await expect(page.getByText(/Étape 2 sur 2 · Gbêkê/i)).toBeVisible();
 });
 
 test("carte : le mode dessin garde les styles de Leaflet (tuiles visibles)", async ({ page }) => {
@@ -229,7 +230,7 @@ test("mode app sur petit téléphone (360 px) : aucune page plus large que l'éc
   const page = await ctx.newPage();
   await page.goto("/parcelle?app=1");
   await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
-  await expect(page).toHaveURL(/\/climat/);
+  await expect(page).toHaveURL(/\/rotations/);
   for (const route of [...ROUTES, "/fiche/B?r=poro&s=2&c=Ma%C3%AFs,Coton&p=0,1&e=pluie&m=traction"]) {
     await page.goto(route);
     await page.waitForLoadState("networkidle");
@@ -289,6 +290,7 @@ test("photo : la photo du champ est réduite, envoyée, et confrontée à la vue
     });
   });
   await page.goto("/parcelle");
+  await page.getByText("Photographier mon champ", { exact: true }).first().click();
   await page.getByLabel("Photographier mon champ").setInputFiles("tests/fixtures/gibs_ndvi_tuile.png");
   await expect(page.getByText("Ce que voit votre téléphone")).toBeVisible();
   await expect(page.getByText("Ce que voit la NASA")).toBeVisible();
@@ -367,10 +369,11 @@ test("calendrier agricole : les étapes datées de la culture, depuis l'accueil"
 test("ma parcelle aujourd'hui rassemble les cinq informations, et la rentabilité attend mes prix", async ({ page }) => {
   await page.goto("/parcelle");
   await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
-  await page.waitForURL(/\/climat$/);
+  await page.waitForURL(/\/rotations$/);
   await page.goto("/aujourdhui");
   for (const id of ["jour-calendrier", "jour-vigilance", "jour-vegetation", "jour-observation", "jour-rotation"]) await expect(page.getByTestId(id)).toBeVisible();
   await page.goto("/rotations");
+  await page.getByText("Rentabilité avec vos prix", { exact: true }).click();
   await expect(page.getByText(/Saisissez vos prix/)).toBeVisible();
   await expect(page.getByTestId("rentabilite-A")).toContainText("Prix manquant");
 });

@@ -17,7 +17,7 @@ const ECHANGES_GARDES = 4;
  * Assistant IA en conversation : chaque question (écrite ou dite à voix haute) s'ajoute au fil, et l'IA reçoit les
  * échanges précédents pour les questions de suite. Le score vient toujours des règles, pas de l'IA.
  */
-export function AssistantIA({ id, parcelle, moteurDictee }: { id: "A" | "B" | "C"; parcelle: Parcelle; moteurDictee?: Moteur | null }) {
+export function AssistantIA({ id, parcelle, moteurDictee, autres = [] }: { id: "A" | "B" | "C"; parcelle: Parcelle; moteurDictee?: Moteur | null; autres?: ("A" | "B" | "C")[] }) {
   const [question, setQuestion] = useState("");
   const [fil, setFil] = useState<Message[]>([]);
   const [attente, setAttente] = useState(false);
@@ -72,13 +72,24 @@ export function AssistantIA({ id, parcelle, moteurDictee }: { id: "A" | "B" | "C
 
   return (
     <div className="flex flex-col gap-4">
-      {fil.length === 0 && (
-        <div className="flex flex-wrap gap-3">
-          <button type="button" onClick={() => void envoyer(null)} disabled={attente} className="h-12 rounded-full bg-orange px-5 text-base font-bold text-ink disabled:opacity-60">
+      <div className="flex flex-wrap gap-2">
+        {fil.length === 0 && (
+          <button type="button" onClick={() => void envoyer(null)} disabled={attente} className="h-11 rounded-full bg-orange px-5 text-[15px] font-bold text-ink disabled:opacity-60">
             Expliquer simplement
           </button>
-        </div>
-      )}
+        )}
+        {/* Comparer en un toucher avec les autres rotations de la parcelle. */}
+        {autres.map((a) => (
+          <button key={a} type="button" disabled={attente} onClick={() => void envoyer(`Compare la rotation ${id} avec la rotation ${a} pour ma parcelle : laquelle convient le mieux, et pourquoi ?`)} className="h-11 rounded-full border border-ink px-4 text-[15px] font-bold disabled:opacity-60">
+            {`Comparer avec ${a}`}
+          </button>
+        ))}
+        {autres.length > 1 && (
+          <button type="button" disabled={attente} onClick={() => void envoyer("Entre les trois rotations, laquelle me conseilles-tu pour ma parcelle, et pourquoi ?")} className="h-11 rounded-full border border-ink px-4 text-[15px] font-bold disabled:opacity-60">
+            Laquelle choisir ?
+          </button>
+        )}
+      </div>
 
       {fil.length > 0 && (
         <ol aria-label="Conversation avec l'assistant" aria-live="polite" aria-busy={attente} className="m-0 flex list-none flex-col gap-3 p-0">
