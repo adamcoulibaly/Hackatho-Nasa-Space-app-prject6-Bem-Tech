@@ -16,6 +16,8 @@ import { useEffect } from "react";
 import { envoyerParcelle } from "@/lib/modeApp";
 import { prochaineCulture } from "@/lib/whatsapp";
 import { AlerteSemis } from "./AlerteSemis";
+import { RappelsSaison } from "./RappelsSaison";
+import { planifierRappels, semisAPlanifier } from "@/lib/rappels";
 import Link from "next/link";
 
 export function TableauVue({ initial, cultures }: { initial: Climat; cultures: Culture[] }) {
@@ -34,10 +36,17 @@ export function TableauVue({ initial, cultures }: { initial: Climat; cultures: C
     envoyerParcelle(parcelle.region, culture);
   }, [parcelle.region, culture]);
   if (etat.statut !== "pret") return <EtatCalcul etat={etat} region={parcelle.region} />;
+  // Rappels de saison : même date de semis que le calendrier (pluies installées cette année, sinon l'habitude).
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  const fiche = cultures.find((c) => c.nom === culture);
+  const rappels = fiche
+    ? planifierRappels(fiche, semisAPlanifier(fiche, saisons ?? null, etat.climat.saisonPluies, aujourdhui, semis?.etat === "fenetre_ouverte" ? semis.depuis : undefined), aujourdhui)
+    : [];
   return (
     <>
       <Tableau climat={etat.climat} reco={rotationConseillee(etat.rotations)} semis={semis} anomalie={anomalie} risqueClimat={risqueClimat} />
       <AlerteSemis />
+      <RappelsSaison rappels={rappels} />
       <Link href="/aujourdhui" className="flex items-center justify-between gap-3 rounded-3xl bg-ink p-[18px] text-paper no-underline hover:text-paper">
         <span className="flex flex-col gap-1">
           <strong className="text-[15px]">Ma parcelle aujourd&apos;hui</strong>

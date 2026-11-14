@@ -11,6 +11,8 @@ import { activer, desactiver, ecrireReglage, lireReglage, verifier } from "@/lib
 import { prendrePhoto } from "@/lib/photo";
 import { texteALire } from "@/lib/alerte";
 import { dicter } from "@/lib/dictee";
+import { arreterRappels, etatRappels, programmerRappels } from "@/lib/rappels";
+import { lireListeRappels } from "@/lib/rappelsListe";
 
 type Message =
   | { type: "position" }
@@ -20,7 +22,8 @@ type Message =
   | { type: "alerte"; action: unknown }
   | { type: "photo" }
   | { type: "lire"; texte: unknown }
-  | { type: "dicter" };
+  | { type: "dicter" }
+  | { type: "rappels"; action: unknown; liste?: unknown };
 
 /**
  * Propriétés de WebView utilisées ici. Les types fournis par react-native-webview 14.0.1 se réduisent à `never`
@@ -123,6 +126,11 @@ export function PageWeb({ onglet, chemin }: { onglet: Onglet; chemin: string }) 
           Speech.stop();
           Speech.speak(texte, { language: "fr-FR" });
         }
+      } else if (m.type === "rappels") {
+        const fallback = { type: "rappels" as const, etat: "inactive" as const };
+        if (m.action === "activer") repondre(await programmerRappels(lireListeRappels(m.liste)).catch(() => fallback));
+        else if (m.action === "desactiver") repondre(await arreterRappels().catch(() => fallback));
+        else if (m.action === "etat") repondre(await etatRappels().catch(() => fallback));
       } else if (m.type === "dicter") {
         // Dictée avec la reconnaissance vocale du téléphone : seul le texte reconnu revient à la page.
         Speech.stop();

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { ecouterNatif, envoyerAuNatif, estModeApp } from "@/lib/modeApp";
 import { reduire } from "@/lib/photo/reduire";
+import { exigerInternet, messageHorsLigne } from "@/lib/enLigne";
 
 type Resultat = {
   analyse: { culture: string; couvertureSol: number; etat: "vigoureux" | "jaunissement" | "sec" | "sol_nu"; remarque: string };
@@ -34,6 +35,7 @@ export function PhotoChamp({ region, lat, lon, reduireImage = reduire }: { regio
 
   const analyser = useCallback(
     async (image: string) => {
+      if (!exigerInternet("l'analyse de la photo")) return setEtat({ statut: "erreur", message: messageHorsLigne("l'analyse de la photo") });
       setEtat({ statut: "analyse" });
       try {
         const r = await fetch("/api/photo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image, ...(position ?? {}), region }) });

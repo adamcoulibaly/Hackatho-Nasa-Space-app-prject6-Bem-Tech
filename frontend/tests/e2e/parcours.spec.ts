@@ -332,7 +332,7 @@ test("hors connexion : les pages déjà consultées restent disponibles sans int
   await context.setOffline(true);
   await page.reload();
   await expect(page.locator("article").first()).toBeVisible();
-  await expect(page.getByText(/Hors connexion/)).toBeVisible();
+  await expect(page.getByText(/Vous êtes hors ligne/)).toBeVisible();
   await page.goto("/methode");
   await expect(page.getByRole("heading", { name: /Pas encore disponible hors connexion|Comment ForoSat/ })).toBeVisible();
   await context.setOffline(false);

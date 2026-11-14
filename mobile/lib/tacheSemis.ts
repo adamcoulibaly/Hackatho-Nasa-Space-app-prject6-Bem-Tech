@@ -14,6 +14,8 @@ import { WEB_URL } from "@/lib/config";
 export const TACHE = "forosat-semis";
 const CLE = "forosat.alerte";
 const CANAL = "semis";
+/** Toucher une alerte ouvre l'accueil (état de semis et alertes du jour). */
+const OUVRIR_ACCUEIL = { onglet: "tableau", chemin: "/tableau" };
 
 export type Reglage = { active: boolean; region: string | null; culture: string | null; annonces: string[]; meteo: DerniersMeteo };
 const VIDE: Reglage = { active: false, region: null, culture: null, annonces: [], meteo: {} };
@@ -43,7 +45,7 @@ async function etatDuJour(region: string): Promise<EtatDuJour | null> {
 
 async function notifier(region: string, culture: string | null, etat: string) {
   const t = texteAlerte(region, culture, etat);
-  await Notifications.scheduleNotificationAsync({ content: { title: t.titre, body: t.corps }, trigger: null });
+  await Notifications.scheduleNotificationAsync({ content: { title: t.titre, body: t.corps, data: OUVRIR_ACCUEIL }, trigger: null });
 }
 
 /** Vérifie l'état et notifie s'il le faut ; `forcer` (bouton « Tester l'alerte ») notifie l'état réel quoi qu'il arrive. */
@@ -60,7 +62,7 @@ export async function verifier(forcer = false): Promise<boolean> {
     const t = texteAlerte(reglage.region, reglage.culture, etat.etat);
     const premiere = etat.alertes?.[0];
     const corps = premiere ? texteMeteo(reglage.region, premiere).corps : etat.etat === "fenetre_ouverte" || etat.etat === "poche_seche" ? t.corps : etat.message ?? "Pas encore le moment de semer.";
-    await Notifications.scheduleNotificationAsync({ content: { title: "ForoSat · test de l'alerte", body: corps }, trigger: null });
+    await Notifications.scheduleNotificationAsync({ content: { title: "ForoSat · test de l'alerte", body: corps, data: OUVRIR_ACCUEIL }, trigger: null });
     return true;
   }
   let annonces = reglage.annonces;
@@ -76,7 +78,7 @@ export async function verifier(forcer = false): Promise<boolean> {
   const meteo = alertesANotifier(reglage.meteo, etat.alertes, aujourdhui);
   for (const a of meteo) {
     const t = texteMeteo(reglage.region, a);
-    await Notifications.scheduleNotificationAsync({ content: { title: t.titre, body: t.corps }, trigger: null });
+    await Notifications.scheduleNotificationAsync({ content: { title: t.titre, body: t.corps, data: OUVRIR_ACCUEIL }, trigger: null });
   }
   if (notifie || meteo.length) await ecrireReglage({ annonces, meteo: noterMeteo(reglage.meteo, meteo, aujourdhui) });
   notifie = notifie || meteo.length > 0;

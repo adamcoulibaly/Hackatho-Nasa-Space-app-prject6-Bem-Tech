@@ -9,6 +9,7 @@ import { regionLaPlusProche, regionParId } from "@/lib/regions";
 import { useParcelle } from "@/lib/parcelle/context";
 import { ecouterNatif, envoyerAuNatif } from "@/lib/modeApp";
 import { GuideCouche } from "./GuideCouche";
+import { exigerInternet } from "@/lib/enLigne";
 
 type Point = [number, number];
 type Fond = "satellite" | "plan";
@@ -234,7 +235,7 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
   const chercher = async (e: FormEvent) => {
     e.preventDefault();
     const q = recherche.trim();
-    if (!q) return;
+    if (!q || !exigerInternet("la recherche de lieu")) return;
     setMessage("Recherche…");
     setResultats([]);
     try {

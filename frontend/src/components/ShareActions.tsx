@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { Rotation } from "@/lib/contract";
 import { whatsappUrl } from "@/lib/whatsapp";
 import { envoyerAuNatif } from "@/lib/modeApp";
+import { exigerInternet } from "@/lib/enLigne";
 
 export function ShareActions({ rotation, lien }: { rotation: Rotation; lien: string }) {
   const [origin, setOrigin] = useState("");
@@ -13,6 +14,7 @@ export function ShareActions({ rotation, lien }: { rotation: Rotation; lien: str
       <a
         href={whatsappUrl(rotation, `${origin}${lien}`)}
         onClick={(e) => {
+          if (!exigerInternet("WhatsApp")) return e.preventDefault();
           const texte = `ForoSat — rotation ${rotation.id} : ${rotation.sequence.join(" → ")}`;
           if (envoyerAuNatif({ type: "partager", url: `${origin}${lien}`, texte })) e.preventDefault();
         }}

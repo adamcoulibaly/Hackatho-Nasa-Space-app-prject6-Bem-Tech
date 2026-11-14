@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ecouterNatif, envoyerAuNatif, estModeApp } from "@/lib/modeApp";
+import { exigerInternet } from "@/lib/enLigne";
 
 type Reconnaissance = {
   lang: string;
@@ -86,6 +87,8 @@ export function DicteeVocale({ onTexte }: { onTexte: (texte: string) => void }) 
       return;
     }
     if (ecoute) return rec.current?.stop();
+    // La dictée du navigateur passe par internet (celle du téléphone, dans l'app, peut marcher sans).
+    if (!exigerInternet("la dictée")) return;
     const r = new mode.web();
     r.lang = "fr-FR";
     r.interimResults = false;

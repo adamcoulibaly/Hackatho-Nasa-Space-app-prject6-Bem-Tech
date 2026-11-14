@@ -13,7 +13,12 @@ export type MessageVersNatif =
   | { type: "alerte"; action: "activer" | "desactiver" | "tester" }
   | { type: "photo" }
   | { type: "lire"; texte: string }
-  | { type: "dicter" };
+  | { type: "dicter" }
+  | { type: "rappels"; action: "activer"; liste: RappelNatif[] }
+  | { type: "rappels"; action: "desactiver" | "etat" };
+
+/** Rappel programmé sur le téléphone : il ouvre `chemin` dans `onglet` quand on le touche. */
+export type RappelNatif = { id: string; date: string; titre: string; texte: string; chemin: string; onglet: Onglet };
 export type MessageDuNatif =
   | { type: "position"; lat: number; lon: number }
   | { type: "position"; erreur: "refus" | "indisponible" }
@@ -23,7 +28,8 @@ export type MessageDuNatif =
   | { type: "photo"; image: string }
   | { type: "photo"; erreur: "refus" | "annule" }
   | { type: "dictee"; texte: string }
-  | { type: "dictee"; erreur: ErreurDictee };
+  | { type: "dictee"; erreur: ErreurDictee }
+  | { type: "rappels"; etat: EtatAlerte; prochain?: string };
 
 export type ErreurDictee = "refus" | "rien" | "indisponible";
 const ERREURS_DICTEE: ErreurDictee[] = ["refus", "rien", "indisponible"];
@@ -98,6 +104,11 @@ export function ecouterNatif(rappel: (m: MessageDuNatif) => void): () => void {
         const { texte, erreur } = m as { texte?: unknown; erreur?: unknown };
         if (typeof texte === "string" && texte.trim()) return rappel({ type: "dictee", texte: texte.trim().slice(0, 300) });
         return ERREURS_DICTEE.includes(erreur as ErreurDictee) ? rappel({ type: "dictee", erreur: erreur as ErreurDictee }) : undefined;
+      }
+      if (m.type === "rappels") {
+        const { etat, prochain } = m as { etat?: unknown; prochain?: unknown };
+        if (!ETATS_ALERTE.includes(etat as EtatAlerte)) return;
+        return rappel({ type: "rappels", etat: etat as EtatAlerte, ...(typeof prochain === "string" && /^\d{4}-\d{2}-\d{2}$/.test(prochain) ? { prochain } : {}) });
       }
       if (m.type === "alerte") {
         const etat = (m as { etat?: unknown }).etat;

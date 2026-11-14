@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { LANGUES, PHRASES, garderBrouillon, lireBrouillon, texteContribution, type Contribution } from "@/lib/traduction";
+import { exigerInternet } from "@/lib/enLigne";
 
 const FIELD = "min-h-11 w-full rounded-xl border border-line bg-paper px-3 text-[15px]";
 
@@ -36,7 +37,7 @@ export function Traduire({ ouvrir = (u) => window.open(u, "_blank", "noopener") 
           </li>
         ))}
       </ol>
-      <button type="button" disabled={!pret} onClick={() => ouvrir(`https://wa.me/?text=${encodeURIComponent(texteContribution(c.langue, c.traductions))}`)}
+      <button type="button" disabled={!pret} onClick={() => exigerInternet("WhatsApp") && ouvrir(`https://wa.me/?text=${encodeURIComponent(texteContribution(c.langue, c.traductions))}`)}
         className="h-12 self-start rounded-full bg-ink px-5 text-[15px] font-bold text-paper disabled:opacity-50">
         Envoyer à l&apos;équipe par WhatsApp
       </button>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { TYPES, ajouterSignalement, dateLongue, lienWhatsapp, lireSignalements, type Signal, type TypeSignalement } from "@/lib/signalement";
+import { exigerInternet } from "@/lib/enLigne";
 
 /** Prévenir les voisins d'un ravageur, d'une maladie ou d'un aléa, par WhatsApp, sans compte ni donnée personnelle. */
 export function Signalement({ region, aujourdhui, ouvrir = (u) => window.open(u, "_blank", "noopener") }: {
@@ -12,7 +13,7 @@ export function Signalement({ region, aujourdhui, ouvrir = (u) => window.open(u,
   const [historique, setHistorique] = useState<Signal[]>([]);
   useEffect(() => setHistorique(lireSignalements()), []);
   const envoyer = () => {
-    if (!type) return;
+    if (!type || !exigerInternet("WhatsApp")) return;
     const s = { type, note: note.trim(), region, date: aujourdhui };
     setHistorique(ajouterSignalement(s));
     ouvrir(lienWhatsapp(s));

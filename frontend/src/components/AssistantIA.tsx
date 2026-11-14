@@ -5,6 +5,7 @@ import type { Parcelle } from "@/lib/parcelle/validate";
 import { lienFiche } from "@/lib/moteur/fiche-lien";
 import { LireAVoixHaute } from "./LireAVoixHaute";
 import { DicteeVocale } from "./DicteeVocale";
+import { exigerInternet, messageHorsLigne } from "@/lib/enLigne";
 
 type Etat = { statut: "repos" } | { statut: "attente" } | { statut: "ok"; texte: string } | { statut: "erreur"; message: string };
 
@@ -13,6 +14,7 @@ export function AssistantIA({ id, parcelle }: { id: "A" | "B" | "C"; parcelle: P
   const [etat, setEtat] = useState<Etat>({ statut: "repos" });
 
   const demander = async (avecQuestion: boolean) => {
+    if (!exigerInternet("l'assistant IA")) return setEtat({ statut: "erreur", message: messageHorsLigne("l'assistant IA") });
     setEtat({ statut: "attente" });
     try {
       const r = await fetch("/api/ia", {
