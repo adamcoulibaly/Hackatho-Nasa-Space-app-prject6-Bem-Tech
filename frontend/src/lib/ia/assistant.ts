@@ -4,6 +4,7 @@ import { lireLienFiche } from "@/lib/moteur/fiche-lien";
 import { calculerRotations } from "@/lib/moteur/rotations";
 import { scoreWord } from "@/lib/format";
 import { enCascade } from "./cascade";
+import { reponseSecours } from "./secours";
 
 /** Fournisseur compatible OpenAI (OpenRouter par défaut, Groq, etc.). La clé reste côté serveur. */
 /** Modèles essayés dans l'ordre : le suivant prend le relais si le précédent est saturé ou en erreur. */
@@ -20,6 +21,9 @@ export const MODELES_PAR_DEFAUT = [
   "google/gemma-4-26b-a4b-it:free",
   "baidu/ernie-5.5-flash-preview:free",
   "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+  "thinkingmachines/inkling-2-small:free",
+  "google/gemma-4-31b-it:free",
+  "liquid/lfm-3-1.7b:free",
   "nvidia/nemotron-3.5-super-vl:free",
 ];
 
@@ -98,18 +102,18 @@ export function construireMessages(rotation: Rotation, climat: Climat, question?
   ];
 }
 
-export type Reponse = { ok: true; texte: string } | { ok: false; statut: number; erreur: string };
+/** `secours` : aucun modèle n'a répondu, ForoSat a écrit la réponse à partir de ses propres données. */
+export type Reponse = { ok: true; texte: string; secours?: true } | { ok: false; statut: number; erreur: string };
 
-const NON_CONFIGURE = "L'assistant IA n'est pas encore configuré.";
-const SATURE = "L'assistant IA est saturé pour le moment. Réessayez dans une minute.";
-const INDISPONIBLE = "L'assistant IA ne répond pas pour le moment.";
 
 export async function repondre(
   demande: Demande,
   deps: { config: ConfigIA; fetch: typeof fetch; rotation: Rotation; climat: Climat; autres?: Rotation[] },
 ): Promise<Reponse> {
   const { config } = deps;
-  if (!config.cle) return { ok: false, statut: 503, erreur: NON_CONFIGURE };
+  // Jamais d'erreur à l'écran : sans clé ou si aucun modèle ne répond, ForoSat répond avec ses propres données.
+  const secours = (): Reponse => ({ ok: true, texte: reponseSecours(deps.rotation, deps.autres ?? [], demande.question), secours: true });
+  if (!config.cle) return secours();
   const messages = construireMessages(deps.rotation, deps.climat, demande.question, demande.historique ?? [], demande.voix ?? false, deps.autres ?? []);
   const r = await enCascade({
     famille: "assistant",
@@ -120,12 +124,12 @@ export async function repondre(
     // Les modèles qui raisonnent consomment des jetons avant de répondre : raisonnement court, non renvoyé,
     // et une marge suffisante pour la réponse.
     corps: (model) => ({ model, messages, temperature: 0.3, max_tokens: 1500, reasoning: { effort: "low", exclude: true } }),
-    relanceMs: 5000,
-    totalMs: 25_000,
+    relanceMs: 4000,
+    totalMs: 22_000,
   });
   if (r.ok) return { ok: true, texte: r.texte.trim() };
-  const sature = r.sature;
-  return { ok: false, statut: 502, erreur: sature ? SATURE : INDISPONIBLE };
+  console.warn(`[ia] aucun modèle n'a répondu (${r.sature ? "saturés" : "indisponibles"}) : réponse de secours ForoSat`);
+  return secours();
 }
 
 /** Les trois rotations recalculées par le moteur ; null si la parcelle est invalide. */

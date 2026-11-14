@@ -8,7 +8,7 @@ import { LireAVoixHaute } from "./LireAVoixHaute";
 import { DicteeVocale } from "./DicteeVocale";
 import { exigerInternet, messageHorsLigne } from "@/lib/enLigne";
 
-type Message = { id: number; question: string | null; voix: boolean; reponse?: string; erreur?: string };
+type Message = { id: number; question: string | null; voix: boolean; reponse?: string; erreur?: string; secours?: boolean };
 
 const EXPLIQUER = "Explique-moi cette rotation simplement.";
 const ECHANGES_GARDES = 4;
@@ -42,7 +42,9 @@ export function AssistantIA({ id, parcelle, moteurDictee, autres = [] }: { id: "
     setFil((f) => [...f, m]);
     setQuestion("");
     setAttente(true);
-    let maj: Partial<Message>;
+    let maj: Partial<Message> = {};
+    // Une coupure réseau passagère (téléphone, wifi de salle) est réessayée une fois avant de prévenir.
+    for (let essai = 0; essai < 2; essai++) {
     try {
       const r = await fetch("/api/ia", {
         method: "POST",
@@ -55,10 +57,13 @@ export function AssistantIA({ id, parcelle, moteurDictee, autres = [] }: { id: "
           ...(historique.length ? { historique } : {}),
         }),
       });
-      const json = (await r.json().catch(() => ({}))) as { texte?: string; erreur?: string };
-      maj = r.ok && json.texte ? { reponse: json.texte } : { erreur: json.erreur ?? "L'assistant IA ne répond pas pour le moment." };
+      const json = (await r.json().catch(() => ({}))) as { texte?: string; erreur?: string; secours?: boolean };
+      maj = r.ok && json.texte ? { reponse: json.texte, secours: json.secours === true } : { erreur: json.erreur ?? "L'assistant IA ne répond pas pour le moment." };
+      break;
     } catch {
       maj = { erreur: "Pas de connexion : l'assistant IA est injoignable." };
+      if (essai === 0) await new Promise((ok) => setTimeout(ok, 1200));
+    }
     }
     setFil((f) => f.map((x) => (x.id === m.id ? { ...x, ...maj } : x)));
     setAttente(false);
@@ -102,6 +107,7 @@ export function AssistantIA({ id, parcelle, moteurDictee, autres = [] }: { id: "
               {x.reponse && (
                 <div className="bulle-ia flex max-w-[92%] flex-col gap-2 self-start rounded-2xl rounded-bl-md bg-[#F4F6F1] p-4">
                   <p className="m-0 whitespace-pre-line text-base leading-relaxed">{x.reponse}</p>
+                  {x.secours && <span className="text-xs text-muted">Réponse préparée par ForoSat à partir de ses données (l&apos;IA était très sollicitée).</span>}
                   <LireAVoixHaute texte={x.reponse} />
                 </div>
               )}

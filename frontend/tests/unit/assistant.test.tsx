@@ -58,9 +58,10 @@ describe("construireMessages", () => {
 describe("repondre", () => {
   const ctx = { rotation: B, climat };
 
-  it("sans clé : l'assistant est annoncé comme non configuré (503)", async () => {
+  it("sans clé : jamais d'erreur, ForoSat répond lui-même à partir de ses données", async () => {
     const r = await repondre({ id: "B", params: PARAMS }, { ...ctx, config: configDepuisEnv({}), fetch: vi.fn() });
-    expect(r).toEqual({ ok: false, statut: 503, erreur: "L'assistant IA n'est pas encore configuré." });
+    expect(r).toMatchObject({ ok: true, secours: true });
+    if (r.ok) expect(r.texte).toContain(B.sequence.join(" → "));
   });
 
   it("appelle /chat/completions avec la clé et renvoie le texte", async () => {
@@ -111,19 +112,19 @@ describe("repondre", () => {
     expect(modeles).toEqual(["a", "b"]);
   });
 
-  it("quota dépassé : message clair (502)", async () => {
+  it("tous les modèles saturés : pas d'erreur, la réponse de secours ForoSat prend le relais", async () => {
     const r = await repondre({ id: "B", params: PARAMS }, { ...ctx, config: { cle: "k", baseUrl: "https://ex.test/v1", modeles: ["m"] }, fetch: (async () => new Response("{}", { status: 429 })) as typeof fetch });
-    expect(r).toEqual({ ok: false, statut: 502, erreur: "L'assistant IA est saturé pour le moment. Réessayez dans une minute." });
+    expect(r).toMatchObject({ ok: true, secours: true });
   });
 
-  it("réseau en panne ou réponse vide : message clair (502)", async () => {
+  it("réseau en panne ou réponse vide : la réponse de secours prend le relais", async () => {
     const panne = (async () => {
       throw new Error("boom");
     }) as typeof fetch;
     const vide = (async () => reponseOpenAI("   ")) as typeof fetch;
     for (const f of [panne, vide]) {
       const r = await repondre({ id: "B", params: PARAMS }, { ...ctx, config: { cle: "k", baseUrl: "https://ex.test/v1", modeles: ["m"] }, fetch: f });
-      expect(r).toEqual({ ok: false, statut: 502, erreur: "L'assistant IA ne répond pas pour le moment." });
+      expect(r).toMatchObject({ ok: true, secours: true });
     }
   });
 });
@@ -230,6 +231,53 @@ describe("comparer les rotations avec l'assistant", () => {
     await u.click(screen.getByRole("button", { name: "Comparer avec A" }));
     expect(await screen.findByText("B tient mieux les années sèches que A.")).toBeInTheDocument();
     expect(corps[0].question).toMatch(/rotation B.*rotation A/);
+    vi.unstubAllGlobals();
+  });
+});
+
+describe("réponse de secours ForoSat (aucun modèle ne répond)", () => {
+  it("explique la rotation avec ses faits : pourquoi, saisons réelles, 2050, conseiller", async () => {
+    const { reponseSecours } = await import("@/lib/ia/secours");
+    const t = reponseSecours(B, [], undefined);
+    expect(t).toContain(B.sequence.join(" → "));
+    expect(t).toContain(B.pourquoi[0]);
+    if (B.rejeu?.total) expect(t).toContain(`${B.rejeu.bonnes} bonnes saisons sur ${B.rejeu.total}`);
+    expect(t).toMatch(/conseiller agricole/);
+  });
+
+  it("compare avec la rotation demandée, et dit laquelle choisir", async () => {
+    const { reponseSecours } = await import("@/lib/ia/secours");
+    const [A, , C] = rotations();
+    const cmp = reponseSecours(B, [A, C], "Compare la rotation B avec la rotation A pour ma parcelle");
+    expect(cmp).toMatch(/Rotation B/);
+    expect(cmp).toMatch(/Rotation A/);
+    const choix = reponseSecours(B, [A, C], "Laquelle choisir ?");
+    const conseillee = [A, B, C].find((r) => r.recommandee)!;
+    expect(choix).toContain(`rotation ${conseillee.id}`);
+  });
+
+  it("l'écran signale discrètement une réponse de secours, sans erreur", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ texte: "Réponse ForoSat.", secours: true }))));
+    const u = userEvent.setup();
+    render(<AssistantIA id="B" parcelle={DEFAULT_PARCELLE} />);
+    await u.click(screen.getByRole("button", { name: "Expliquer simplement" }));
+    expect(await screen.findByText("Réponse ForoSat.")).toBeInTheDocument();
+    expect(screen.getByText(/préparée par ForoSat/)).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    vi.unstubAllGlobals();
+  });
+
+  it("une coupure réseau passagère est réessayée une fois automatiquement", async () => {
+    let n = 0;
+    vi.stubGlobal("fetch", vi.fn(async () => {
+      n++;
+      if (n === 1) throw new TypeError("Failed to fetch");
+      return new Response(JSON.stringify({ texte: "Deuxième essai réussi." }));
+    }));
+    const u = userEvent.setup();
+    render(<AssistantIA id="B" parcelle={DEFAULT_PARCELLE} />);
+    await u.click(screen.getByRole("button", { name: "Expliquer simplement" }));
+    expect(await screen.findByText("Deuxième essai réussi.", {}, { timeout: 4000 })).toBeInTheDocument();
     vi.unstubAllGlobals();
   });
 });

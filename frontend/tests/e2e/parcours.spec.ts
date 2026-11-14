@@ -129,14 +129,15 @@ test("carte : la couche SMAP signale qu'elle commence en 2015", async ({ page })
   await expect(page.getByText(/données à partir de 2015/)).toBeVisible();
 });
 
-test("assistant IA sans clé : l'écran le dit clairement", async ({ page }) => {
+test("assistant IA sans réponse d'un modèle : jamais d'erreur, ForoSat répond avec ses données", async ({ page }) => {
   test.skip(!!process.env.LLM_API_KEY, "une clé est configurée");
   await page.goto("/parcelle");
   await page.getByRole("button", { name: "Analyser ma parcelle" }).click();
   await page.waitForURL(/\/rotations$/);
   await page.goto("/rotations/B");
   await page.getByRole("button", { name: "Expliquer simplement" }).click();
-  await expect(page.getByRole("alert").filter({ hasText: "pas encore configuré" })).toBeVisible();
+  await expect(page.getByText(/Réponse préparée par ForoSat/)).toBeVisible();
+  await expect(page.getByRole("list", { name: "Conversation avec l'assistant" }).getByRole("alert")).toHaveCount(0);
 });
 
 async function toucher(page: import("@playwright/test").Page, isMobile: boolean, x: number, y: number) {

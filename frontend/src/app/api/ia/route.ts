@@ -24,5 +24,5 @@ export async function POST(req: Request) {
   if (!trouve) return NextResponse.json({ erreur: "Rotation introuvable." }, { status: 400 });
 
   const r = await repondre(demande.data, { config: configDepuisEnv(process.env), fetch, rotation: trouve.rotation, autres: trouve.autres, climat });
-  return r.ok ? NextResponse.json({ texte: r.texte }) : NextResponse.json({ erreur: r.erreur }, { status: r.statut });
+  return r.ok ? NextResponse.json({ texte: r.texte, ...(r.secours ? { secours: true } : {}) }) : NextResponse.json({ erreur: r.erreur }, { status: r.statut });
 }
