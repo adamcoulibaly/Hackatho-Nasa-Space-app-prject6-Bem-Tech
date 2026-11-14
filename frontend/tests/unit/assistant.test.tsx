@@ -309,3 +309,10 @@ describe("second fournisseur (Groq) quand OpenRouter est à court", () => {
     expect(configDepuisEnv({ LLM_API_KEY: "k" }).secours).toBeUndefined();
   });
 });
+
+describe("texteBrut", () => {
+  it("retire le Markdown qu'un modèle ajouterait : gras, titres, puces en astérisque", async () => {
+    const { texteBrut } = await import("@/lib/ia/assistant");
+    expect(texteBrut("## Titre\n**Rotation B** est *meilleure*.\n* point un\n- point deux")).toBe("Titre\nRotation B est meilleure.\n- point un\n- point deux");
+  });
+});

@@ -73,11 +73,24 @@ export type Echange = { role: "user" | "assistant"; content: string };
 const REGLES = `Tu es l'assistant de ForoSat, un outil d'aide à la décision pour les agriculteurs de Côte d'Ivoire.
 Règles :
 - Réponds en français simple, phrases courtes, 120 mots au plus, sans jargon (explique un terme technique s'il le faut).
+- Texte brut uniquement : pas de Markdown (ni astérisques, ni dièses, ni tableaux) ; des tirets simples pour une liste.
 - Appuie-toi uniquement sur les faits fournis. N'invente aucun chiffre, aucune date, aucun prix.
 - Si l'information manque, dis-le simplement et propose de demander à un conseiller agricole.
 - Tu n'as pas calculé le score : il vient de règles agronomiques transparentes. Ne le modifie pas.
 - Pour comparer des rotations, n'utilise que les faits de chaque rotation fournie (scores, saisons réelles, projection) et dis clairement laquelle convient le mieux et pourquoi.
 - Termine en rappelant de valider la décision avec un conseiller agricole.`;
+
+/** Retire la mise en forme Markdown qu'un modèle ajouterait malgré la consigne (l'écran affiche du texte brut). */
+export function texteBrut(t: string): string {
+  return t
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/__(.+?)__/g, "$1")
+    .replace(/^\s{0,3}#{1,6}\s+/gm, "")
+    .replace(/^\s*[*•]\s+/gm, "- ")
+    .replace(/(^|\s)\*(\S[^*]*?)\*(?=\s|[.,;:!?]|$)/g, "$1$2")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
 
 /** Résumé d'une rotation pour l'IA : de quoi la comparer aux autres sans tout répéter. */
 export function resumeRotation(r: Rotation): string {
@@ -145,7 +158,7 @@ export async function repondre(
       relanceMs: 4000,
       totalMs: config.secours ? 15_000 : 22_000,
     });
-    if (r.ok) return { ok: true, texte: r.texte.trim() };
+    if (r.ok) return { ok: true, texte: texteBrut(r.texte) };
     if (r.quotaJour) {
       quotaEpuiseJusqua = minuitUtc();
       console.warn("[ia] quota quotidien OpenRouter épuisé : second fournisseur jusqu'à minuit UTC");
@@ -164,7 +177,7 @@ export async function repondre(
       relanceMs: 3000,
       totalMs: 12_000,
     });
-    if (g.ok) return { ok: true, texte: g.texte.trim() };
+    if (g.ok) return { ok: true, texte: texteBrut(g.texte) };
   }
 
   // 3. Aucun modèle : ForoSat répond avec ses propres données.
