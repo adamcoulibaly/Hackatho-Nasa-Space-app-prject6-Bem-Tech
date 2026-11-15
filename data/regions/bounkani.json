@@ -246,7 +246,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "bounkani",
     "source": "NASA POWER, Bouna (9,27 N · 3,00 O)",
@@ -355,5 +357,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      1,
+      15,
+      54,
+      91,
+      118,
+      124,
+      131,
+      159,
+      193,
+      111,
+      19,
+      4
+    ],
+    "pluieMensuellePower": [
+      1,
+      14,
+      60,
+      73,
+      103,
+      121,
+      141,
+      159,
+      167,
+      108,
+      18,
+      2
+    ],
+    "annuel": 1020,
+    "annuelPower": 967,
+    "ecartPct": 5,
+    "correlation": 0.88,
+    "accord": "bon",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.42,
+      2.18,
+      2.78,
+      3.34,
+      null,
+      2.1,
+      2.01,
+      0.5,
+      null,
+      2.82,
+      2.26,
+      null
+    ],
+    "joursChauds": 0.23,
+    "lst": [
+      37.4,
+      40.6,
+      39.9,
+      37.5,
+      31.3,
+      33.1,
+      24.2,
+      33.2,
+      42.9,
+      31.9,
+      37.4,
+      null
+    ],
+    "passages": 26,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

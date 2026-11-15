@@ -246,7 +246,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "worodougou",
     "source": "NASA POWER, Séguéla (7,96 N · 6,67 O)",
@@ -355,5 +357,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      7,
+      39,
+      104,
+      101,
+      129,
+      151,
+      138,
+      199,
+      219,
+      138,
+      33,
+      12
+    ],
+    "pluieMensuellePower": [
+      9,
+      41,
+      97,
+      129,
+      152,
+      194,
+      200,
+      245,
+      267,
+      158,
+      42,
+      15
+    ],
+    "annuel": 1270,
+    "annuelPower": 1549,
+    "ecartPct": -18,
+    "correlation": 0.8,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.88,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      3.28,
+      null
+    ],
+    "joursChauds": 0.25,
+    "lst": [
+      36.0,
+      null,
+      null,
+      null,
+      null,
+      null,
+      29.3,
+      null,
+      null,
+      null,
+      35.8,
+      null
+    ],
+    "passages": 4,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

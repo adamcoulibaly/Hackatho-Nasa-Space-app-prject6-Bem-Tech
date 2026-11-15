@@ -255,7 +255,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "indenie-djuablin",
     "source": "NASA POWER, Abengourou (6,73 N · 3,50 O)",
@@ -364,5 +366,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      14,
+      44,
+      128,
+      141,
+      175,
+      174,
+      101,
+      66,
+      128,
+      197,
+      80,
+      21
+    ],
+    "pluieMensuellePower": [
+      20,
+      50,
+      122,
+      133,
+      175,
+      254,
+      121,
+      66,
+      132,
+      214,
+      106,
+      33
+    ],
+    "annuel": 1269,
+    "annuelPower": 1426,
+    "ecartPct": -11,
+    "correlation": 0.88,
+    "accord": "bon",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.73,
+      2.72,
+      3.96,
+      null,
+      null,
+      2.1,
+      1.57,
+      null,
+      null,
+      0.89,
+      2.63,
+      1.81
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      31.6,
+      28.8,
+      35.1,
+      34.9,
+      null,
+      31.3,
+      27.7,
+      null,
+      null,
+      38.1,
+      29.1,
+      27.2
+    ],
+    "passages": 14,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

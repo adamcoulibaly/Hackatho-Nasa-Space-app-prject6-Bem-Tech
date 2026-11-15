@@ -9,6 +9,7 @@ import { regionLaPlusProche, regionParId } from "@/lib/regions";
 import { useParcelle } from "@/lib/parcelle/context";
 import { ecouterNatif, envoyerAuNatif } from "@/lib/modeApp";
 import { GuideCouche } from "./GuideCouche";
+import { PenteParcelle } from "./PenteParcelle";
 import { exigerInternet } from "@/lib/enLigne";
 
 type Point = [number, number];
@@ -340,9 +341,10 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
       )}
 
       <p aria-live="polite" className="m-0 min-h-[1.5em] text-sm text-muted">{message}</p>
+      <PenteParcelle />
 
       <div className="flex flex-wrap items-center gap-3 rounded-3xl bg-ink p-3 text-paper">
-        <div role="group" aria-label="Couche NASA" className="flex flex-wrap gap-1">
+        <div role="group" aria-label="Couche NASA" data-guide="couches" className="flex flex-wrap gap-1">
           {[{ id: "aucune" as const, label: "Sans couche NASA" }, ...couches.filter((c) => c.id !== "couleurs")].map((c) => (
             <button key={c.id} type="button" aria-pressed={c.id === nasaId} onClick={() => setNasaId(c.id)} className={`h-11 rounded-full px-3.5 text-[13px] font-bold ${c.id === nasaId ? "bg-paper text-ink" : "bg-transparent text-paper"}`}>
               {c.label}
@@ -362,7 +364,7 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
         )}
       </div>
       {nasa && <GuideCouche couche={nasa} />}
-      <p className="m-0 text-xs text-muted">Le contour de votre champ reste sur cet appareil : il n'est envoyé nulle part.</p>
+      <p className="m-0 text-xs text-muted">Le contour de votre champ reste sur cet appareil ; il n'est envoyé au serveur ForoSat que pour calculer sa pente, sans y être gardé.</p>
     </div>
   );
 }

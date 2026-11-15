@@ -246,7 +246,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "bagoue",
     "source": "NASA POWER, Boundiali (9,52 N · 6,48 O)",
@@ -355,5 +357,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      2,
+      13,
+      44,
+      85,
+      115,
+      153,
+      215,
+      291,
+      238,
+      113,
+      17,
+      2
+    ],
+    "pluieMensuellePower": [
+      3,
+      14,
+      50,
+      72,
+      98,
+      125,
+      167,
+      215,
+      176,
+      101,
+      18,
+      2
+    ],
+    "annuel": 1288,
+    "annuelPower": 1041,
+    "ecartPct": 24,
+    "correlation": 0.91,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.94,
+      null,
+      1.49,
+      null,
+      4.03,
+      2.13,
+      null,
+      null,
+      2.33,
+      null,
+      3.59,
+      2.4
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      30.3,
+      null,
+      35.4,
+      null,
+      33.9,
+      30.6,
+      28.8,
+      null,
+      37.3,
+      null,
+      36.2,
+      31.1
+    ],
+    "passages": 17,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

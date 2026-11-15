@@ -246,7 +246,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "gbeke",
     "source": "NASA POWER, Bouaké (7,69 N · 5,03 O)",
@@ -355,5 +357,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      7,
+      43,
+      102,
+      115,
+      131,
+      138,
+      88,
+      122,
+      167,
+      141,
+      34,
+      11
+    ],
+    "pluieMensuellePower": [
+      12,
+      46,
+      109,
+      125,
+      154,
+      203,
+      143,
+      134,
+      211,
+      165,
+      61,
+      21
+    ],
+    "annuel": 1099,
+    "annuelPower": 1384,
+    "ecartPct": -21,
+    "correlation": 0.81,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.78,
+      null,
+      3.95,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      3.51,
+      null
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      34.1,
+      null,
+      39.1,
+      null,
+      28.0,
+      null,
+      null,
+      null,
+      null,
+      null,
+      32.5,
+      null
+    ],
+    "passages": 8,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

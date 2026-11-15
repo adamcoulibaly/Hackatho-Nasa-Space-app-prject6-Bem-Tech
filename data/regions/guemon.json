@@ -241,7 +241,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "guemon",
     "source": "NASA POWER, Duékoué (6,71 N · 7,43 O)",
@@ -350,5 +352,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      15,
+      71,
+      134,
+      134,
+      154,
+      187,
+      131,
+      179,
+      230,
+      183,
+      57,
+      27
+    ],
+    "pluieMensuellePower": [
+      18,
+      59,
+      113,
+      123,
+      173,
+      266,
+      154,
+      192,
+      285,
+      229,
+      98,
+      36
+    ],
+    "annuel": 1502,
+    "annuelPower": 1746,
+    "ecartPct": -14,
+    "correlation": 0.7,
+    "accord": "faible",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.36,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      3.97,
+      2.01
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      29.9,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      32.3,
+      31.0
+    ],
+    "passages": 4,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

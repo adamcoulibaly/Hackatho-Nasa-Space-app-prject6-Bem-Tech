@@ -111,5 +111,38 @@
       ],
       "pourVotreChamp": "Semez quand le sol est humide en profondeur : après une seule pluie, un sol encore sec en dessous fait mourir les semis."
     }
+  },
+  {
+    "id": "pluie",
+    "label": "Pluie",
+    "source": "GPM IMERG · intensité de pluie",
+    "echelle": "20 sept. : faible → forte",
+    "gibs": {
+      "couche": "IMERG_Precipitation_Rate",
+      "format": "png",
+      "niveau": 6,
+      "date": "09-20",
+      "depuis": 2001
+    },
+    "opacite": 0.7,
+    "guide": {
+      "mesure": "L'intensité de la pluie (en millimètres par heure) estimée par GPM IMERG, qui fusionne les mesures d'une constellation de satellites, le 20 septembre de l'année choisie, en pleine saison des pluies.",
+      "finesse": "Pixel d'environ 10 km, et une seule journée : d'une année à l'autre, l'orage passe ou non sur votre zone ce jour-là. La pluie de toute l'année est comparée dans la page Climat.",
+      "lecture": [
+        {
+          "couleur": "#00764E",
+          "sens": "vert foncé : pluie faible (environ 0,1 à 0,5 mm/h)"
+        },
+        {
+          "couleur": "#C3E400",
+          "sens": "vert-jaune à orange : pluie modérée (1 à 2 mm/h)"
+        },
+        {
+          "couleur": "#E70000",
+          "sens": "rouge : forte pluie (5 à 10 mm/h et plus)"
+        }
+      ],
+      "pourVotreChamp": "Une zone sans couleur n'a pas eu de pluie ce jour-là. Des taches rouges répétées signalent des orages violents : risque de ruissellement et d'érosion sur les pentes."
+    }
   }
 ]

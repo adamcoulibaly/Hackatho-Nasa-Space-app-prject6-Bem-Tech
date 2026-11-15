@@ -72,6 +72,10 @@ Build Android (APK installable) avec le compte Expo : `npx eas-cli@latest build 
   - `/api/semis/<région>` lit la pluie NASA POWER des 30 derniers jours et donne l'état : saison sèche, premières pluies, fenêtre de semis ouverte ou poche sèche.
   - L'accueil l'affiche en direct.
   - L'app Android vérifie en tâche de fond (environ 2 fois par jour) et notifie au passage vers « fenêtre ouverte » ou « poche sèche ».
+- **Pluie vérifiée par satellite (GPM IMERG).** La pluie NASA POWER de chaque région est comparée mois par mois à la pluie IMERG V07 (GES DISC) sur 2005–2025, sur la même maille de 0,5° : écart annuel, corrélation et verdict (bon, moyen, faible) affichés sur la page Climat ; couche « Pluie » IMERG sur la carte (NASA GIBS).
+- **Pente de la parcelle (SRTM).** Dès que le contour est fermé, `/api/pente` lit l'altitude SRTM (tuiles Terrain d'AWS Open Data, source SRTM déclarée par tuile) et calcule la pente générale du champ (plan ajusté aux altitudes) et celle des parties raides ; conseil anti-érosion sous la carte, et rappel de la rotation la mieux notée en anti-érosion sur la page Rotations.
+- **Chaleur au ras des champs (ECOSTRESS).** Température de surface (ECO_L2T_LSTE) et évapotranspiration (ECO_L3T_JET), pixels de 70 m, sur 8 points de campagne à 12 km de chaque chef-lieu, passages de jour sans nuage, 2023–2024. Sous 8 passages clairs, ForoSat le dit et n'affiche pas de moyenne.
+- **Guide pas à pas.** Au premier passage, une bulle éclaire la zone à toucher (champ, contour, pente, couches NASA, cultures, analyse, rotations, assistant, simulateur, climat vérifié, suivi) et passe à la suite quand l'utilisateur l'a fait ; relance depuis la page Guide. Le même guide fonctionne dans l'app mobile.
 - **Photo et satellite.**
   - Une photo du champ est analysée par un modèle de vision gratuit (`LLM_VISION_MODEL`, Nemotron VL par défaut), puis confrontée au NDVI MODIS du dernier mois publié au même endroit (NASA GIBS).
   - La photo n'est pas enregistrée, et la position est arrondie à environ 1 km.
@@ -102,10 +106,15 @@ python3 build_grace.py        # eau stockée GRACE / GRACE-FO (NASA GIBS, sans c
 python3 build_regions.py      # climat réel des 33 régions et districts (data/regions/<id>.json), à relancer pour rafraîchir l'état du moment
 python3 build_saisons.py      # 20 saisons réelles rejouées par culture (NASA POWER journalier, FAO-56) → data/saisons/<id>.json
 python3 build_projections.py  # projections 2050 (NEX-GDDP-CMIP6, ~540 téléchargements, demande scipy) → data/projections/<id>.json
-python3 -m unittest test_indicators test_climat_complet test_ndvi_gibs test_grace_gibs test_saison test_build_saisons test_cmip6
+python3 build_imerg.py        # pluie GPM IMERG mensuelle 2005–2025 (GES DISC, jeton Earthdata) → data/raw/imerg.json
+python3 build_ecostress.py    # ECOSTRESS 2023–2024 (CMR + LP DAAC, jeton Earthdata, demande rasterio, ~1 h) → data/raw/ecostress.json
+python3 ajoute_satellites.py  # ajoute IMERG (recoupé avec POWER) et ECOSTRESS aux data/regions/<id>.json sans tout retélécharger
+python3 -m unittest test_indicators test_climat_complet test_ndvi_gibs test_grace_gibs test_saison test_build_saisons test_cmip6 test_imerg test_ecostress
 ```
 
 Pour **les 31 régions et 2 districts** (au chef-lieu de chacun) : pluie, chaleur et humidité du sol mensuelles 2005–2025 (NASA POWER), une ou deux saisons des pluies, alertes par règles et état du moment sur les 30 derniers jours publiés. La végétation vient du NDVI mensuel MODIS Terra, lu dans les tuiles NASA GIBS sur un anneau de 7 à 18 km autour du chef-lieu (la campagne, pas la ville). L'eau stockée vient de GRACE / GRACE-FO (mascons JPL, 2005–2022), lue elle aussi dans NASA GIBS : moyenne annuelle en cm d'eau, lacune 2017–2018 entre les deux missions.
+
+`build_imerg.py` et `build_ecostress.py` demandent un compte NASA Earthdata : un jeton (Earthdata Login → Generate Token) dans la variable `EARTHDATA_TOKEN`, jamais dans le code.
 
 ## Règles d'équipe
 

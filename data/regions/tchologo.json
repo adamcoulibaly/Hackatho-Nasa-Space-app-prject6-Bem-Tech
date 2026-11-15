@@ -246,7 +246,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "tchologo",
     "source": "NASA POWER, Ferkessédougou (9,59 N · 5,20 O)",
@@ -355,5 +357,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      2,
+      17,
+      41,
+      81,
+      111,
+      135,
+      185,
+      230,
+      210,
+      119,
+      17,
+      2
+    ],
+    "pluieMensuellePower": [
+      2,
+      14,
+      55,
+      73,
+      110,
+      124,
+      154,
+      189,
+      175,
+      107,
+      20,
+      2
+    ],
+    "annuel": 1150,
+    "annuelPower": 1025,
+    "ecartPct": 12,
+    "correlation": 0.9,
+    "accord": "bon",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      1.82,
+      null,
+      2.71,
+      null,
+      2.19,
+      null,
+      1.39,
+      2.21,
+      3.26,
+      null,
+      2.82,
+      null
+    ],
+    "joursChauds": 0.07,
+    "lst": [
+      35.2,
+      null,
+      43.5,
+      38.4,
+      35.8,
+      null,
+      31.3,
+      36.2,
+      33.9,
+      null,
+      33.3,
+      null
+    ],
+    "passages": 14,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

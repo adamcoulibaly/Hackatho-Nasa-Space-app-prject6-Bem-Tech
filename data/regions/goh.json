@@ -250,7 +250,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "goh",
     "source": "NASA POWER, Gagnoa (6,13 N · 5,95 O)",
@@ -359,5 +361,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      18,
+      74,
+      149,
+      149,
+      162,
+      192,
+      90,
+      88,
+      137,
+      167,
+      84,
+      36
+    ],
+    "pluieMensuellePower": [
+      25,
+      76,
+      153,
+      151,
+      182,
+      254,
+      116,
+      105,
+      187,
+      185,
+      99,
+      43
+    ],
+    "annuel": 1346,
+    "annuelPower": 1576,
+    "ecartPct": -15,
+    "correlation": 0.77,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.57,
+      null,
+      3.38,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      3.19,
+      null
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      31.6,
+      null,
+      33.9,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      34.5,
+      null
+    ],
+    "passages": 6,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

@@ -250,7 +250,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "marahoue",
     "source": "NASA POWER, Bouaflé (6,98 N · 5,75 O)",
@@ -359,5 +361,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      11,
+      60,
+      127,
+      128,
+      147,
+      158,
+      95,
+      114,
+      151,
+      149,
+      51,
+      23
+    ],
+    "pluieMensuellePower": [
+      13,
+      54,
+      122,
+      129,
+      153,
+      212,
+      119,
+      103,
+      166,
+      151,
+      73,
+      24
+    ],
+    "annuel": 1214,
+    "annuelPower": 1319,
+    "ecartPct": -8,
+    "correlation": 0.81,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.69,
+      null,
+      3.17,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      3.74,
+      null
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      32.0,
+      null,
+      36.0,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      36.2,
+      null
+    ],
+    "passages": 6,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

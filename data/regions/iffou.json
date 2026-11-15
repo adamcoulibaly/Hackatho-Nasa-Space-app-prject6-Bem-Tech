@@ -255,7 +255,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "iffou",
     "source": "NASA POWER, Daoukro (7,06 N · 3,97 O)",
@@ -364,5 +366,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      12,
+      44,
+      116,
+      136,
+      158,
+      167,
+      93,
+      78,
+      133,
+      178,
+      61,
+      13
+    ],
+    "pluieMensuellePower": [
+      16,
+      45,
+      115,
+      122,
+      167,
+      233,
+      123,
+      79,
+      147,
+      193,
+      89,
+      25
+    ],
+    "annuel": 1189,
+    "annuelPower": 1354,
+    "ecartPct": -12,
+    "correlation": 0.87,
+    "accord": "bon",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      null,
+      3.21,
+      2.33,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      3.25,
+      null
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      null,
+      28.4,
+      38.3,
+      30.9,
+      null,
+      null,
+      27.0,
+      null,
+      null,
+      null,
+      28.8,
+      null
+    ],
+    "passages": 8,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

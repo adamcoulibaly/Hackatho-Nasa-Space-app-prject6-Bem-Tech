@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const ETAPES_GUIDE = [
-  { titre: "Situez votre champ", texte: "Cherchez votre village ou utilisez votre position, puis dessinez le contour de votre champ sur la carte. Choisissez vos cultures, votre accès à l'eau et ce qui compte pour vous.", action: "Aller au champ", href: "/parcelle" },
-  { titre: "Lisez le climat de votre zone", texte: "Pluie, chaleur, humidité du sol et végétation mesurées par la NASA depuis 2005, et ce qu'elles font concrètement à votre sol.", action: "Voir le climat", href: "/climat" },
+  { titre: "Situez votre champ", texte: "Cherchez votre village ou utilisez votre position, puis dessinez le contour de votre champ sur la carte : ForoSat calcule sa pente (altitude SRTM) et le risque d'érosion. Choisissez vos cultures, votre accès à l'eau et ce qui compte pour vous.", action: "Aller au champ", href: "/parcelle" },
+  { titre: "Lisez le climat de votre zone", texte: "Pluie, chaleur, humidité du sol et végétation mesurées par la NASA depuis 2005, la pluie vérifiée par les satellites GPM, la chaleur au ras des champs vue par ECOSTRESS, et ce qu'elles font concrètement à votre sol.", action: "Voir le climat", href: "/climat" },
   { titre: "Comparez trois rotations", texte: "Votre rotation actuelle et deux alternatives, notées sur 7 critères, rejouées sur 21 saisons réelles et projetées vers 2030, 2040 et 2050.", action: "Comparer", href: "/rotations" },
   { titre: "Simulez avant de choisir", texte: "Sur 3, 5 ou 10 ans, en année sèche ou très pluvieuse : voyez le rendement, la fertilité et la couverture du sol évoluer.", action: "Simuler", href: "/simulateur" },
   { titre: "Suivez la saison", texte: "L'accueil montre chaque jour l'état de semis et les alertes (sécheresse, fortes pluies) avec un conseil. Dans l'app, activez les notifications.", action: "Ouvrir l'accueil", href: "/tableau" },

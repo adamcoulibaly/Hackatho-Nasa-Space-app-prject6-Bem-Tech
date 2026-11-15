@@ -113,7 +113,13 @@ export function construireMessages(rotation: Rotation, climat: Climat, question?
     `Lacune : ${rotation.lacune}`,
     `Confiance : ${rotation.confiance.niveau}.`,
     `Climat de la zone : ${climat.indicateurs.map((i) => `${i.label} ${i.valeur}`).join(" ; ")}.`,
-    climat.meta ? `Sources : ${climat.meta.reel.join(", ")} (${climat.meta.source}, ${climat.meta.periode}). Végétation et eau stockée : pas encore disponibles.` : "Source du climat inconnue.",
+    climat.meta ? `Sources : ${climat.meta.reel.join(", ")} (${climat.meta.source}, ${climat.meta.periode}).` : "Source du climat inconnue.",
+    climat.imerg
+      ? `Pluie vérifiée par les satellites GPM (IMERG) : ${climat.imerg.annuel} mm par an, contre ${climat.imerg.annuelPower} mm pour NASA POWER (écart ${climat.imerg.ecartPct} %, accord ${climat.imerg.accord}).`
+      : "",
+    climat.ecostress && climat.ecostress.joursChauds !== null && climat.ecostress.passages >= 8
+      ? `Chaleur au ras des champs (ECOSTRESS, ${climat.ecostress.periode}) : surface au-dessus de ${climat.ecostress.seuil} °C lors de ${Math.round(climat.ecostress.joursChauds * 100)} % des ${climat.ecostress.passages} passages sans nuage.`
+      : "",
     rotation.rejeu?.total || rotation.projection ? `En bref : ${resumeRotation(rotation)}` : "",
     autres.length ? `Autres rotations proposées pour cette parcelle (pour comparer) :\n${autres.map((r) => `- ${resumeRotation(r)}`).join("\n")}` : "",
   ].filter(Boolean).join("\n");

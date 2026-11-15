@@ -250,7 +250,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "la-me",
     "source": "NASA POWER, Adzopé (6,11 N · 3,86 O)",
@@ -359,5 +361,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      20,
+      50,
+      122,
+      140,
+      178,
+      204,
+      96,
+      57,
+      104,
+      204,
+      106,
+      33
+    ],
+    "pluieMensuellePower": [
+      26,
+      59,
+      133,
+      146,
+      188,
+      271,
+      115,
+      59,
+      124,
+      230,
+      121,
+      45
+    ],
+    "annuel": 1314,
+    "annuelPower": 1517,
+    "ecartPct": -13,
+    "correlation": 0.92,
+    "accord": "bon",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.24,
+      3.0,
+      3.24,
+      null,
+      null,
+      2.21,
+      1.33,
+      null,
+      null,
+      null,
+      1.84,
+      2.09
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      29.9,
+      31.5,
+      33.0,
+      null,
+      null,
+      30.7,
+      22.8,
+      null,
+      null,
+      null,
+      29.8,
+      27.5
+    ],
+    "passages": 9,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

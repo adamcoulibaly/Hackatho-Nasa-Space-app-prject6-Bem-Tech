@@ -21,6 +21,17 @@ export type Parcelle = {
   autreObjectif?: string;
   /** Moyens pour acheter des intrants (engrais, semences, traitements). */
   moyens?: "faibles" | "moyens" | "bons";
+  /** Pente du contour dessiné (altitude SRTM) ; `cle` identifie le contour mesuré. */
+  pente?: PenteParcelle;
+};
+
+export type PenteParcelle = {
+  moyenne: number;
+  forte: number;
+  altitudeMin: number;
+  altitudeMax: number;
+  classe: "faible" | "modere" | "fort" | "tres-fort";
+  cle: string;
 };
 
 /** Longueur maximale d'une saisie « Autre ». */
@@ -74,4 +85,14 @@ export const ParcelleSchema = z.object({
   autreCulture: z.string().max(AUTRE_MAX).optional(),
   autreObjectif: z.string().max(AUTRE_MAX).optional(),
   moyens: z.enum(["faibles", "moyens", "bons"]).optional(),
+  pente: z
+    .object({
+      moyenne: z.number().nonnegative(),
+      forte: z.number().nonnegative(),
+      altitudeMin: z.number(),
+      altitudeMax: z.number(),
+      classe: z.enum(["faible", "modere", "fort", "tres-fort"]),
+      cle: z.string().max(64),
+    })
+    .optional(),
 });

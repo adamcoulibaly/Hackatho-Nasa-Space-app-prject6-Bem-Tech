@@ -246,7 +246,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "gontougo",
     "source": "NASA POWER, Bondoukou (8,08 N · 2,80 O)",
@@ -355,5 +357,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      5,
+      28,
+      93,
+      120,
+      140,
+      148,
+      111,
+      102,
+      181,
+      154,
+      39,
+      7
+    ],
+    "pluieMensuellePower": [
+      8,
+      28,
+      92,
+      111,
+      146,
+      170,
+      153,
+      144,
+      222,
+      158,
+      40,
+      10
+    ],
+    "annuel": 1128,
+    "annuelPower": 1282,
+    "ecartPct": -12,
+    "correlation": 0.82,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      null,
+      3.2,
+      3.67,
+      4.07,
+      null,
+      2.78,
+      3.28,
+      null,
+      null,
+      2.33,
+      3.62,
+      null
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      null,
+      33.5,
+      31.3,
+      34.8,
+      null,
+      25.9,
+      30.0,
+      null,
+      null,
+      31.3,
+      30.3,
+      null
+    ],
+    "passages": 15,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

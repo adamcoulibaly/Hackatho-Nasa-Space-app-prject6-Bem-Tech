@@ -8,12 +8,14 @@ import { regionParId } from "@/lib/regions";
 import { RainChart } from "./RainChart";
 import { YearMatrix } from "./YearMatrix";
 import { GraceChart } from "./GraceChart";
+import { RecoupementPluie } from "./RecoupementPluie";
+import { ChaleurChamps } from "./ChaleurChamps";
 import { EffetsSurLeSol } from "./EffetsSurLeSol";
 import { AlertCard } from "./AlertCard";
 import { ClimatTabs } from "./ClimatTabs";
 
-const Card = ({ titre, aide, children, className = "" }: { titre: string; aide?: string; children: React.ReactNode; className?: string }) => (
-  <section className={`flex flex-col gap-4 rounded-[28px] bg-white p-[26px] ${className}`}>
+const Card = ({ titre, aide, children, className = "", guide }: { titre: string; aide?: string; children: React.ReactNode; className?: string; guide?: string }) => (
+  <section data-guide={guide} className={`flex min-w-0 flex-col gap-4 rounded-[28px] bg-white p-[26px] ${className}`}>
     <div className="flex flex-wrap items-baseline justify-between gap-2.5">
       <h2 className="m-0 font-display text-xl font-bold tracking-[-0.02em]">{titre}</h2>
       {aide && <span className="text-sm text-muted">{aide}</span>}
@@ -67,7 +69,7 @@ export function ClimatVue({ initial }: { initial: Climat }) {
       {entete}
       {climat.meta && (
         <p role="note" className="m-0 rounded-2xl bg-[#D7F0E2] px-4 py-3 text-[15px] leading-normal text-[#00502B]">
-          <strong>Données réelles :</strong> {climat.meta.reel.join(" et ")} ({climat.meta.source}, {climat.meta.periode}).
+          <strong>Données réelles :</strong> {new Intl.ListFormat("fr", { type: "conjunction" }).format(climat.meta.reel)} ({climat.meta.source}, {climat.meta.periode}).
           {climat.meta.tendancePluie ? ` ${climat.meta.tendancePluie}` : ""}{" "}
           {(() => {
             const veg = climat.onglets.some((o) => o.id === "veg");
@@ -91,6 +93,11 @@ export function ClimatVue({ initial }: { initial: Climat }) {
       <Card className="max-md:hidden" titre="Pluie mois par mois" aide="Moyenne en mm · les bandes claires marquent les saisons des pluies">
         <RainChart mois={climat.pluieMensuelle} saisons={climat.saisons ?? [climat.saisonPluies]} />
       </Card>
+      {climat.imerg && (
+        <Card guide="pluie-satellite" titre="La pluie vérifiée par les satellites GPM" aide="Moyenne en mm, NASA POWER face à GPM IMERG">
+          <RecoupementPluie imerg={climat.imerg} />
+        </Card>
+      )}
       <Card className="max-md:hidden" titre="L'année d'un coup d'œil" aide="Plus la case est foncée, plus la valeur est élevée">
         <YearMatrix lignes={climat.matrice} />
       </Card>
@@ -100,6 +107,11 @@ export function ClimatVue({ initial }: { initial: Climat }) {
           <p className="m-0 text-[15px] leading-normal text-muted">
             Écart annuel de la réserve d'eau totale, en centimètres d'eau, par rapport à la moyenne de référence de la mission (GRACE puis GRACE-FO, mascons JPL, via NASA GIBS). Les colonnes hachurées marquent une <strong className="text-ink">lacune de données</strong> : la fin de GRACE en 2017 et le lancement de GRACE-FO en 2018. Mesure à grande échelle (plusieurs centaines de km) : elle décrit la région, pas la parcelle.
           </p>
+        </Card>
+      )}
+      {climat.ecostress && (
+        <Card titre="La chaleur au ras des champs" aide="ECOSTRESS · pixels de 70 m">
+          <ChaleurChamps ecostress={climat.ecostress} />
         </Card>
       )}
       <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3.5">

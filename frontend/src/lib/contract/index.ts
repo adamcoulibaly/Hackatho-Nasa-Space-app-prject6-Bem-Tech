@@ -35,6 +35,34 @@ export const ClimatSchema = z.object({
     .min(1),
   /** Eau stockée (GRACE) : absente tant que le compte Earthdata n'est pas branché. */
   grace: z.array(z.object({ annee: z.number().int(), ecart: z.number().nullable() })).min(2).optional(),
+  /** Pluie GPM IMERG (satellites) recoupée avec la pluie NASA POWER, sur les mêmes mois. */
+  imerg: z
+    .object({
+      pluieMensuelle: z.array(z.number().nonnegative()).length(12),
+      pluieMensuellePower: z.array(z.number().nonnegative()).length(12),
+      annuel: z.number().nonnegative(),
+      annuelPower: z.number().nonnegative(),
+      ecartPct: z.number().int(),
+      correlation: z.number().min(-1).max(1).nullable(),
+      accord: z.enum(["bon", "moyen", "faible"]),
+      mois: z.number().int().positive(),
+      periode: z.string(),
+      source: z.string(),
+    })
+    .optional(),
+  /** Stress thermique et évapotranspiration ECOSTRESS au point agricole de la région (passages clairs). */
+  ecostress: z
+    .object({
+      lst: z.array(z.number().nullable()).length(12),
+      et: z.array(z.number().nullable()).length(12),
+      passages: z.number().int().nonnegative(),
+      joursChauds: z.number().min(0).max(1).nullable(),
+      seuil: z.number(),
+      periode: z.string(),
+      source: z.string(),
+      point: z.string(),
+    })
+    .optional(),
   alertes: z.array(z.object({ type: z.enum(["surveiller", "favorable"]), titre: z.string(), texte: z.string() })).min(1),
   /** Un onglet par indicateur pour l'affichage téléphone (12 valeurs mensuelles). */
   onglets: z
@@ -184,7 +212,7 @@ export type Rotation = z.infer<typeof RotationSchema>;
 
 /* ---------- couches de la carte (tuiles NASA GIBS, sans clé) ---------- */
 export const CoucheSchema = z.object({
-  id: z.enum(["couleurs", "veg", "chaleur", "sol"]),
+  id: z.enum(["couleurs", "veg", "chaleur", "sol", "pluie"]),
   label: z.string(),
   source: z.string(),
   echelle: z.string(),

@@ -15,6 +15,7 @@ import { strategies } from "@/lib/moteur/strategies";
 import { useSaisons } from "@/lib/useSaisons";
 import { Rentabilite } from "./Rentabilite";
 import { Repli } from "./Repli";
+import { LIBELLE_CLASSE, meilleureAntiErosion } from "@/lib/pente";
 
 const aujourdhuiIso = () => new Date().toISOString().slice(0, 10);
 
@@ -44,6 +45,15 @@ export function RotationsVue({ initial, cultures }: { initial: Climat; cultures:
       <div data-stagger className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-stretch gap-4">
         {etat.rotations.map((r) => <RotationCard key={r.id} rotation={r} dark={r.recommandee} />)}
       </div>
+      {parcelle.pente && parcelle.pente.classe !== "faible" && (() => {
+        const m = meilleureAntiErosion(etat.rotations);
+        const pct = parcelle.pente.moyenne.toLocaleString("fr-FR", { maximumFractionDigits: 1 });
+        return (
+          <p role="note" data-testid="note-pente" className="m-0 rounded-2xl bg-[#FDE7CC] px-4 py-3 text-[15px] leading-normal text-[#5C2E00]">
+            <strong>{LIBELLE_CLASSE[parcelle.pente.classe]} ({pct} %, altitude SRTM) :</strong> l&apos;eau de pluie emporte la terre. Sur le critère anti-érosion, la rotation {m.id} est la mieux notée ({m.scores.erosion}/5){m.recommandee ? ", et c'est aussi la rotation recommandée." : " : comparez-la à la rotation recommandée avant de choisir."}
+          </p>
+        );
+      })()}
       <Link href="/simulateur" className="flex items-center justify-between gap-3 rounded-3xl bg-ink p-5 text-paper no-underline hover:text-paper">
         <span className="flex flex-col gap-1">
           <strong className="font-display text-lg">Simuler sur 3, 5 ou 10 ans</strong>

@@ -250,7 +250,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "san-pedro",
     "source": "NASA POWER, San-Pédro (4,76 N · 6,65 O)",
@@ -359,5 +361,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      22,
+      56,
+      81,
+      118,
+      215,
+      317,
+      94,
+      61,
+      84,
+      129,
+      112,
+      47
+    ],
+    "pluieMensuellePower": [
+      41,
+      79,
+      125,
+      133,
+      225,
+      406,
+      182,
+      137,
+      322,
+      266,
+      114,
+      64
+    ],
+    "annuel": 1336,
+    "annuelPower": 2094,
+    "ecartPct": -36,
+    "correlation": 0.58,
+    "accord": "faible",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.19,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      2.07,
+      null
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      33.6,
+      null
+    ],
+    "passages": 1,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

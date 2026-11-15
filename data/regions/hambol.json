@@ -246,7 +246,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "hambol",
     "source": "NASA POWER, Katiola (8,09 N · 5,15 O)",
@@ -355,5 +357,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      5,
+      33,
+      93,
+      106,
+      132,
+      123,
+      105,
+      144,
+      186,
+      145,
+      31,
+      7
+    ],
+    "pluieMensuellePower": [
+      8,
+      39,
+      101,
+      122,
+      152,
+      186,
+      167,
+      175,
+      241,
+      160,
+      43,
+      14
+    ],
+    "annuel": 1110,
+    "annuelPower": 1408,
+    "ecartPct": -21,
+    "correlation": 0.83,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.92,
+      null,
+      3.57,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      3.36,
+      null
+    ],
+    "joursChauds": 0.12,
+    "lst": [
+      34.5,
+      null,
+      38.8,
+      null,
+      29.6,
+      null,
+      null,
+      null,
+      null,
+      null,
+      30.9,
+      null
+    ],
+    "passages": 8,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

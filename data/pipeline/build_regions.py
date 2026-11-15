@@ -21,6 +21,7 @@ RAW = ICI.parent / "raw" / "power"
 SORTIE = ICI.parent / "regions"
 NDVI = ICI.parent / "raw" / "ndvi.json"  # produit par build_ndvi.py (facultatif)
 GRACE = ICI.parent / "raw" / "grace.json"  # produit par build_grace.py (facultatif)
+IMERG = ICI.parent / "raw" / "imerg.json"  # produit par build_imerg.py (facultatif)
 
 
 def main(argv: list[str]) -> int:
@@ -30,6 +31,7 @@ def main(argv: list[str]) -> int:
     regions = json.loads(REGIONS.read_text(encoding="utf-8"))
     ndvi = json.loads(NDVI.read_text(encoding="utf-8")) if NDVI.exists() else {}
     grace = json.loads(GRACE.read_text(encoding="utf-8")) if GRACE.exists() else {}
+    imerg = json.loads(IMERG.read_text(encoding="utf-8")) if IMERG.exists() else {}
     RAW.mkdir(parents=True, exist_ok=True)
     SORTIE.mkdir(parents=True, exist_ok=True)
     for r in regions:
@@ -39,7 +41,7 @@ def main(argv: list[str]) -> int:
             time.sleep(1)
         jours = json.loads(telecharger_jours(r["lat"], r["lon"], debut_j, fin_j))
         time.sleep(1)
-        c = climat_complet(json.loads(mensuel_f.read_text(encoding="utf-8")), jours, r, aujourd_hui, ndvi=ndvi.get(r["id"]), grace=grace.get(r["id"]))
+        c = climat_complet(json.loads(mensuel_f.read_text(encoding="utf-8")), jours, r, aujourd_hui, ndvi=ndvi.get(r["id"]), grace=grace.get(r["id"]), imerg=imerg.get(r["id"]))
         (SORTIE / f"{r['id']}.json").write_text(json.dumps(c, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         etat = c.get("actuel", {}).get("texte", "pas d'état du moment")
         print(f"{r['chefLieu']:<16} {c['indicateurs'][1]['valeur']:>9}  {c['indicateurs'][0]['valeur']:<22} {etat}")

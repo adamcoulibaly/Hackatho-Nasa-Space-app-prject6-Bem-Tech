@@ -8,7 +8,7 @@ const parId = (id: string) => couches.find((c) => c.id === id)!;
 
 describe("couches NASA GIBS", () => {
   it("le contrat décrit 4 couches réelles", () => {
-    expect(couches.map((c) => c.id)).toEqual(["couleurs", "veg", "chaleur", "sol"]);
+    expect(couches.map((c) => c.id)).toEqual(["couleurs", "veg", "chaleur", "sol", "pluie"]);
   });
   it("construit l'adresse de tuile avec la date de l'année choisie", () => {
     expect(gibsTileUrl(parId("veg"), 2018)).toBe(

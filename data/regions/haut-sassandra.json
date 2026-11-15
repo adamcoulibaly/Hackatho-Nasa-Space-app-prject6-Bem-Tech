@@ -241,7 +241,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "haut-sassandra",
     "source": "NASA POWER, Daloa (6,89 N · 6,45 O)",
@@ -350,5 +352,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      11,
+      65,
+      136,
+      128,
+      151,
+      157,
+      111,
+      145,
+      171,
+      160,
+      49,
+      26
+    ],
+    "pluieMensuellePower": [
+      14,
+      58,
+      137,
+      140,
+      169,
+      230,
+      126,
+      127,
+      187,
+      165,
+      76,
+      26
+    ],
+    "annuel": 1310,
+    "annuelPower": 1455,
+    "ecartPct": -10,
+    "correlation": 0.78,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.45,
+      null,
+      3.15,
+      null,
+      null,
+      null,
+      2.75,
+      null,
+      null,
+      null,
+      3.82,
+      1.47
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      32.2,
+      null,
+      35.2,
+      null,
+      null,
+      null,
+      19.3,
+      null,
+      null,
+      null,
+      35.6,
+      31.4
+    ],
+    "passages": 7,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

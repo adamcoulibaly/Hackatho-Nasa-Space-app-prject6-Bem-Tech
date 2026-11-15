@@ -250,7 +250,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "agneby-tiassa",
     "source": "NASA POWER, Agboville (5,93 N · 4,21 O)",
@@ -359,5 +361,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      19,
+      52,
+      114,
+      136,
+      174,
+      222,
+      93,
+      55,
+      94,
+      192,
+      112,
+      34
+    ],
+    "pluieMensuellePower": [
+      25,
+      56,
+      122,
+      138,
+      173,
+      243,
+      105,
+      60,
+      121,
+      207,
+      114,
+      42
+    ],
+    "annuel": 1297,
+    "annuelPower": 1406,
+    "ecartPct": -8,
+    "correlation": 0.91,
+    "accord": "bon",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      3.43,
+      null,
+      null,
+      null,
+      null,
+      2.26,
+      null,
+      null,
+      null,
+      null,
+      null,
+      2.04
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      30.6,
+      null,
+      null,
+      null,
+      null,
+      30.4,
+      null,
+      null,
+      null,
+      null,
+      null,
+      27.7
+    ],
+    "passages": 3,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

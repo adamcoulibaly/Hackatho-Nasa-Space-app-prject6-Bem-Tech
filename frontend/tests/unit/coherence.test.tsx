@@ -14,8 +14,8 @@ describe("Méthode : n'annonce que ce que ForoSat utilise vraiment", () => {
   const src = SourcesSchema.parse(lire("sources.json"));
   it("les sources marquées « Utilisé » sont celles du pipeline et du site", () => {
     const utilisees = src.sources.filter((s) => s.priorite === "Utilisé").map((s) => s.nom);
-    expect(utilisees).toEqual(expect.arrayContaining(["NASA POWER", "MODIS Terra (NDVI)", "SMAP L4", "GRACE / GRACE-FO", "NASA NEX-GDDP-CMIP6"]));
-    for (const nom of ["Landsat / HLS", "SRTM", "GPM IMERG", "ECOSTRESS"]) expect(utilisees).not.toContain(nom);
+    expect(utilisees).toEqual(expect.arrayContaining(["NASA POWER", "MODIS Terra (NDVI)", "SMAP L4", "GRACE / GRACE-FO", "NASA NEX-GDDP-CMIP6", "GPM IMERG", "SRTM", "ECOSTRESS"]));
+    expect(utilisees).not.toContain("Landsat / HLS");
   });
   it("aucune approche n'est dite « testée » si elle ne l'a pas été, et la détection n'est pas attribuée à l'IA", () => {
     expect(src.approches.find((a) => a.id === "rf")!.verdict).toBe("Prévu");

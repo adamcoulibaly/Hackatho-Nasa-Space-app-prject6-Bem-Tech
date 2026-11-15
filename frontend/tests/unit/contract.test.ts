@@ -8,7 +8,7 @@ const REGIONS = path.resolve(__dirname, "../../../data/regions");
 const load = (n: string) => JSON.parse(fs.readFileSync(path.join(DIR, `${n}.json`), "utf8"));
 
 describe("contrat de données — Korhogo", () => {
-  it("climat de Korhogo : entièrement réel, végétation et eau stockée comprises", () => {
+  it("climat de Korhogo : entièrement réel, végétation, eau stockée, pluie satellite et chaleur des champs comprises", () => {
     const c = ClimatSchema.parse(JSON.parse(fs.readFileSync(path.join(REGIONS, "poro.json"), "utf8")));
     expect(c.pluieMensuelle).toHaveLength(12);
     expect(c.saisonPluies.debut).toBeLessThanOrEqual(c.saisonPluies.fin);
@@ -18,15 +18,20 @@ describe("contrat de données — Korhogo", () => {
     expect(c.matrice.map((m) => m.label)).toEqual(["Pluie", "Chaleur", "Humidité du sol", "Végétation"]);
     expect(c.indicateurs).toHaveLength(5);
     expect(c.alertes.length).toBeGreaterThanOrEqual(1);
-    expect(c.meta?.reel).toEqual(["pluie", "chaleur", "humidité du sol", "végétation", "eau stockée"]);
+    expect(c.meta?.reel).toEqual(["pluie", "chaleur", "humidité du sol", "végétation", "eau stockée", "pluie satellite", "stress thermique"]);
+    // GPM IMERG recoupe NASA POWER sur les mêmes mois ; ECOSTRESS donne la chaleur au ras des champs.
+    expect(c.imerg!.mois).toBeGreaterThan(200);
+    // Comparaison sur les mois publiés par IMERG (jusqu'à fin 2025) : la normale POWER recalculée reste à quelques mm près.
+    c.imerg!.pluieMensuellePower.forEach((v, i) => expect(Math.abs(v - c.pluieMensuelle[i])).toBeLessThanOrEqual(5));
+    expect(c.ecostress!.passages).toBeGreaterThan(10);
   });
 
   it("couches, sources et lexique", () => {
-    expect(CouchesSchema.parse(load("couches"))).toHaveLength(4);
+    expect(CouchesSchema.parse(load("couches"))).toHaveLength(5);
     const s = SourcesSchema.parse(load("sources"));
-    expect(s.sources).toHaveLength(9);
+    expect(s.sources).toHaveLength(10);
     expect(s.approches).toHaveLength(4);
-    expect(LexiqueSchema.parse(load("lexique"))).toHaveLength(20);
+    expect(LexiqueSchema.parse(load("lexique"))).toHaveLength(21);
   });
 
   it("rejette un score hors de 1 à 5", () => {

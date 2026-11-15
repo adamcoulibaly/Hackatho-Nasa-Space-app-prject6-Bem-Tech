@@ -13,3 +13,6 @@ __pycache__/
 # Séries brutes lourdes, retéléchargées par le pipeline
 data/raw/jours/
 data/raw/cmip6/
+
+# Cache de téléchargement ECOSTRESS (build_ecostress.py), régénérable
+data/raw/ecostress-cache.json

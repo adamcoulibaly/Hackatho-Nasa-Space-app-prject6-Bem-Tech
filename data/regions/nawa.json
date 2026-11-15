@@ -250,7 +250,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "nawa",
     "source": "NASA POWER, Soubré (5,79 N · 6,59 O)",
@@ -359,5 +361,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      21,
+      74,
+      139,
+      145,
+      165,
+      201,
+      89,
+      97,
+      146,
+      182,
+      108,
+      40
+    ],
+    "pluieMensuellePower": [
+      25,
+      77,
+      152,
+      154,
+      192,
+      279,
+      132,
+      132,
+      234,
+      222,
+      103,
+      44
+    ],
+    "annuel": 1407,
+    "annuelPower": 1746,
+    "ecartPct": -19,
+    "correlation": 0.74,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.55,
+      null,
+      3.26,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      3.61,
+      1.84
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      32.7,
+      null,
+      34.6,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      31.9,
+      33.1
+    ],
+    "passages": 6,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

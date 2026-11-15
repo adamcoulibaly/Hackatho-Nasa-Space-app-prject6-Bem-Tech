@@ -246,7 +246,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "bafing",
     "source": "NASA POWER, Touba (8,28 N · 7,68 O)",
@@ -355,5 +357,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      8,
+      34,
+      83,
+      95,
+      132,
+      175,
+      179,
+      241,
+      234,
+      137,
+      30,
+      8
+    ],
+    "pluieMensuellePower": [
+      5,
+      31,
+      75,
+      100,
+      123,
+      175,
+      194,
+      265,
+      228,
+      128,
+      36,
+      8
+    ],
+    "annuel": 1356,
+    "annuelPower": 1368,
+    "ecartPct": -1,
+    "correlation": 0.8,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      3.0,
+      null,
+      2.1,
+      null,
+      null,
+      null,
+      null,
+      null,
+      2.33,
+      null,
+      null,
+      2.99
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      26.3,
+      null,
+      28.6,
+      null,
+      null,
+      null,
+      26.2,
+      null,
+      30.9,
+      null,
+      null,
+      29.7
+    ],
+    "passages": 8,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

@@ -48,6 +48,16 @@ export const ETAPES: readonly EtapeGuide[] = [
     texte: "Touchez la carte à chaque coin de votre champ (3 au moins), puis « Terminer le contour ». La surface se calcule toute seule.",
   },
   {
+    id: "pente", chemin: "/parcelle", lien: "/parcelle", cible: "pente", avance: "suivant",
+    titre: "La pente de votre champ",
+    texte: "Dès que le contour est fermé, ForoSat calcule sa pente avec l'altitude SRTM de la NASA. Plus elle est forte, plus la pluie emporte la terre : suivez le conseil anti-érosion.",
+  },
+  {
+    id: "couches", chemin: "/parcelle", lien: "/parcelle", cible: "couches", declencheur: '[data-guide="couches"] button', avance: "clic",
+    titre: "Votre zone vue de l'espace",
+    texte: "Touchez une couche NASA : végétation, chaleur du sol, humidité du sol ou pluie des satellites GPM. Ce qu'elle veut dire pour votre champ s'affiche juste en dessous.",
+  },
+  {
     id: "cultures", chemin: "/parcelle", lien: "/parcelle", cible: "cultures", avance: "suivant",
     titre: "Ce que vous cultivez",
     texte: "Touchez vos cultures d'aujourd'hui, dans l'ordre des saisons (3 au plus).",
@@ -86,6 +96,11 @@ export const ETAPES: readonly EtapeGuide[] = [
     id: "simuler", chemin: "/simulateur", lien: "/simulateur", cible: "simulation", avance: "suivant",
     titre: "Testez avant de semer",
     texte: "Choisissez une durée et une année sèche ou très pluvieuse : le verdict et les rendements s'affichent juste en dessous.",
+  },
+  {
+    id: "climat", chemin: "/climat", lien: "/climat", cible: "pluie-satellite", avance: "suivant",
+    titre: "Un climat vérifié par satellite",
+    texte: "La pluie de NASA POWER est comparée à celle mesurée par les satellites GPM : ForoSat vous dit si les quantités sont fiables. Plus bas, ECOSTRESS montre la chaleur au ras des champs.",
   },
   {
     id: "suivre", chemin: "/tableau", lien: "/tableau", cible: "tableau", avance: "suivant",

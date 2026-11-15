@@ -250,7 +250,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "abidjan",
     "source": "NASA POWER, Abidjan (5,32 N · 4,02 O)",
@@ -359,5 +361,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      24,
+      56,
+      102,
+      126,
+      210,
+      301,
+      104,
+      50,
+      81,
+      198,
+      142,
+      47
+    ],
+    "pluieMensuellePower": [
+      34,
+      65,
+      139,
+      156,
+      209,
+      279,
+      101,
+      49,
+      104,
+      213,
+      122,
+      54
+    ],
+    "annuel": 1441,
+    "annuelPower": 1525,
+    "ecartPct": -6,
+    "correlation": 0.88,
+    "accord": "bon",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      1.88,
+      null,
+      2.5,
+      null,
+      null,
+      2.35,
+      null,
+      null,
+      null,
+      null,
+      2.23,
+      null
+    ],
+    "joursChauds": 0.67,
+    "lst": [
+      null,
+      null,
+      40.0,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      43.1,
+      null
+    ],
+    "passages": 3,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

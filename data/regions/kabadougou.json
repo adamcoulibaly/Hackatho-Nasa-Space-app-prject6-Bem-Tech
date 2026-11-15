@@ -246,7 +246,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "kabadougou",
     "source": "NASA POWER, Odienné (9,50 N · 7,56 O)",
@@ -355,5 +357,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      2,
+      13,
+      38,
+      69,
+      111,
+      207,
+      282,
+      339,
+      258,
+      146,
+      23,
+      2
+    ],
+    "pluieMensuellePower": [
+      3,
+      15,
+      54,
+      73,
+      96,
+      147,
+      189,
+      271,
+      210,
+      111,
+      24,
+      3
+    ],
+    "annuel": 1490,
+    "annuelPower": 1196,
+    "ecartPct": 25,
+    "correlation": 0.85,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      3.22,
+      3.45,
+      3.59,
+      null,
+      2.85,
+      2.63,
+      null,
+      null,
+      null,
+      3.05,
+      3.48,
+      3.0
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      23.7,
+      39.3,
+      37.9,
+      null,
+      34.6,
+      27.7,
+      28.8,
+      null,
+      25.5,
+      34.0,
+      32.9,
+      30.5
+    ],
+    "passages": 18,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

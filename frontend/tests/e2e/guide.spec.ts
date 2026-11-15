@@ -7,7 +7,8 @@ const capture = async (page: Page, nom: string, projet: string) => {
 const bulle = (page: Page, titre: string) => page.getByRole("dialog", { name: titre });
 
 test("guide pas à pas : du champ au suivi de saison, en touchant ce que la bulle montre", async ({ page, isMobile }, info) => {
-  test.setTimeout(90_000);
+  test.setTimeout(120_000);
+  await page.route("**/api/pente", (route) => route.fulfill({ json: { moyenne: 3.2, forte: 5.1, altitudeMin: 340, altitudeMax: 346, classe: "modere", points: 40, source: "Altitude SRTM (NASA)" } }));
   await page.goto("/parcelle");
   // Les tests automatisés ne déclenchent pas le guide seul : on simule un premier passage.
   await page.evaluate(() => localStorage.setItem("forosat.guide", JSON.stringify({ etape: 0, statut: "en-cours" })));
@@ -39,6 +40,15 @@ test("guide pas à pas : du champ au suivi de saison, en touchant ce que la bull
     await page.waitForTimeout(350);
   }
   await page.getByRole("button", { name: /Terminer le contour \(4 points\)/ }).click();
+
+  // Nouveautés : la pente SRTM du contour, puis les couches NASA (dont la pluie GPM).
+  await expect(bulle(page, "La pente de votre champ")).toBeVisible();
+  await expect(page.getByTestId("pente-parcelle")).toContainText("Pente douce · 3,2 %");
+  await page.waitForTimeout(400);
+  await capture(page, "4a-pente", info.project.name);
+  await page.getByRole("button", { name: "Suivant" }).click();
+  await expect(bulle(page, "Votre zone vue de l'espace")).toBeVisible();
+  await page.getByRole("button", { name: "Pluie", exact: true }).click();
 
   await expect(bulle(page, "Ce que vous cultivez")).toBeVisible();
   await page.waitForTimeout(400);
@@ -73,6 +83,14 @@ test("guide pas à pas : du champ au suivi de saison, en touchant ce que la bull
   await reprise.getByRole("link", { name: "Continuer" }).click();
   await expect(page).toHaveURL(/\/simulateur$/);
   await expect(bulle(page, "Testez avant de semer")).toBeVisible();
+  await page.getByRole("button", { name: "Suivant" }).click();
+
+  await expect(reprise).toContainText("Un climat vérifié par satellite");
+  await reprise.getByRole("link", { name: "Continuer" }).click();
+  await expect(page).toHaveURL(/\/climat$/);
+  await expect(bulle(page, "Un climat vérifié par satellite")).toBeVisible();
+  await page.waitForTimeout(400);
+  await capture(page, "12a-climat", info.project.name);
   await page.getByRole("button", { name: "Suivant" }).click();
 
   await reprise.getByRole("link", { name: "Continuer" }).click();

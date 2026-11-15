@@ -250,7 +250,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "loh-djiboua",
     "source": "NASA POWER, Divo (5,84 N · 5,35 O)",
@@ -359,5 +361,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      18,
+      68,
+      127,
+      141,
+      164,
+      221,
+      85,
+      62,
+      106,
+      166,
+      99,
+      36
+    ],
+    "pluieMensuellePower": [
+      24,
+      71,
+      140,
+      143,
+      169,
+      233,
+      105,
+      82,
+      152,
+      169,
+      98,
+      43
+    ],
+    "annuel": 1293,
+    "annuelPower": 1429,
+    "ecartPct": -10,
+    "correlation": 0.82,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.44,
+      null,
+      3.47,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      3.54,
+      null
+    ],
+    "joursChauds": 0.17,
+    "lst": [
+      31.9,
+      null,
+      36.0,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      35.5,
+      null
+    ],
+    "passages": 6,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

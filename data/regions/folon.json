@@ -246,7 +246,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "folon",
     "source": "NASA POWER, Minignan (10,00 N · 7,84 O)",
@@ -355,5 +357,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      2,
+      8,
+      27,
+      56,
+      109,
+      217,
+      278,
+      326,
+      259,
+      126,
+      13,
+      2
+    ],
+    "pluieMensuellePower": [
+      2,
+      8,
+      34,
+      67,
+      116,
+      186,
+      234,
+      319,
+      253,
+      119,
+      18,
+      2
+    ],
+    "annuel": 1423,
+    "annuelPower": 1358,
+    "ecartPct": 5,
+    "correlation": 0.86,
+    "accord": "bon",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      3.18,
+      3.68,
+      3.01,
+      3.02,
+      3.26,
+      3.71,
+      null,
+      0.68,
+      null,
+      3.68,
+      3.55,
+      3.45
+    ],
+    "joursChauds": 0.17,
+    "lst": [
+      27.9,
+      39.9,
+      40.0,
+      42.1,
+      38.5,
+      28.0,
+      30.1,
+      23.7,
+      null,
+      31.8,
+      30.5,
+      30.3
+    ],
+    "passages": 23,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

@@ -241,7 +241,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "tonkpi",
     "source": "NASA POWER, Man (7,41 N · 7,55 O)",
@@ -350,5 +352,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      11,
+      59,
+      120,
+      123,
+      141,
+      177,
+      149,
+      218,
+      248,
+      168,
+      44,
+      17
+    ],
+    "pluieMensuellePower": [
+      11,
+      52,
+      116,
+      150,
+      185,
+      253,
+      224,
+      295,
+      326,
+      212,
+      83,
+      26
+    ],
+    "annuel": 1475,
+    "annuelPower": 1933,
+    "ecartPct": -24,
+    "correlation": 0.71,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.26,
+      null,
+      null,
+      null,
+      null,
+      null,
+      1.24,
+      null,
+      null,
+      null,
+      3.61,
+      1.57
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      30.3,
+      null,
+      null,
+      null,
+      null,
+      null,
+      24.4,
+      null,
+      null,
+      null,
+      33.7,
+      30.9
+    ],
+    "passages": 4,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

@@ -255,7 +255,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "moronou",
     "source": "NASA POWER, Bongouanou (6,65 N · 4,20 O)",
@@ -364,5 +366,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      14,
+      48,
+      117,
+      142,
+      161,
+      179,
+      91,
+      73,
+      115,
+      188,
+      73,
+      17
+    ],
+    "pluieMensuellePower": [
+      19,
+      50,
+      116,
+      129,
+      162,
+      233,
+      115,
+      70,
+      135,
+      197,
+      101,
+      32
+    ],
+    "annuel": 1218,
+    "annuelPower": 1359,
+    "ecartPct": -10,
+    "correlation": 0.87,
+    "accord": "bon",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      3.41,
+      3.98,
+      2.24,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      3.43,
+      null
+    ],
+    "joursChauds": 0.0,
+    "lst": [
+      30.1,
+      29.4,
+      39.3,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      28.8,
+      null
+    ],
+    "passages": 7,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

@@ -118,5 +118,11 @@
     "tag": "Alertes du jour",
     "definition": "Le niveau des alertes de ces derniers jours dans votre région (sécheresse, fortes pluies, chaleur) : faible, moyenne ou élevée.",
     "pourquoi": "À ne pas confondre avec le risque climatique de la carte, qui résume 20 ans de saisons."
+  },
+  {
+    "terme": "Pluie satellite",
+    "tag": "GPM IMERG",
+    "definition": "La pluie estimée par une constellation de satellites qui observent les nuages et les gouttes, toutes les demi-heures, partout sur la Terre.",
+    "pourquoi": "Comparée à NASA POWER, elle montre si les quantités de pluie annoncées pour votre zone sont fiables."
   }
 ]

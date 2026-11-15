@@ -255,7 +255,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "yamoussoukro",
     "source": "NASA POWER, Yamoussoukro (6,82 N · 5,28 O)",
@@ -364,5 +366,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      11,
+      58,
+      129,
+      130,
+      146,
+      161,
+      85,
+      93,
+      133,
+      145,
+      55,
+      20
+    ],
+    "pluieMensuellePower": [
+      14,
+      49,
+      113,
+      123,
+      151,
+      212,
+      120,
+      92,
+      158,
+      164,
+      77,
+      24
+    ],
+    "annuel": 1166,
+    "annuelPower": 1297,
+    "ecartPct": -10,
+    "correlation": 0.82,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      2.25,
+      null,
+      3.03,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      3.23,
+      null
+    ],
+    "joursChauds": 0.2,
+    "lst": [
+      33.3,
+      null,
+      40.5,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      38.2,
+      null
+    ],
+    "passages": 5,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }

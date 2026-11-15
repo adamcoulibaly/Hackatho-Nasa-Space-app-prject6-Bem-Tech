@@ -71,27 +71,35 @@
       "priorite": "Utilisé"
     },
     {
+      "nom": "ECOSTRESS",
+      "mesure": "Température de surface et évapotranspiration",
+      "finesse": "70 m",
+      "finesseClasse": "fine",
+      "usage": "Chaleur au ras des champs et eau évaporée, 33 régions (2023–2024)",
+      "priorite": "Utilisé"
+    },
+    {
+      "nom": "GPM IMERG",
+      "mesure": "Pluie mesurée par la constellation de satellites GPM",
+      "finesse": "≈ 10 km",
+      "finesseClasse": "moyenne",
+      "usage": "Recoupement de la pluie NASA POWER dans les 33 régions (2005–2025) et couche « Pluie » de la carte",
+      "priorite": "Utilisé"
+    },
+    {
+      "nom": "SRTM",
+      "mesure": "Altitude, d'où la pente",
+      "finesse": "30 m",
+      "finesseClasse": "fine",
+      "usage": "Pente de la parcelle dessinée et risque d'érosion, rappelé avec les rotations",
+      "priorite": "Utilisé"
+    },
+    {
       "nom": "Landsat / HLS",
       "mesure": "Végétation fine (NDVI)",
       "finesse": "30 m",
       "finesseClasse": "fine",
       "usage": "État des cultures à l'échelle du champ",
-      "priorite": "Prochaine étape"
-    },
-    {
-      "nom": "GPM IMERG",
-      "mesure": "Pluie, pluies extrêmes",
-      "finesse": "≈ 10 km",
-      "finesseClasse": "moyenne",
-      "usage": "Alertes de fortes pluies plus fines",
-      "priorite": "Prochaine étape"
-    },
-    {
-      "nom": "SRTM",
-      "mesure": "Altitude, pente",
-      "finesse": "30 m",
-      "finesseClasse": "fine",
-      "usage": "Risque d'érosion de la parcelle",
       "priorite": "Prochaine étape"
     }
   ],

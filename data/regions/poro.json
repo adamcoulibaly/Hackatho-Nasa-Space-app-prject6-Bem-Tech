@@ -246,7 +246,9 @@
       "chaleur",
       "humidité du sol",
       "végétation",
-      "eau stockée"
+      "eau stockée",
+      "pluie satellite",
+      "stress thermique"
     ],
     "region": "poro",
     "source": "NASA POWER, Korhogo (9,46 N · 5,63 O)",
@@ -355,5 +357,79 @@
       }
     ],
     "extras": []
+  },
+  "imerg": {
+    "pluieMensuelle": [
+      3,
+      17,
+      42,
+      83,
+      111,
+      135,
+      195,
+      239,
+      232,
+      124,
+      17,
+      4
+    ],
+    "pluieMensuellePower": [
+      2,
+      14,
+      49,
+      72,
+      100,
+      119,
+      159,
+      205,
+      171,
+      103,
+      19,
+      2
+    ],
+    "annuel": 1202,
+    "annuelPower": 1015,
+    "ecartPct": 18,
+    "correlation": 0.89,
+    "accord": "moyen",
+    "mois": 249,
+    "periode": "2005–2025",
+    "source": "GPM IMERG V07 mensuel (NASA GES DISC), carré de 0,5° autour du chef-lieu"
+  },
+  "ecostress": {
+    "et": [
+      1.8,
+      null,
+      3.2,
+      null,
+      1.95,
+      null,
+      0.78,
+      2.13,
+      3.13,
+      null,
+      2.53,
+      null
+    ],
+    "joursChauds": 0.09,
+    "lst": [
+      34.6,
+      null,
+      47.5,
+      38.9,
+      32.8,
+      null,
+      34.3,
+      25.7,
+      33.6,
+      null,
+      36.0,
+      null
+    ],
+    "passages": 11,
+    "periode": "2023–2024",
+    "point": "8 points de campagne à 12 km du chef-lieu",
+    "seuil": 40.0,
+    "source": "ECOSTRESS V002 (NASA LP DAAC) : température de surface ECO_L2T_LSTE et évapotranspiration journalière ECO_L3T_JET, 70 m"
   }
 }
