@@ -9,6 +9,16 @@ import { GuidePasAPas } from "@/components/GuidePasAPas";
 export const metadata: Metadata = {
   title: "ForoSat — choisir sa prochaine rotation",
   description: "Comparer trois rotations de cultures à partir de 20 ans de données satellites NASA.",
+  applicationName: "ForoSat",
+  authors: [{ name: "Équipe BEM Tech" }],
+  creator: "Équipe BEM Tech",
+  // Usage de l'IA déclaré (règlement NASA Space Apps Challenge).
+  other: {
+    "ai-design-site": "Design du site réalisé avec Claude Design (Anthropic)",
+    "ai-design-mobile": "Design de l'application mobile réalisé avec Claude (Anthropic)",
+    "ai-assistance": "Claude (Anthropic) a aidé à déboguer l'application, corriger les bugs et tester les fonctions",
+    "ai-demo-video": "Vidéo de démonstration générée avec Claude Code ; voix générée par ElevenLabs",
+  },
 };
 
 const FONTS =
