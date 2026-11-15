@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ClimatSchema, type Climat } from "@/lib/contract";
 import { REGION_PILOTE } from "@/lib/regions";
+import { urlDonnee } from "@/lib/monde/url";
 
 export type EtatClimat = { statut: "pret"; climat: Climat } | { statut: "chargement" } | { statut: "erreur"; reessayer: () => void };
 
@@ -22,7 +23,7 @@ export function useClimatRegion(initial: Climat, region: string): EtatClimat {
     }
     let annule = false;
     setInterne({ statut: "chargement" });
-    fetch(`/api/climat/${region}`)
+    fetch(urlDonnee("climat", region) ?? `/api/climat/${region}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((json) => !annule && setInterne({ statut: "pret", climat: ClimatSchema.parse(json) }))
       .catch(() => !annule && setInterne({ statut: "erreur" }));

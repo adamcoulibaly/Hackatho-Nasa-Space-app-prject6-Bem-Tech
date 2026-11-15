@@ -6,7 +6,7 @@ import type { Climat, Culture } from "@/lib/contract";
 import { useParcelle } from "@/lib/parcelle/context";
 import { useRotations } from "@/lib/useRotations";
 import { rotationConseillee } from "@/lib/moteur/rotations";
-import { regionParId } from "@/lib/regions";
+import { nomZone } from "@/lib/monde/nom";
 import { PrioritesRappel } from "./PrioritesRappel";
 import { RotationCard } from "./RotationCard";
 import { EtatCalcul } from "./EtatCalcul";
@@ -22,12 +22,11 @@ const aujourdhuiIso = () => new Date().toISOString().slice(0, 10);
 export function RotationsVue({ initial, cultures }: { initial: Climat; cultures: Culture[] }) {
   const { parcelle } = useParcelle();
   const etat = useRotations(initial, cultures, parcelle);
-  const region = regionParId(parcelle.region);
   const saisons = useSaisons(parcelle.region);
   const entete = (
     <div className="flex flex-wrap items-end justify-between gap-4">
       <div className="flex flex-col gap-2">
-        <span className="text-[13px] uppercase tracking-[0.14em] text-muted">Étape 2 sur 2{region ? ` · ${region.nom}` : ""}</span>
+        <span className="text-[13px] uppercase tracking-[0.14em] text-muted">Étape 2 sur 2 · {nomZone(parcelle)}</span>
         <h1 className="m-0 font-display text-[clamp(30px,3.4vw,46px)] font-bold leading-[1.05] tracking-[-0.04em]">
           Trois chemins <span className="font-serif font-normal italic text-orange-dark">pour votre sol.</span>
         </h1>

@@ -45,7 +45,7 @@ describe("recherche Nominatim", () => {
     const u = new URL(nominatimUrl("Bouaké centre"));
     expect(u.origin).toBe("https://nominatim.openstreetmap.org");
     expect(u.searchParams.get("q")).toBe("Bouaké centre");
-    expect(u.searchParams.get("countrycodes")).toBe("ci");
+    expect(u.searchParams.get("countrycodes")).toBeNull(); // recherche dans le monde entier
     expect(u.searchParams.get("format")).toBe("json");
   });
   it("lit le premier résultat ou renvoie null", () => {

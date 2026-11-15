@@ -3,9 +3,9 @@
  * Données ForoSat (/api/climat, /api/saisons, /api/projections, /api/semis) : réseau d'abord, puis la copie gardée.
  * Fichiers de l'application (/_next/static) : copie gardée d'abord (ils ne changent jamais pour une même adresse).
  * Rien n'est gardé pour l'assistant IA ni pour la photo (envoi de données), ni pour les sites extérieurs. */
-const VERSION = "forosat-v1";
+const VERSION = "forosat-v2";
 const PAGE_HORS_LIGNE = "/hors-ligne";
-const A_GARDER = /^\/api\/(climat|saisons|projections|semis|anomalie)(\/|\?|$)/;
+const A_GARDER = /^\/api\/(climat|saisons|projections|semis|anomalie|monde\/climat|monde\/saisons)(\/|\?|$)/;
 
 /** Garde la page « hors connexion » et tous ses fichiers (scripts, styles) : elle doit s'afficher sans réseau. */
 async function garderPageHorsLigne() {

@@ -1,12 +1,17 @@
 import { z } from "zod";
-import { REGION_IDS } from "@/lib/regions";
+import { regionParId } from "@/lib/regions";
+import { CATALOGUE, CULTURES_CI } from "@/lib/monde/pays";
 
 export type Eau = "pluie" | "irrigation";
 export type Materiel = "daba" | "traction" | "tracteur";
 
 export type Parcelle = {
-  /** Identifiant de la région (voir lib/regions). */
+  /** Région ivoirienne, ou point du monde « pt_<lat>_<lon> » (voir lib/regions et lib/monde/lieu). */
   region: string;
+  /** Pays de la parcelle (code ISO à 2 lettres, ex. « SN ») ; absent = Côte d'Ivoire. */
+  pays?: string;
+  /** Nom du lieu (village, ville) trouvé sur la carte, pour l'afficher à la place des coordonnées. */
+  lieu?: string;
   surface: number;
   cultures: string[];
   eau: Eau;
@@ -37,7 +42,9 @@ export type PenteParcelle = {
 /** Longueur maximale d'une saisie « Autre ». */
 export const AUTRE_MAX = 40;
 
-export const CULTURES = ["Maïs", "Coton", "Igname", "Manioc", "Arachide", "Riz", "Sorgho", "Niébé"] as const;
+/** Les 8 cultures de la Côte d'Ivoire ; le catalogue mondial est dans lib/monde/pays. */
+export const CULTURES = CULTURES_CI;
+export { CATALOGUE };
 
 export const PRIORITES = [
   "Rendre mon sol plus fertile",
@@ -74,7 +81,9 @@ export function validateParcelle(p: Parcelle): { ok: boolean; erreurs: string[] 
 
 /** Forme attendue d'une parcelle relue depuis le stockage local. */
 export const ParcelleSchema = z.object({
-  region: z.enum(REGION_IDS),
+  region: z.string().refine((id) => !!regionParId(id), "Région inconnue"),
+  pays: z.string().regex(/^[A-Z]{2}$/).optional(),
+  lieu: z.string().max(80).optional(),
   surface: z.number(),
   cultures: z.array(z.string()),
   eau: z.enum(["pluie", "irrigation"]),

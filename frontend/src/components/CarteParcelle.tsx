@@ -5,7 +5,8 @@ import type * as Leaflet from "leaflet";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { Couche } from "@/lib/contract";
 import { anneeDisponible, gibsTileUrl, lireNominatimListe, nominatimUrl, surfaceHa, type Lieu } from "@/lib/carte";
-import { regionLaPlusProche, regionParId } from "@/lib/regions";
+import { regionParId } from "@/lib/regions";
+import { localisationDe, localiser } from "@/lib/monde/localiser";
 import { useParcelle } from "@/lib/parcelle/context";
 import { ecouterNatif, envoyerAuNatif } from "@/lib/modeApp";
 import { GuideCouche } from "./GuideCouche";
@@ -135,7 +136,7 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
     if (!prete || !m || parcelle.region === regionVue.current) return;
     regionVue.current = parcelle.region;
     const c = parcelle.contour;
-    if (c && c.length >= 3 && regionLaPlusProche(...centreDe(c)).id === parcelle.region) return;
+    if (c && c.length >= 3 && localisationDe(...centreDe(c), parcelle.pays ? { pays: parcelle.pays, nomPays: "" } : null).region === parcelle.region) return;
     const r = regionParId(parcelle.region);
     if (r) m.flyTo([r.lat, r.lon], 11, { duration: 0.3 });
   }, [prete, parcelle.region, parcelle.contour]);
@@ -207,15 +208,26 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
       }
       const s = Math.round(surfaceHa(pts) * 100) / 100;
       const centre = centreDe(pts);
-      const region = regionLaPlusProche(...centre);
-      setParcelle({ surface: s, contour: pts, centre, region: region.id });
-      regionVue.current = region.id;
+      // Région tout de suite (cadre de la Côte d'Ivoire), puis pays et lieu précis dès que le géocodeur répond.
+      const provisoire = localisationDe(...centre, null);
+      setParcelle({ surface: s, contour: pts, centre, region: provisoire.region });
+      regionVue.current = provisoire.region;
       modeDessin.current = false;
       carte.current?.doubleClickZoom.enable();
       setDessine(false);
-      setMessage(`Parcelle enregistrée : ${ha(s)}. Région détectée : ${region.nom} (modifiable dans le formulaire). Glissez un coin pour ajuster.`);
+      setMessage(`Parcelle enregistrée : ${ha(s)}. Glissez un coin pour ajuster.`);
+      void appliquerLieu(...centre, `Parcelle enregistrée : ${ha(s)}.`);
       return [];
     });
+  };
+  /** Pays, lieu et région (ivoirienne ou point du monde) du point, enregistrés avec la parcelle. */
+  const appliquerLieu = async (lat: number, lon: number, avant = "") => {
+    const loc = await localiser(lat, lon);
+    regionVue.current = loc.region;
+    setParcelle({ region: loc.region, pays: loc.pays, lieu: loc.lieu });
+    const ou = loc.pays === "CI" ? `${regionParId(loc.region)?.nom ?? ""}, Côte d'Ivoire` : `${loc.lieu ? `${loc.lieu}, ` : ""}${loc.nomPays}`;
+    setMessage(`${avant ? `${avant} ` : ""}Lieu : ${ou}.${loc.pays === "CI" ? "" : " Climat et saisons calculés pour ce point avec NASA POWER."}`);
+    return loc;
   };
   const terminerRef = useRef(terminer);
   terminerRef.current = terminer;
@@ -255,6 +267,7 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
     if (m) lieu.cadre ? m.flyToBounds(lieu.cadre, { maxZoom: 15, duration: 0.3 }) : m.flyTo([lieu.lat, lieu.lon], 14, { duration: 0.3 });
     setResultats([]);
     setMessage(lieu.nom);
+    void appliquerLieu(lieu.lat, lieu.lon);
   };
   // Position renvoyée par l'app mobile (GPS natif).
   useEffect(
@@ -264,6 +277,7 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
         if ("erreur" in m) return setMessage("Position refusée ou indisponible. Cherchez votre village à la place.");
         carte.current?.flyTo([m.lat, m.lon], 17, { duration: 0.3 });
         setMessage("Carte centrée sur votre position. Vous pouvez dessiner votre champ.");
+        void appliquerLieu(m.lat, m.lon, "Carte centrée sur votre position.");
       }),
     [],
   );
@@ -276,6 +290,7 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
       (pos) => {
         carte.current?.flyTo([pos.coords.latitude, pos.coords.longitude], 17, { duration: 0.3 });
         setMessage("Carte centrée sur votre position. Vous pouvez dessiner votre champ.");
+        void appliquerLieu(pos.coords.latitude, pos.coords.longitude, "Carte centrée sur votre position.");
       },
       () => setMessage("Position refusée ou indisponible. Cherchez votre village à la place."),
       { timeout: 10000, enableHighAccuracy: true },

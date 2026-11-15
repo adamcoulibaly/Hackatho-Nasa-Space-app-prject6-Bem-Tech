@@ -2,11 +2,22 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useParcelle } from "@/lib/parcelle/context";
-import { AUTRE_MAX, CULTURES, MAX_CULTURES, PRIORITES, validateParcelle, type Eau, type Materiel } from "@/lib/parcelle/validate";
-import { libelleRegion, regionsParDistrict } from "@/lib/regions";
+import { AUTRE_MAX, MAX_CULTURES, PRIORITES, validateParcelle, type Eau, type Materiel } from "@/lib/parcelle/validate";
+import { estRegionIvoirienne, libelleRegion, regionParId, regionsParDistrict, REGION_PILOTE } from "@/lib/regions";
+import { autresCultures, culturesDuPays, zoneDuPays } from "@/lib/monde/pays";
 import { IconeCulture } from "./plantes";
 
 const FIELD = "h-12 rounded-[14px] border border-line bg-white px-3 text-[15px] text-ink";
+
+/** Nom du pays en français à partir de son code ISO (« SN » → « Sénégal »). */
+export function nomPays(code: string | undefined): string {
+  if (!code || code === "ZZ") return "Pays inconnu";
+  try {
+    return new Intl.DisplayNames(["fr"], { type: "region" }).of(code) ?? code;
+  } catch {
+    return code;
+  }
+}
 
 /** Le formulaire n'est monté qu'une fois le stockage local lu : sinon le champ de surface garderait la valeur par défaut. */
 export function ParcelleForm({ onSubmit }: { onSubmit: () => void }) {
@@ -30,6 +41,12 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
   }, [parcelle.surface]);
 
   const autreCulture = parcelle.autreCulture !== undefined;
+  const ivoirien = estRegionIvoirienne(parcelle.region);
+  const pays = ivoirien ? "CI" : parcelle.pays;
+  const lat = regionParId(parcelle.region)?.lat;
+  const proposees = culturesDuPays(pays, lat);
+  const autres = autresCultures(pays, lat);
+  const [plus, setPlus] = useState(() => parcelle.cultures.some((c) => (autres as string[]).includes(c)));
   const nbCultures = parcelle.cultures.length + (autreCulture ? 1 : 0);
   const toggle = (liste: string[], valeur: string) =>
     liste.includes(valeur) ? liste.filter((v) => v !== valeur) : [...liste, valeur];
@@ -44,16 +61,26 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
   return (
     <form onSubmit={submit} noValidate className="flex max-w-[460px] flex-col gap-[22px] rounded-[28px] bg-white p-[26px]">
       <div className="grid grid-cols-2 gap-3">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="region" className="text-sm font-semibold">Région</label>
-          <select id="region" className={FIELD} value={parcelle.region} onChange={(e) => setParcelle({ region: e.target.value })}>
-            {regionsParDistrict().map(([groupe, regions]) => (
-              <optgroup key={groupe} label={groupe}>
-                {regions.map((r) => <option key={r.id} value={r.id}>{libelleRegion(r)}</option>)}
-              </optgroup>
-            ))}
-          </select>
-        </div>
+        {ivoirien ? (
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="region" className="text-sm font-semibold">Région</label>
+            <select id="region" className={FIELD} value={parcelle.region} onChange={(e) => setParcelle({ region: e.target.value, pays: "CI", lieu: undefined })}>
+              {regionsParDistrict().map(([groupe, regions]) => (
+                <optgroup key={groupe} label={groupe}>
+                  {regions.map((r) => <option key={r.id} value={r.id}>{libelleRegion(r)}</option>)}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <div className="flex min-w-0 flex-col gap-1.5" data-testid="lieu-monde">
+            <span className="text-sm font-semibold">Lieu</span>
+            <span className={`${FIELD} flex flex-col justify-center leading-tight`}>
+              <span className="truncate font-semibold">{parcelle.lieu ?? regionParId(parcelle.region)?.nom}</span>
+              <span className="truncate text-xs text-muted">{nomPays(parcelle.pays)}</span>
+            </span>
+          </div>
+        )}
         <div className="flex flex-col gap-1.5">
           <label htmlFor="surface" className="text-sm font-semibold">Surface (ha)</label>
           <input
@@ -71,10 +98,22 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
         </div>
       </div>
 
+      <p className="-mt-3 m-0 text-[13px] leading-snug text-muted">
+        {ivoirien ? (
+          <>Hors de Côte d&apos;Ivoire ? Cherchez votre lieu sur la carte : ForoSat fonctionne partout dans le monde.</>
+        ) : (
+          <>
+            Climat et saisons calculés pour ce point avec NASA POWER.{" "}
+            <button type="button" className="font-semibold text-ink underline" onClick={() => setParcelle({ region: REGION_PILOTE, pays: "CI", lieu: undefined })}>Choisir plutôt une région de Côte d&apos;Ivoire</button>
+          </>
+        )}
+      </p>
+
       <fieldset data-guide="cultures" className="m-0 flex flex-col gap-2.5 border-none p-0">
         <legend className="mb-2.5 p-0 text-sm font-semibold">Ce que je cultive aujourd'hui <span className="font-normal text-muted">(3 au plus, dans l'ordre des saisons)</span></legend>
+        {!ivoirien && <p className="-mt-1 m-0 text-[13px] text-muted">Cultures courantes{zoneDuPays(pays) ? ` : ${zoneDuPays(pays)}` : " sous cette latitude"}</p>}
         <div className="flex flex-wrap gap-2">
-          {CULTURES.map((c) => {
+          {[...proposees, ...(plus ? autres : [])].map((c) => {
             const on = parcelle.cultures.includes(c);
             return (
               <button
@@ -93,6 +132,11 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
               </button>
             );
           })}
+          {autres.length > 0 && (
+            <button type="button" aria-expanded={plus} onClick={() => setPlus((v) => !v)} className="h-11 rounded-full border border-line bg-white px-4 text-[15px] font-semibold text-ink">
+              {plus ? "Moins de cultures" : `Plus de cultures (${autres.length})`}
+            </button>
+          )}
           <button
             type="button"
             aria-pressed={autreCulture}
@@ -110,7 +154,7 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
           <div className="flex flex-col gap-1.5">
             <label htmlFor="autre-culture" className="text-sm font-semibold">Quelle autre culture ?</label>
             <input id="autre-culture" className={FIELD} maxLength={AUTRE_MAX} value={parcelle.autreCulture ?? ""} onChange={(e) => setParcelle({ autreCulture: e.target.value })} placeholder="ex. anacarde, cacao, soja" />
-            <span className="text-[13px] text-muted">Gardée dans votre parcelle, mais pas encore évaluée : ForoSat n&apos;a des fiches que pour les 8 cultures ci-dessus.</span>
+            <span className="text-[13px] text-muted">Gardée dans votre parcelle, mais pas encore évaluée : ForoSat n&apos;a des fiches que pour les cultures de la liste.</span>
           </div>
         )}
         {tropDeCultures && <p role="status" className="m-0 text-sm text-[#5C2E00]">3 cultures au plus : retirez-en une pour en choisir une autre.</p>}

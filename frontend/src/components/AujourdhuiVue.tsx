@@ -9,7 +9,7 @@ import { useSemis } from "@/lib/useSemis";
 import { useAnomalie } from "@/lib/useAnomalie";
 import { useSaisons } from "@/lib/useSaisons";
 import { lireCarnet, type Observation } from "@/lib/carnet";
-import { regionParId, libelleRegion } from "@/lib/regions";
+import { libelleZone } from "@/lib/monde/nom";
 import { EtatCalcul } from "./EtatCalcul";
 import { MaParcelleAujourdhui } from "./MaParcelleAujourdhui";
 
@@ -22,10 +22,9 @@ export function AujourdhuiVue({ initial, cultures }: { initial: Climat; cultures
   const [derniere, setDerniere] = useState<Observation | null>(null);
   useEffect(() => setDerniere(lireCarnet()[0] ?? null), []);
   if (etat.statut !== "pret") return <EtatCalcul etat={etat} region={parcelle.region} />;
-  const region = regionParId(parcelle.region);
   return (
     <MaParcelleAujourdhui
-      region={region ? libelleRegion(region) : parcelle.region}
+      region={libelleZone(parcelle)}
       reco={rotationConseillee(etat.rotations)}
       cultures={cultures}
       saisons={saisons ?? null}

@@ -4,7 +4,8 @@ import Link from "next/link";
 import type { Climat } from "@/lib/contract";
 import { useClimatRegion } from "@/lib/useClimatRegion";
 import { useParcelle } from "@/lib/parcelle/context";
-import { regionParId } from "@/lib/regions";
+import { estRegionIvoirienne } from "@/lib/regions";
+import { nomCourt, nomZone } from "@/lib/monde/nom";
 import { RainChart } from "./RainChart";
 import { YearMatrix } from "./YearMatrix";
 import { GraceChart } from "./GraceChart";
@@ -27,13 +28,13 @@ const Card = ({ titre, aide, children, className = "", guide }: { titre: string;
 /** Climat de la région choisie (voir useClimatRegion). */
 export function ClimatVue({ initial }: { initial: Climat }) {
   const { parcelle } = useParcelle();
-  const region = regionParId(parcelle.region);
+  const ivoirien = estRegionIvoirienne(parcelle.region);
   const etat = useClimatRegion(initial, parcelle.region);
 
   const entete = (
     <div className="flex flex-wrap items-end justify-between gap-4">
       <div className="flex flex-col gap-2">
-        <span className="text-[13px] uppercase tracking-[0.14em] text-muted">Climat de votre zone{region ? ` · ${region.nom}` : ""}</span>
+        <span className="text-[13px] uppercase tracking-[0.14em] text-muted">Climat de votre zone · {nomZone(parcelle)}</span>
         <h1 className="m-0 font-display text-[clamp(30px,3.4vw,46px)] font-bold leading-[1.05] tracking-[-0.04em]">
           Le climat de votre champ, <span className="font-serif font-normal italic text-green-dark">vu de l'espace.</span>
         </h1>
@@ -47,7 +48,7 @@ export function ClimatVue({ initial }: { initial: Climat }) {
     return (
       <>
         {entete}
-        <p aria-busy="true" className="m-0 rounded-2xl bg-white px-4 py-6 text-[15px] text-muted">Chargement du climat de {region?.chefLieu ?? "votre région"}…</p>
+        <p aria-busy="true" className="m-0 rounded-2xl bg-white px-4 py-6 text-[15px] text-muted">Chargement du climat de {nomCourt(parcelle)}{ivoirien ? "" : " (calcul NASA POWER pour ce point, quelques secondes)"}…</p>
       </>
     );
   }
@@ -56,7 +57,7 @@ export function ClimatVue({ initial }: { initial: Climat }) {
       <>
         {entete}
         <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-[#FDE7CC] px-4 py-4 text-[#5C2E00]">
-          <p role="alert" className="m-0 text-[15px]">Impossible de charger le climat de {region?.chefLieu ?? "cette région"}. Vérifiez la connexion.</p>
+          <p role="alert" className="m-0 text-[15px]">Impossible de charger le climat de {nomCourt(parcelle)}. Vérifiez la connexion.</p>
           <button type="button" onClick={etat.reessayer} className="h-11 rounded-full bg-ink px-5 text-sm font-bold text-paper">Réessayer</button>
         </div>
       </>
@@ -72,6 +73,7 @@ export function ClimatVue({ initial }: { initial: Climat }) {
           <strong>Données réelles :</strong> {new Intl.ListFormat("fr", { type: "conjunction" }).format(climat.meta.reel)} ({climat.meta.source}, {climat.meta.periode}).
           {climat.meta.tendancePluie ? ` ${climat.meta.tendancePluie}` : ""}{" "}
           {(() => {
+            if (!ivoirien) return "Calculé à la demande pour ce point du monde. La végétation, l'eau stockée, la pluie satellite, la chaleur des champs et les projections 2050 sont encore réservées à la Côte d'Ivoire.";
             const veg = climat.onglets.some((o) => o.id === "veg");
             if (climat.grace && veg) return "";
             if (!veg && !climat.grace) return "La végétation (NDVI) et l'eau stockée (GRACE) s'afficheront dès que leurs données seront branchées.";

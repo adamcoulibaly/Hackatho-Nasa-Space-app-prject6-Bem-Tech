@@ -60,6 +60,8 @@ Build Android (APK installable) avec le compte Expo : `npx eas-cli@latest build 
 
 ## Fonctions phares
 
+- **Partout dans le monde.** La carte cherche n'importe quel lieu ; le pays est détecté (Nominatim, géocodage inverse). En Côte d'Ivoire, la région la plus proche et ses données pré-calculées ; ailleurs, un « point du monde » (cellule NASA POWER de 0,5°, identifiant `pt_<lat>_<lon>`) dont le climat et les 21 saisons rejouées sont calculés à la demande par `/api/monde/climat|saisons/<point>`. Ce calcul est un portage TypeScript fidèle du pipeline Python (`frontend/src/lib/monde/`), vérifié à l'identique sur les régions ivoiriennes. Catalogue de 19 cultures (`knowledge/cultures.json`), proposées selon le pays (`frontend/src/lib/monde/pays.ts`) ; les cultures de saison fraîche (blé, orge, pois chiche, pomme de terre) sont semées quand la chaleur retombe. Projections 2050, pluie IMERG, ECOSTRESS et carte des risques restent ivoiriens pour l'instant, et la page le dit.
+
 - **Rejeu de 20 saisons réelles.** Chaque rotation est rejouée sur les saisons 2005–2025 de sa région (NASA POWER, jour par jour) :
   - date de semis selon la règle de début des pluies de Sivakumar ;
   - bilan d'eau FAO-56 (Hargreaves, coefficients culturaux par stade, réservoir de 100 mm affiché comme hypothèse) ;

@@ -1,4 +1,5 @@
 import liste from "./regions.json";
+import { libellePoint, pointDepuisId } from "./monde/lieu";
 
 /** Les 31 régions et 2 districts autonomes de Côte d'Ivoire, avec leur chef-lieu (géocodé sur OpenStreetMap). */
 export type Region = { id: string; nom: string; chefLieu: string; district: string; lat: number; lon: number };
@@ -7,9 +8,21 @@ export const REGIONS: Region[] = liste;
 export const REGION_IDS = REGIONS.map((r) => r.id) as [string, ...string[]];
 export const REGION_PILOTE = "poro";
 
+/**
+ * Région ivoirienne, ou point du monde (« pt_<lat>_<lon> ») présenté comme une région : son climat et ses saisons
+ * sont calculés à la demande depuis NASA POWER.
+ */
 export function regionParId(id: string): Region | undefined {
-  return REGIONS.find((r) => r.id === id);
+  const r = REGIONS.find((x) => x.id === id);
+  if (r) return r;
+  const p = pointDepuisId(id);
+  if (!p) return undefined;
+  const nom = libellePoint(p.lat, p.lon);
+  return { id, nom, chefLieu: nom, district: "", lat: p.lat, lon: p.lon };
 }
+
+/** Vrai pour une des 33 régions ivoiriennes (données pré-calculées, projections 2050 comprises). */
+export const estRegionIvoirienne = (id: string) => REGIONS.some((r) => r.id === id);
 
 export function libelleRegion(r: Region): string {
   return r.nom.startsWith("District") ? r.nom : `${r.nom} (${r.chefLieu})`;

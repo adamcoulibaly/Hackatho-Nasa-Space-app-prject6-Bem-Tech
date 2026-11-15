@@ -53,7 +53,7 @@ const ESPACES: { titre: string; sous: string; outils: [string, string, string][]
     sous: "Les données NASA",
     outils: [
       ["Climat de ma zone", "/climat", "Pluie, chaleur, humidité du sol et végétation mesurées depuis 2005."],
-      ["Carte des risques", "/risques", "Les 33 régions : saisons perdues depuis 2005 et estimation vers 2050."],
+      ["Carte des risques", "/risques", "Les 33 régions de Côte d'Ivoire : saisons perdues depuis 2005 et estimation vers 2050."],
       ["Traduire ForoSat", "/traduire", "Dioula, baoulé, sénoufo : traduit avec les locuteurs."],
     ],
   },
@@ -74,7 +74,7 @@ export default function Home() {
             Lire le ciel pour mieux <span className="font-serif font-normal italic text-orange-dark">cultiver</span> la terre.
           </h1>
           <p className="m-0 max-w-2xl text-lg leading-relaxed text-muted">
-            ForoSat aide l'agriculteur et son conseiller agricole à choisir la prochaine rotation de cultures : la rotation actuelle comparée à deux alternatives, à partir de l'historique climatique observé par la NASA, avec le pourquoi de chaque conseil.
+            ForoSat aide l'agriculteur et son conseiller agricole à choisir la prochaine rotation de cultures : la rotation actuelle comparée à deux alternatives, à partir de l'historique climatique observé par la NASA, avec le pourquoi de chaque conseil. Partout dans le monde : 19 cultures, proposées selon le pays de la parcelle.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link href="/parcelle" className={`${CTA} bg-orange text-ink hover:text-ink`}>Analyser ma parcelle</Link>

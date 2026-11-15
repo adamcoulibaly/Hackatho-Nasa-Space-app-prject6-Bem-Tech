@@ -36,7 +36,7 @@ export function Bienvenue() {
             Lire le ciel pour mieux <span className="font-serif font-normal italic text-orange">cultiver.</span>
           </h1>
           <p className="m-0 hidden max-w-[520px] text-lg leading-normal text-[#C9D4CD] md:block">
-            ForoSat aide les agriculteurs ivoiriens à choisir la rotation des cultures qui tient sur leur parcelle, à partir des données satellite de la NASA, en français et sur téléphone.
+            ForoSat aide les agriculteurs à choisir la rotation des cultures qui tient sur leur parcelle, à partir des données satellite de la NASA, en français et sur téléphone. Né en Côte d'Ivoire, il fonctionne partout : choisissez votre champ sur la carte du monde.
           </p>
           <ul className="m-0 hidden list-none flex-col gap-3 p-0 md:flex">
             {ATOUTS.map((a) => (

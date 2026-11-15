@@ -69,7 +69,7 @@ export function getProjections(id: string): Promise<Projections> {
   return load(id, ProjectionsSchema, dir);
 }
 
-/** Fiches des 8 cultures (knowledge/cultures.json). */
+/** Fiches du catalogue de cultures (knowledge/cultures.json). */
 export function getCultures(): Promise<Culture[]> {
   const dir = process.env.FOROSAT_KNOWLEDGE_DIR ?? path.resolve(process.cwd(), "..", "knowledge");
   return load("cultures", CulturesSchema, dir);

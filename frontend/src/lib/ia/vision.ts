@@ -1,8 +1,8 @@
 /** Analyse d'une photo de champ par un modèle de vision gratuit (OpenRouter, compatible OpenAI). La photo n'est jamais enregistrée. */
 import { z } from "zod";
 import type { ConfigIA } from "./assistant";
+import { CATALOGUE as CULTURES } from "@/lib/monde/pays";
 
-const CULTURES = ["Maïs", "Coton", "Igname", "Manioc", "Arachide", "Riz", "Sorgho", "Niébé"] as const;
 export const MODELE_VISION_PAR_DEFAUT = "nvidia/nemotron-3.5-super-vl:free";
 
 export const AnalysePhotoSchema = z.object({

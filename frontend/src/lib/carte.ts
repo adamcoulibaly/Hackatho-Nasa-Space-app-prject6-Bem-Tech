@@ -27,13 +27,12 @@ export function surfaceHa(points: [number, number][]): number {
   return Math.abs((somme * RAYON_TERRE * RAYON_TERRE) / 2) / 10000;
 }
 
-/** Recherche d'une localité en Côte d'Ivoire (Nominatim, OpenStreetMap, sans clé). */
+/** Recherche d'une localité, partout dans le monde (Nominatim, OpenStreetMap, sans clé). */
 export function nominatimUrl(requete: string): string {
   const u = new URL("https://nominatim.openstreetmap.org/search");
   u.searchParams.set("q", requete);
   u.searchParams.set("format", "json");
   u.searchParams.set("limit", "5");
-  u.searchParams.set("countrycodes", "ci");
   u.searchParams.set("accept-language", "fr");
   return u.toString();
 }

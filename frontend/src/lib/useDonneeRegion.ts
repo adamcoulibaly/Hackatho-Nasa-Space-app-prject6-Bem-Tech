@@ -2,13 +2,20 @@
 
 import { useEffect, useState } from "react";
 import type { ZodType } from "zod";
+import { urlDonnee } from "@/lib/monde/url";
 
 /** Données d'une région servies par /api/<chemin>/<region> : undefined pendant le chargement, null si indisponibles. */
 export function useDonneeRegion<T>(chemin: string, region: string, schema: ZodType<T>): T | null | undefined {
   const [etat, setEtat] = useState<{ region: string; donnee: T | null } | null>(null);
   useEffect(() => {
     let annule = false;
-    fetch(`/api/${chemin}/${region}`)
+    const url = urlDonnee(chemin, region);
+    // Donnée qui n'existe pas pour un point du monde (projections 2050) : indisponible, sans requête.
+    if (!url) {
+      setEtat({ region, donnee: null });
+      return;
+    }
+    fetch(url)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((json) => !annule && setEtat({ region, donnee: schema.parse(json) }))
       .catch(() => !annule && setEtat({ region, donnee: null }));

@@ -5,6 +5,18 @@ import { extraireClimat, type ClimatResume } from "./climat";
 import { notesBrutes, notesRotation, scorePondere, type Notes } from "./notes";
 import { rejouer } from "./rejeu";
 import { choisirTient2050, projeter } from "./projection";
+import { culturesDuPays } from "@/lib/monde/pays";
+import { regionParId } from "@/lib/regions";
+
+/**
+ * Cultures parmi lesquelles chercher les alternatives : celles du pays de la parcelle (ou de sa latitude) et
+ * celles que l'agriculteur cultive déjà. En Côte d'Ivoire, ce sont les 8 cultures historiques.
+ */
+export function culturesCandidates(p: Parcelle, cultures: Culture[]): Culture[] {
+  const pays = p.pays ?? (p.region.startsWith("pt_") ? undefined : "CI");
+  const proposees = new Set<string>([...culturesDuPays(pays, regionParId(p.region)?.lat), ...p.cultures]);
+  return cultures.filter((c) => proposees.has(c.nom));
+}
 
 export type Choix = { id: "A" | "B" | "C"; sequence: string[]; cultures: Culture[]; scores: Notes; score: number };
 
@@ -45,7 +57,9 @@ export function choisirRotations(p: Parcelle, climat: Climat, cultures: Culture[
   if (actuelle.length === 0) return null;
   const cl = extraireClimat(climat);
 
-  const classes = candidats(cultures)
+  const pool = culturesCandidates(p, cultures);
+  // Pool trop étroit (sans légumineuse, par exemple) : on cherche dans tout le catalogue plutôt que de ne rien proposer.
+  const classes = candidats(candidats(pool).length ? pool : cultures)
     .filter((s) => ensemble(s) !== ensemble(actuelle))
     .map((s) => ({ s, ...evaluer(s, p, cl, saisons) }))
     .sort((x, y) => y.score - x.score || cle(x.s).localeCompare(cle(y.s), "fr"));

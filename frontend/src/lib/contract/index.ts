@@ -262,7 +262,7 @@ export const LexiqueSchema = z.array(TermeSchema).min(1);
 /* ---------- fiches cultures (knowledge/cultures.json) ---------- */
 export const CultureSchema = z.object({
   nom: z.string(),
-  famille: z.enum(["poacées", "fabacées", "malvacées", "dioscoréacées", "euphorbiacées"]),
+  famille: z.enum(["poacées", "fabacées", "malvacées", "dioscoréacées", "euphorbiacées", "solanacées", "convolvulacées", "pédaliacées", "astéracées"]),
   /** Durée typique du cycle, en jours. */
   cycleJours: z.number().int().positive(),
   /** Besoin en eau sur le cycle, en mm : [minimum, confortable]. */
@@ -290,6 +290,8 @@ export const CultureSchema = z.object({
   ky: z.object({ valeur: z.number().positive(), source: z.string() }),
   /** Besoin en intrants achetés (engrais, semences, traitements), de 1 (faible) à 5 (élevé) : estimation à valider. */
   intrants: niveau,
+  /** Culture de saison fraîche : semée quand la température maximale moyenne du mois passe sous ce seuil (°C), pas aux premières pluies. */
+  semisFrais: z.number().optional(),
 });
 export type Culture = z.infer<typeof CultureSchema>;
-export const CulturesSchema = z.array(CultureSchema).length(8);
+export const CulturesSchema = z.array(CultureSchema).min(8);

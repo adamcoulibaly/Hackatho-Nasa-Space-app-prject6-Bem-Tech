@@ -21,7 +21,7 @@ describe("AnalysePhotoSchema", () => {
   it("rejette une couverture de 140 % et une culture inconnue", () => {
     expect(AnalysePhotoSchema.safeParse(ANALYSE).success).toBe(true);
     expect(AnalysePhotoSchema.safeParse({ ...ANALYSE, couvertureSol: 140 }).success).toBe(false);
-    expect(AnalysePhotoSchema.safeParse({ ...ANALYSE, culture: "Blé" }).success).toBe(false);
+    expect(AnalysePhotoSchema.safeParse({ ...ANALYSE, culture: "Café" }).success).toBe(false);
   });
 });
 

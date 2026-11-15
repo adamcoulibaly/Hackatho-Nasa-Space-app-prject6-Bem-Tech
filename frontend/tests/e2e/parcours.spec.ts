@@ -147,6 +147,7 @@ async function toucher(page: import("@playwright/test").Page, isMobile: boolean,
 }
 
 test("carte : on ferme le contour en touchant le premier point, et on peut retirer un point", async ({ page, isMobile }) => {
+  await page.route("**/nominatim.openstreetmap.org/reverse**", (r) => r.fulfill({ json: { address: { country_code: "ci", country: "Côte d'Ivoire", town: "Korhogo" } } }));
   await page.goto("/parcelle");
   const carte = page.getByTestId("carte");
   await expect(carte.locator(".leaflet-pane").first()).toBeAttached();
@@ -161,7 +162,7 @@ test("carte : on ferme le contour en touchant le premier point, et on peut retir
   await page.getByRole("button", { name: "Retirer le dernier point" }).click();
   await expect(page.getByText(/^3 points · ≈ /)).toBeVisible();
   await toucher(page, isMobile, cx - 50, cy - 40); // premier point
-  await expect(page.getByText(/Parcelle enregistrée : .* ha\. Région détectée : Poro/)).toBeVisible();
+  await expect(page.getByText(/Parcelle enregistrée : .* ha\. Lieu : Poro, Côte d'Ivoire\./)).toBeVisible();
   await expect(page.getByRole("button", { name: "Redessiner ma parcelle" })).toBeVisible();
 });
 
