@@ -113,6 +113,8 @@ button:not(:disabled):active, a.rounded-full:active, a[class*="rounded-3xl"]:act
 @keyframes depuis-bas { from { opacity: 0; transform: translateY(24px) scale(0.98); } to { opacity: 1; transform: none; } }
 @keyframes depuis-haut { from { transform: translateY(-100%); } to { transform: none; } }
 .toast-entree { animation: depuis-bas 300ms var(--ease-spring) both; }
+/* Guide pas à pas : chaque nouvelle bulle arrive en glissant légèrement. */
+.guide-bulle { animation: depuis-bas 300ms var(--ease-spring) both; }
 .bandeau-entree { animation: depuis-haut 300ms var(--ease-out) both; }
 
 /* Pastilles et badges qui apparaissent : petit rebond. */
@@ -169,7 +171,7 @@ button:not(:disabled):active, a.rounded-full:active, a[class*="rounded-3xl"]:act
   .js-motion main { animation: fade 100ms linear both; }
   .indicateur-onglet { transition: none; }
   .icone-active, .pop, .micro-ecoute::after { animation: none; }
-  .bulle-moi, .bulle-ia, .toast-entree { animation: fade 100ms linear both; }
+  .bulle-moi, .bulle-ia, .toast-entree, .guide-bulle { animation: fade 100ms linear both; }
   .bandeau-entree { animation: none; }
   .points-attente span { animation: none; opacity: 0.7; }
   .ecran-accueil { animation: ecran-sortie 100ms linear 0.6s forwards; }

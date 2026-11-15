@@ -37,7 +37,7 @@ export function RotationDetail({ id, initial, cultures }: { id: "A" | "B" | "C";
       <div className="flex flex-wrap items-center justify-between gap-3">
         {retour}
         {/* Passer d'une rotation à l'autre sans revenir à la liste. */}
-        <nav aria-label="Changer de rotation" className="flex gap-1 rounded-full bg-white p-1">
+        <nav aria-label="Changer de rotation" data-guide="changer-rotation" className="flex gap-1 rounded-full bg-white p-1">
           {etat.rotations.map((r) => (
             <Link key={r.id} href={`/rotations/${r.id}`} aria-current={r.id === id ? "page" : undefined}
               className={`flex h-10 min-w-[52px] items-center justify-center rounded-full px-3 text-[15px] font-bold no-underline ${r.id === id ? "bg-ink text-paper hover:text-paper" : "text-ink hover:text-ink"}`}>
@@ -89,7 +89,7 @@ export function RotationDetail({ id, initial, cultures }: { id: "A" | "B" | "C";
 
       <Section titre="Demander à l'assistant IA">
         <p className="m-0 text-[15px] text-muted">Posez votre question, ou comparez cette rotation aux autres en un toucher.</p>
-        <AssistantIA id={id} parcelle={parcelle} autres={ids.filter((x) => x !== id)} />
+        <div data-guide="assistant"><AssistantIA id={id} parcelle={parcelle} autres={ids.filter((x) => x !== id)} /></div>
       </Section>
 
       <div className="flex flex-col gap-3">

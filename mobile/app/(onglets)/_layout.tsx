@@ -1,18 +1,14 @@
-import { SymbolView, type SymbolViewProps } from "expo-symbols";
 import { Tabs, router } from "expo-router";
 import * as Notifications from "expo-notifications";
 import * as Haptics from "expo-haptics";
 import { useEffect } from "react";
 import { demanderChemin, estCheminInterne, estOnglet } from "@/lib/onglets";
-import type { ColorValue } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COULEURS } from "@/lib/config";
-
-const icone = (nom: SymbolViewProps["name"]) =>
-  function TabIcon({ color }: { color: ColorValue }) {
-    return <SymbolView name={nom} tintColor={color} size={24} />;
-  };
+import { BarreOnglets, hauteurReservee } from "@/components/BarreOnglets";
 
 export default function Onglets() {
+  const insets = useSafeAreaInsets();
   // Toucher une notification (rappel de saison, alerte) ouvre la page qu'elle annonce, dans le bon onglet.
   const reponse = Notifications.useLastNotificationResponse();
   useEffect(() => {
@@ -30,15 +26,14 @@ export default function Onglets() {
         headerShown: false,
         // Changement d'onglet en glissé-fondu, comme une page qui se décale.
         animation: "shift",
-        tabBarActiveTintColor: COULEURS.orange,
-        tabBarInactiveTintColor: "#C9D4CD",
-        tabBarStyle: { backgroundColor: COULEURS.encre, borderTopColor: COULEURS.ligne },
-        tabBarLabelStyle: { fontSize: 12, fontWeight: "600" },
-      }}>
-      <Tabs.Screen name="tableau" options={{ title: "Accueil", tabBarIcon: icone({ ios: "house", android: "home", web: "home" }) }} />
-      <Tabs.Screen name="climat" options={{ title: "Climat", tabBarIcon: icone({ ios: "drop", android: "water_drop", web: "water_drop" }) }} />
-      <Tabs.Screen name="rotations" options={{ title: "Rotations", tabBarIcon: icone({ ios: "arrow.triangle.2.circlepath", android: "autorenew", web: "autorenew" }) }} />
-      <Tabs.Screen name="champ" options={{ title: "Champ", tabBarIcon: icone({ ios: "mappin.and.ellipse", android: "location_on", web: "location_on" }) }} />
+        // Barre flottante comme celle du site : la page s'arrête juste au-dessus, sur le fond papier du site.
+        sceneStyle: { backgroundColor: COULEURS.papier, paddingBottom: hauteurReservee(insets.bottom) },
+      }}
+      tabBar={(props) => <BarreOnglets {...props} />}>
+      <Tabs.Screen name="tableau" options={{ title: "Accueil" }} />
+      <Tabs.Screen name="climat" options={{ title: "Climat" }} />
+      <Tabs.Screen name="rotations" options={{ title: "Rotations" }} />
+      <Tabs.Screen name="champ" options={{ title: "Champ" }} />
     </Tabs>
   );
 }

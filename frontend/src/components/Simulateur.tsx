@@ -89,7 +89,7 @@ export function Simulateur({ rotations, saisons, cultures, surface = 1 }: { rota
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="grid gap-5 rounded-[28px] bg-white p-5 sm:p-[26px] md:grid-cols-[auto_1fr]">
+      <section data-guide="simulation" className="grid gap-5 rounded-[28px] bg-white p-5 sm:p-[26px] md:grid-cols-[auto_1fr]">
         <Choix libelle="Durée de la simulation" options={DUREES.map((d) => [d, `${d} ans`])} valeur={duree} onChange={(d) => { setDuree(d); setJour(Math.min(jour, d * 365 - 1)); }} />
         <Choix libelle="Climat simulé" options={scenarios} valeur={scenario} onChange={setScenario} />
       </section>

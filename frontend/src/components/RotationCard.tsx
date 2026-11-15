@@ -7,7 +7,7 @@ export function RotationCard({ rotation, dark = false }: { rotation: Rotation; d
   const r = rotation;
   const muted = dark ? "text-[#C9D4CD]" : "text-muted";
   return (
-    <article className={`lift flex min-w-0 flex-col gap-5 rounded-[28px] p-5 sm:p-[26px] ${dark ? "bg-ink text-paper" : "bg-white text-ink"}`}>
+    <article data-guide={r.recommandee ? "rotation-conseillee" : undefined} className={`lift flex min-w-0 flex-col gap-5 rounded-[28px] p-5 sm:p-[26px] ${dark ? "bg-ink text-paper" : "bg-white text-ink"}`}>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className={`font-display text-[40px] font-extrabold leading-none tracking-[-0.05em] ${r.recommandee ? "text-orange" : dark ? "text-paper" : "text-muted"}`}>{r.id}</span>
         <span className="flex flex-wrap justify-end gap-1.5">
@@ -37,6 +37,7 @@ export function RotationCard({ rotation, dark = false }: { rotation: Rotation; d
         <span className={`text-sm ${muted}`}>Confiance : <strong className={dark ? "text-paper" : "text-ink"}>{r.confiance.niveau}</strong></span>
         <Link
           href={`/rotations/${r.id}`}
+          data-guide={r.recommandee ? "detail-conseille" : undefined}
           aria-label={`Voir le détail de la rotation ${r.id}`}
           className={`inline-flex h-[46px] shrink-0 items-center whitespace-nowrap rounded-full px-[18px] text-[15px] font-bold no-underline ${dark ? "bg-orange text-ink hover:text-ink" : "bg-ink text-paper hover:text-paper"}`}
         >

@@ -114,7 +114,7 @@ export function Tableau({ climat, reco, semis, anomalie, risqueClimat }: { clima
         <Link href="/parcelle" aria-label="Changer de parcelle" className="inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full border border-line bg-white px-3.5 text-sm font-semibold text-ink no-underline hover:text-ink">Modifier</Link>
       </div>
 
-      <section className="flex flex-col gap-3.5 rounded-[28px] bg-ink p-5 text-paper">
+      <section data-guide="tableau" className="flex flex-col gap-3.5 rounded-[28px] bg-ink p-5 text-paper">
         <div className="flex items-center justify-between gap-2">
           <span className={`rounded-full px-[11px] py-[5px] text-[13px] font-bold ${semis?.etat === "fenetre_ouverte" ? "bg-green text-ink" : "bg-[#3A2208] text-[#FFB066]"}`}>
             {semis ? BADGE[semis.etat] : s.saison}

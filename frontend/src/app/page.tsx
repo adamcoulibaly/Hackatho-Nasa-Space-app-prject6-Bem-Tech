@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { LogoAnime } from "@/components/LogoAnime";
 import { EcranAccueil } from "@/components/EcranAccueil";
+import { LancerGuide } from "@/components/LancerGuide";
 
 const CTA = "inline-flex h-14 items-center rounded-full px-6 text-[17px] font-bold no-underline";
 
@@ -160,6 +161,7 @@ export default function Home() {
           <p className="m-0 text-[15px] text-muted">Les pages déjà consultées restent disponibles hors connexion, sur le site comme dans l&apos;app Android.</p>
           <div className="flex flex-wrap gap-3">
             <Link href="/bienvenue" className={`${CTA} bg-orange text-ink hover:text-ink`}>Commencer</Link>
+            <LancerGuide className={`${CTA} border border-ink text-ink`}>Guide pas à pas</LancerGuide>
             <Link href="/guide" className={`${CTA} border border-ink text-ink hover:text-ink`}>Guide d&apos;utilisation</Link>
             <Link href="/methode" className={`${CTA} border border-ink text-ink hover:text-ink`}>Méthode et incertitude</Link>
           </div>

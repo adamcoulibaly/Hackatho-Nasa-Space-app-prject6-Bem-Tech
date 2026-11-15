@@ -55,7 +55,7 @@ export function TableauVue({ initial, cultures }: { initial: Climat; cultures: C
       <AlerteSemis />
       <RappelsSaison rappels={rappels} />
       {/* Raccourcis compacts plutôt qu'une longue pile de cartes. */}
-      <nav aria-label="Raccourcis" className="grid grid-cols-2 gap-2.5">
+      <nav aria-label="Raccourcis" data-guide="raccourcis" className="grid grid-cols-2 gap-2.5">
         {RACCOURCIS.map(([titre, href, sous, sombre]) => (
           <Link key={href} href={href} className={`flex min-h-[92px] flex-col justify-between gap-1 rounded-3xl p-4 no-underline ${sombre ? "bg-ink text-paper hover:text-paper" : "bg-white text-ink hover:text-ink"}`}>
             <strong className="text-[15px] leading-tight">{titre}</strong>

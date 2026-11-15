@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Couche } from "@/lib/contract";
 import { ouvrirDansApp } from "@/lib/modeApp";
+import { signalerGuide } from "@/lib/guide";
 import { Repli } from "./Repli";
 import { useParcelle } from "@/lib/parcelle/context";
 import { CarteParcelle } from "./CarteParcelle";
@@ -21,6 +22,7 @@ export function ParcelleView({ couches }: { couches: Couche[] }) {
       <ParcelleForm
         onSubmit={() => {
           marquerSaisie();
+          signalerGuide("parcelle-analysee");
           // Parcours court : la réponse (les rotations) tout de suite ; le climat reste à un toucher.
           // Dans l'app mobile, les rotations s'ouvrent dans leur onglet.
           if (!ouvrirDansApp("/rotations")) router.push("/rotations");

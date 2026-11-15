@@ -4,6 +4,7 @@ import { ParcelleProvider } from "@/lib/parcelle/context";
 import { MotionRoot } from "@/components/MotionRoot";
 import { ModeApp } from "@/components/ModeApp";
 import { HorsLigne } from "@/components/HorsLigne";
+import { GuidePasAPas } from "@/components/GuidePasAPas";
 
 export const metadata: Metadata = {
   title: "ForoSat — choisir sa prochaine rotation",
@@ -21,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="stylesheet" href={FONTS} />
       </head>
-      <body className="font-sans bg-paper text-ink min-h-screen"><ParcelleProvider>{children}</ParcelleProvider><MotionRoot /><ModeApp /><HorsLigne /></body>
+      <body className="font-sans bg-paper text-ink min-h-screen"><ParcelleProvider>{children}<GuidePasAPas /></ParcelleProvider><MotionRoot /><ModeApp /><HorsLigne /></body>
     </html>
   );
 }

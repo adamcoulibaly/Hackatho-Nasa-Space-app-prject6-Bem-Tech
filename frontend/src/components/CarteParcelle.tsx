@@ -286,26 +286,28 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
 
   return (
     <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-3">
+      <div data-guide="lieu" className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-2">
         <form onSubmit={chercher} role="search" className="flex min-w-0 flex-[1_1_260px] gap-2">
           <label htmlFor="lieu" className="sr-only">Rechercher une localité</label>
           <input id="lieu" type="search" value={recherche} onChange={(e) => setRecherche(e.target.value)} placeholder="Village, ville… (ex. Napié)" className="h-11 min-w-0 flex-grow rounded-full border border-line bg-white px-4 text-base" />
           <button type="submit" className={`${BTN} bg-ink text-paper`}>Rechercher</button>
         </form>
-        <button type="button" onClick={maPosition} className={`${BTN} border border-line bg-white text-ink`}>Ma position</button>
+        <button type="button" data-guide="position" onClick={maPosition} className={`${BTN} border border-line bg-white text-ink`}>Ma position</button>
       </div>
 
       {resultats.length > 0 && (
         <ul className="fade-in m-0 flex list-none flex-col gap-1 rounded-2xl bg-white p-2" aria-label="Lieux trouvés">
           {resultats.map((l) => (
             <li key={`${l.lat},${l.lon}`}>
-              <button type="button" onClick={() => aller(l)} className="min-h-11 w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-paper">{l.nom}</button>
+              <button type="button" data-guide="lieu-trouve" onClick={() => aller(l)} className="min-h-11 w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-paper">{l.nom}</button>
             </li>
           ))}
         </ul>
       )}
+      </div>
 
-      <div className="relative">
+      <div data-guide="carte" className="relative">
       <div className="relative isolate overflow-hidden rounded-[28px] bg-[#0B1A13]">
         <div ref={conteneur} data-testid="carte" aria-label="Carte de la parcelle" role="region" className="h-[420px] w-full md:h-[560px]" />
         <div className="pointer-events-none absolute inset-x-3 top-3 z-[500] flex justify-end">
@@ -324,7 +326,7 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
             <div className="flex flex-wrap gap-1.5">
               <button type="button" onClick={retirer} disabled={points.length === 0} className={`${BTN} bg-transparent text-paper ring-1 ring-[#2A4234]`}>Retirer le dernier point</button>
               <button type="button" onClick={annuler} className={`${BTN} bg-transparent text-paper ring-1 ring-[#2A4234]`}>Annuler</button>
-              <button type="button" onClick={() => terminerRef.current()} disabled={points.length < 3} className={`${BTN} bg-orange text-ink`}>Terminer le contour ({points.length} points)</button>
+              <button type="button" data-guide="terminer" onClick={() => terminerRef.current()} disabled={points.length < 3} className={`${BTN} bg-orange text-ink`}>Terminer le contour ({points.length} points)</button>
             </div>
           </div>
         )}
@@ -332,7 +334,7 @@ export function CarteParcelle({ couches }: { couches: Couche[] }) {
 
       {!dessine && (
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={commencer} className={`${BTN} bg-ink text-paper`}>{aContour ? "Redessiner ma parcelle" : "Dessiner ma parcelle"}</button>
+          <button type="button" data-guide="dessiner" onClick={commencer} className={`${BTN} bg-ink text-paper`}>{aContour ? "Redessiner ma parcelle" : "Dessiner ma parcelle"}</button>
           {aContour && <button type="button" onClick={effacer} className={`${BTN} border border-line bg-white text-ink`}>Effacer le contour</button>}
         </div>
       )}

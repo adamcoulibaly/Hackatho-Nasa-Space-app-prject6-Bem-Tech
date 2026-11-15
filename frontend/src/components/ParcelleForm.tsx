@@ -71,7 +71,7 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
         </div>
       </div>
 
-      <fieldset className="m-0 flex flex-col gap-2.5 border-none p-0">
+      <fieldset data-guide="cultures" className="m-0 flex flex-col gap-2.5 border-none p-0">
         <legend className="mb-2.5 p-0 text-sm font-semibold">Ce que je cultive aujourd'hui <span className="font-normal text-muted">(3 au plus, dans l'ordre des saisons)</span></legend>
         <div className="flex flex-wrap gap-2">
           {CULTURES.map((c) => {
@@ -132,7 +132,7 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
         </div>
       </fieldset>
 
-      <fieldset className="m-0 flex flex-col gap-2.5 border-none p-0">
+      <fieldset data-guide="priorites" className="m-0 flex flex-col gap-2.5 border-none p-0">
         <legend className="mb-2.5 p-0 text-sm font-semibold">Ce qui compte le plus pour moi</legend>
         {PRIORITES.map((p) => (
           <label key={p} className="flex min-h-[44px] items-center gap-3 text-[15px]">
@@ -188,7 +188,7 @@ function ParcelleFormChamps({ onSubmit }: { onSubmit: () => void }) {
         </div>
       )}
 
-      <button type="submit" className="h-14 rounded-full bg-orange text-[17px] font-bold text-ink">Analyser ma parcelle</button>
+      <button type="submit" data-guide="analyser" className="h-14 rounded-full bg-orange text-[17px] font-bold text-ink">Analyser ma parcelle</button>
     </form>
   );
 }
